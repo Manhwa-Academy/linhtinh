@@ -4,7 +4,12 @@ import Webcam from 'react-webcam'
 import html2canvas from 'html2canvas'
 import { 
   Camera, Upload, Sparkles, ArrowLeft, ArrowRight, 
-  Download, RotateCcw, Heart, Star, Gift, Flower2
+  Download, RotateCcw, Heart, Star, Gift, Flower2,
+  Cat, Sun, Moon, Cloud, Music, Crown, Gem, Smile,
+  Snowflake, Flame, Zap, Droplet, Circle, Square, Triangle,
+  Hexagon, Shield, Bookmark, Flag, MapPin, Anchor, Compass,
+  Rocket, Gamepad2, Palette, Bell, Coffee, Plane, Bike, Car,
+  Umbrella, Trophy, Key, Glasses
 } from 'lucide-react'
 import '../styles/BoothPage.css'
 
@@ -21,18 +26,94 @@ const filters = [
   { id: 'bw', name: 'B&W', description: 'Timeless classic', value: 'grayscale(100%) contrast(1.2)', color: '#E2E8F0', icon: Sparkles }
 ]
 
+const stickerIconsMap = {
+  Heart, Star, Sparkles, Sun, Moon, Cloud, Snowflake, Flame, Zap, Droplet, 
+  Circle, Square, Triangle, Hexagon, Shield, Bookmark, Flag, MapPin, Anchor, Compass,
+  Cat, Gift, Flower2, Music, Crown, Gem, Smile, Rocket, Gamepad2, Palette, 
+  Bell, Coffee, Camera, Plane, Bike, Car, Umbrella, Trophy, Key, Glasses
+}
+
 const stickerCategories = {
-  hearts: ['❤️', '💕', '💖', '💗', '💝', '💞'],
-  stars: ['⭐', '✨', '🌟', '💫', '⚡', '🌠'],
-  cute: ['🎀', '🎁', '🌸', '💐', '🌷', '🦋', '🧁'],
-  text: ['OMG!', 'Cute!', 'You!', 'LOL', 'BFF', 'Smile!', 'Besties']
+  shapes: [
+    { id: 's1', type: 'icon', name: 'Heart', props: { color: '#FF6B9D', fill: '#FF6B9D' } },
+    { id: 's2', type: 'icon', name: 'Star', props: { color: '#FBBF24', fill: '#FBBF24' } },
+    { id: 's3', type: 'icon', name: 'Sparkles', props: { color: '#FCD34D', fill: 'none' } },
+    { id: 's4', type: 'icon', name: 'Sun', props: { color: '#F59E0B', fill: '#FCD34D' } },
+    { id: 's5', type: 'icon', name: 'Moon', props: { color: '#6366F1', fill: '#C7D2FE' } },
+    { id: 's6', type: 'icon', name: 'Cloud', props: { color: '#60A5FA', fill: '#DBEAFE' } },
+    { id: 's7', type: 'icon', name: 'Snowflake', props: { color: '#3B82F6', fill: '#93C5FD' } },
+    { id: 's8', type: 'icon', name: 'Flame', props: { color: '#EF4444', fill: '#FCA5A5' } },
+    { id: 's9', type: 'icon', name: 'Zap', props: { color: '#EAB308', fill: '#FEF08A' } },
+    { id: 's10', type: 'icon', name: 'Droplet', props: { color: '#06B6D4', fill: '#67E8F9' } },
+    { id: 's11', type: 'icon', name: 'Circle', props: { color: '#8B5CF6', fill: '#C4B5FD' } },
+    { id: 's12', type: 'icon', name: 'Square', props: { color: '#10B981', fill: '#6EE7B7' } },
+    { id: 's13', type: 'icon', name: 'Triangle', props: { color: '#F43F5E', fill: '#FDA4AF' } },
+    { id: 's14', type: 'icon', name: 'Hexagon', props: { color: '#D946EF', fill: '#F0ABFC' } },
+    { id: 's15', type: 'icon', name: 'Shield', props: { color: '#64748B', fill: '#CBD5E1' } },
+    { id: 's16', type: 'icon', name: 'Bookmark', props: { color: '#EAB308', fill: '#FDE047' } },
+    { id: 's17', type: 'icon', name: 'Flag', props: { color: '#EF4444', fill: '#FCA5A5' } },
+    { id: 's18', type: 'icon', name: 'MapPin', props: { color: '#EF4444', fill: '#FCA5A5' } },
+    { id: 's19', type: 'icon', name: 'Anchor', props: { color: '#3B82F6', fill: '#93C5FD' } },
+    { id: 's20', type: 'icon', name: 'Compass', props: { color: '#8B5CF6', fill: '#C4B5FD' } },
+  ],
+  cute: [
+    { id: 'c1', type: 'icon', name: 'Cat', props: { color: '#D97706', fill: '#FBBF24' } },
+    { id: 'c2', type: 'icon', name: 'Gift', props: { color: '#EF4444', fill: '#FCA5A5' } },
+    { id: 'c3', type: 'icon', name: 'Flower2', props: { color: '#EC4899', fill: '#FBCFE8' } },
+    { id: 'c4', type: 'icon', name: 'Music', props: { color: '#8B5CF6', fill: '#DDD6FE' } },
+    { id: 'c5', type: 'icon', name: 'Crown', props: { color: '#F59E0B', fill: '#FDE68A' } },
+    { id: 'c6', type: 'icon', name: 'Gem', props: { color: '#3B82F6', fill: '#BFDBFE' } },
+    { id: 'c7', type: 'icon', name: 'Smile', props: { color: '#F59E0B', fill: '#FDE68A' } },
+    { id: 'c8', type: 'icon', name: 'Rocket', props: { color: '#EF4444', fill: '#FCA5A5' } },
+    { id: 'c9', type: 'icon', name: 'Gamepad2', props: { color: '#8B5CF6', fill: '#C4B5FD' } },
+    { id: 'c10', type: 'icon', name: 'Palette', props: { color: '#10B981', fill: '#6EE7B7' } },
+    { id: 'c11', type: 'icon', name: 'Bell', props: { color: '#EAB308', fill: '#FEF08A' } },
+    { id: 'c12', type: 'icon', name: 'Coffee', props: { color: '#8B5CF6', fill: '#C4B5FD' } },
+    { id: 'c13', type: 'icon', name: 'Camera', props: { color: '#64748B', fill: '#CBD5E1' } },
+    { id: 'c14', type: 'icon', name: 'Plane', props: { color: '#3B82F6', fill: '#93C5FD' } },
+    { id: 'c15', type: 'icon', name: 'Bike', props: { color: '#F43F5E', fill: '#FDA4AF' } },
+    { id: 'c16', type: 'icon', name: 'Car', props: { color: '#10B981', fill: '#6EE7B7' } },
+    { id: 'c17', type: 'icon', name: 'Umbrella', props: { color: '#EC4899', fill: '#FBCFE8' } },
+    { id: 'c18', type: 'icon', name: 'Trophy', props: { color: '#EAB308', fill: '#FDE047' } },
+    { id: 'c19', type: 'icon', name: 'Key', props: { color: '#D946EF', fill: '#F0ABFC' } },
+    { id: 'c20', type: 'icon', name: 'Glasses', props: { color: '#3B82F6', fill: '#93C5FD' } },
+  ],
+  text: [
+    { id: 't1', type: 'text', text: 'OMG!' },
+    { id: 't2', type: 'text', text: 'Cute!' },
+    { id: 't3', type: 'text', text: 'You!' },
+    { id: 't4', type: 'text', text: 'LOL' },
+    { id: 't5', type: 'text', text: 'BFF' },
+    { id: 't6', type: 'text', text: 'Smile!' },
+    { id: 't7', type: 'text', text: 'Besties' },
+    { id: 't8', type: 'text', text: 'Love' },
+    { id: 't9', type: 'text', text: 'Cool' },
+    { id: 't10', type: 'text', text: 'Fun' },
+    { id: 't11', type: 'text', text: 'Sweet!' },
+    { id: 't12', type: 'text', text: 'XOXO' },
+    { id: 't13', type: 'text', text: 'Vibe' },
+    { id: 't14', type: 'text', text: '100%' },
+    { id: 't15', type: 'text', text: 'Mood' },
+    { id: 't16', type: 'text', text: 'Dope' },
+    { id: 't17', type: 'text', text: 'Slay' },
+    { id: 't18', type: 'text', text: 'Epic' },
+    { id: 't19', type: 'text', text: 'Lit' },
+    { id: 't20', type: 'text', text: 'Yasss' },
+  ]
 }
 
 const categoryIcons = {
-  hearts: Heart,
-  stars: Star,
-  cute: Gift,
+  shapes: Star,
+  cute: Cat,
   text: Flower2
+}
+
+const renderStickerContent = (stickerItem, size = 48) => {
+  if (stickerItem.type === 'icon') {
+    const IconCmp = stickerIconsMap[stickerItem.name]
+    return <IconCmp size={size} {...stickerItem.props} />
+  }
+  return stickerItem.text
 }
 
 function BoothPage() {
@@ -50,7 +131,7 @@ function BoothPage() {
   const [selectedFilter, setSelectedFilter] = useState(null)
   const [capturedPhotos, setCapturedPhotos] = useState([])
   const [selectedStickers, setSelectedStickers] = useState([])
-  const [stickerCategory, setStickerCategory] = useState('hearts')
+  const [stickerCategory, setStickerCategory] = useState('shapes')
   const [countdown, setCountdown] = useState(null)
   const [showCamera, setShowCamera] = useState(false)
   const [showFilterPicker, setShowFilterPicker] = useState(false)
@@ -171,10 +252,10 @@ function BoothPage() {
   }
 
   // Step 4: Add stickers
-  const addSticker = (sticker) => {
+  const addSticker = (stickerItem) => {
     const newSticker = {
       id: Date.now() + Math.random(), // Ensure unique ID
-      content: sticker,
+      item: stickerItem,
       x: 10, // Position as percentage from left
       y: 10, // Position as percentage from top
       photoIndex: selectedPhotoIndex // Add to currently selected photo
@@ -527,7 +608,7 @@ function BoothPage() {
                     {selectedStickers
                       .filter(sticker => sticker.photoIndex === selectedPhotoIndex)
                       .map((sticker) => {
-                        const isTextBubble = sticker.content.length > 2
+                        const isTextBubble = sticker.item.type === 'text'
                         return (
                           <span
                             key={sticker.id}
@@ -552,7 +633,7 @@ function BoothPage() {
                             onDoubleClick={() => removeSticker(sticker.id)}
                             title="Drag to move, double-click to remove"
                           >
-                            {sticker.content}
+                            {renderStickerContent(sticker.item, 48)}
                           </span>
                         )
                       })}
@@ -584,17 +665,16 @@ function BoothPage() {
                   })}
                 </div>
                 <div className="stickers-grid">
-                  {stickerCategories[stickerCategory].map((sticker, index) => {
-                    // Check if it's a text bubble or emoji
-                    const isTextBubble = sticker.length > 2
+                  {stickerCategories[stickerCategory].map((stickerItem, index) => {
+                    const isTextBubble = stickerItem.type === 'text'
                     return (
                       <button
                         key={index}
                         className={`sticker-btn ${isTextBubble ? 'text-bubble' : ''}`}
-                        onClick={() => addSticker(sticker)}
+                        onClick={() => addSticker(stickerItem)}
                         title="Click to add"
                       >
-                        {sticker}
+                        {renderStickerContent(stickerItem, 32)}
                       </button>
                     )
                   })}
@@ -636,7 +716,7 @@ function BoothPage() {
                       {selectedStickers
                         .filter(sticker => sticker.photoIndex === index)
                         .map((sticker) => {
-                          const isTextBubble = sticker.content.length > 2
+                          const isTextBubble = sticker.item.type === 'text'
                           return (
                             <div 
                               key={sticker.id}
@@ -647,7 +727,7 @@ function BoothPage() {
                                 top: `${sticker.y}%`
                               }}
                             >
-                              {sticker.content}
+                              {renderStickerContent(sticker.item, 48)}
                             </div>
                           )
                         })}
