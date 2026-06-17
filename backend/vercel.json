@@ -1,6 +1,8 @@
 {
   "version": 2,
-  "buildCommand": "echo 'No build needed for Node.js backend'",
+  "framework": null,
+  "buildCommand": "",
+  "outputDirectory": ".",
   "builds": [
     {
       "src": "api/**/*.js",

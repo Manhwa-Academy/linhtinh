@@ -1,9 +1,5 @@
 node_modules
-.env
-*.log
-uploads/*.jpg
-uploads/*.png
-uploads/*.jpeg
-uploads/*.webp
-!uploads/.gitkeep
-!uploads/frames/.gitkeep
+vite.config.js
+*.config.js
+dist
+build
