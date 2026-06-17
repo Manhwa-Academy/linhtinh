@@ -7,8 +7,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import fs from 'fs'
 import pg from 'pg'
-import { createRouteHandler } from 'uploadthing/express'
-import { uploadRouter } from './uploadthing.js'
+import uploadthingHandler from './api/uploadthing.js'
 
 const { Pool } = pg
 
@@ -217,11 +216,11 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Server đang chạy' })
 })
 
-// UploadThing API - dùng express adapter
-app.use('/api/uploadthing', createRouteHandler({
-  router: uploadRouter,
-  config: { token: process.env.UPLOADTHING_TOKEN }
-}))
+// UploadThing API
+app.all('/api/uploadthing', (req, res) => {
+  console.log('[Server] UploadThing request received:', req.method, req.url);
+  return uploadthingHandler(req, res);
+})
 
 // ============== FRAMES API ==============
 
