@@ -7,7 +7,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import fs from 'fs'
 import pg from 'pg'
-import uploadthingHandler from './api/uploadthing.js'
+import { put } from '@vercel/blob'
 
 const { Pool } = pg
 
@@ -183,28 +183,15 @@ const upload = multer({
   }
 })
 
-// Multer for frame images
-const frameStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, framesDir)
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-    cb(null, 'frame-' + uniqueSuffix + path.extname(file.originalname))
-  }
-})
-
+// Multer for frame images — dùng memoryStorage để hoạt động cả local lẫn Vercel
 const uploadFrame = multer({
-  storage: frameStorage,
+  storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB for frames
   fileFilter: (req, file, cb) => {
     const allowedTypes = /jpeg|jpg|png|webp|gif/
     const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase())
     const mimetype = allowedTypes.test(file.mimetype)
-    
-    if (mimetype && extname) {
-      return cb(null, true)
-    }
+    if (mimetype && extname) return cb(null, true)
     cb(new Error('Chỉ chấp nhận file ảnh (jpeg, jpg, png, webp, gif) cho frame'))
   }
 })
@@ -214,12 +201,6 @@ const uploadFrame = multer({
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Server đang chạy' })
-})
-
-// UploadThing API
-app.all('/api/uploadthing', (req, res) => {
-  console.log('[Server] UploadThing request received:', req.method, req.url);
-  return uploadthingHandler(req, res);
 })
 
 // ============== FRAMES API ==============
@@ -283,27 +264,48 @@ app.post('/api/frames', async (req, res) => {
   }
 })
 
-// Upload frame image
+// Upload frame image — Vercel Blob (production) hoặc local disk (dev)
 app.post('/api/upload-frame', uploadFrame.single('frameImage'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'Không có file được upload' })
     }
 
-    const fileName = req.file.filename
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+    const fileName = 'frame-' + uniqueSuffix + path.extname(req.file.originalname)
+    let fileUrl
+
+    if (process.env.BLOB_READ_WRITE_TOKEN) {
+      // Production: upload lên Vercel Blob
+      console.log('[Upload Frame] Uploading to Vercel Blob...')
+      const blob = await put(`frames/${fileName}`, req.file.buffer, {
+        access: 'public',
+        contentType: req.file.mimetype
+      })
+      fileUrl = blob.url
+      console.log('[Upload Frame] Vercel Blob URL:', fileUrl)
+    } else {
+      // Local dev: ghi file vào disk
+      console.log('[Upload Frame] Saving to local disk...')
+      const localPath = path.join(framesDir, fileName)
+      fs.writeFileSync(localPath, req.file.buffer)
+      fileUrl = `/uploads/frames/${fileName}`
+      console.log('[Upload Frame] Local path:', fileUrl)
+    }
 
     res.json({
       success: true,
       message: 'Upload frame image thành công',
       file: {
         filename: fileName,
-        path: `/uploads/frames/${fileName}`,
+        url: fileUrl,
+        path: fileUrl.startsWith('http') ? fileUrl : `/uploads/frames/${fileName}`,
         size: req.file.size
       }
     })
   } catch (error) {
     console.error('Lỗi upload frame:', error)
-    res.status(500).json({ error: 'Lỗi khi upload frame image' })
+    res.status(500).json({ error: 'Lỗi khi upload frame image: ' + error.message })
   }
 })
 

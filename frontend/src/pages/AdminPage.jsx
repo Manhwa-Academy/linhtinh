@@ -34,11 +34,11 @@ function AdminPage() {
       }
 
       const data = await response.json()
-      const filePath = data?.file?.path
-      if (!filePath) throw new Error('Không lấy được path file sau upload')
+      const fileUrl = data?.file?.url || data?.file?.path
+      if (!fileUrl) throw new Error('Không lấy được URL file sau upload')
 
-      // Trả về đường dẫn tương đối, frameImageUrl() sẽ build URL đầy đủ
-      const url = `${API_URL}${filePath}`
+      // Nếu URL đã là http (Vercel Blob) thì dùng luôn, còn không thì build từ API_URL
+      const url = fileUrl.startsWith('http') ? fileUrl : `${API_URL}${fileUrl}`
       console.log('[Upload] Upload thành công, URL:', url)
       return url
     } catch (err) {
