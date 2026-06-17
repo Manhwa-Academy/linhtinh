@@ -2,29 +2,25 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Plus, Edit2, Trash2, Save, X, LogOut, Upload, Image } from 'lucide-react'
 import { API_URL, frameImageUrl } from '../config/api'
+import { useUploadThing } from '../utils/uploadthing'
 import '../styles/AdminPage.css'
 
 function AdminPage() {
   const navigate = useNavigate()
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [password, setPassword] = useState('')
-  // Upload frame image trực tiếp qua backend /api/upload-frame
+  const { startUpload } = useUploadThing("frameImageUploader")
+
+  // Wrapper với timeout 90s để tránh treo vô hạn
   const uploadFrameImage = async (file) => {
-    const formData = new FormData()
-    formData.append('frameImage', file)
-    const response = await fetch(`${API_URL}/api/upload-frame`, {
-      method: 'POST',
-      body: formData
+    const timeout = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Upload timeout (90s) - kiểm tra kết nối mạng')), 90000)
+    )
+    const upload = startUpload([file]).then(result => {
+      if (!result || !result[0]) throw new Error('Upload không trả về kết quả')
+      return result[0].url
     })
-    if (!response.ok) {
-      const err = await response.json().catch(() => ({}))
-      throw new Error(err.error || 'Upload thất bại')
-    }
-    const data = await response.json()
-    // Trả về URL đầy đủ
-    return data.file.path.startsWith('http')
-      ? data.file.path
-      : `${API_URL}${data.file.path}`
+    return Promise.race([upload, timeout])
   }
   const [frames, setFrames] = useState([])
   const [editingFrame, setEditingFrame] = useState(null)

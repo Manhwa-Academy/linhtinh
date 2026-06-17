@@ -1,7 +1,11 @@
 import { generateReactHelpers } from "@uploadthing/react";
 
+// UploadThing cần backend có thể truy cập từ internet để xác thực presigned URL.
+// Luôn dùng production backend URL cho UploadThing negotiation.
+const UPLOADTHING_BACKEND_URL = 'https://meomiry-backend.vercel.app';
+
 export const { useUploadThing, uploadFiles } = generateReactHelpers({
-  url: `${import.meta.env.VITE_API_URL || 'https://meomiry-backend.vercel.app'}/api/uploadthing`,
+  url: `${UPLOADTHING_BACKEND_URL}/api/uploadthing`,
 });
 
 // Export helper function for direct file upload
