@@ -2,14 +2,30 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Plus, Edit2, Trash2, Save, X, LogOut, Upload, Image } from 'lucide-react'
 import { API_URL, frameImageUrl } from '../config/api'
-import { useUploadThing } from '../utils/uploadthing'
 import '../styles/AdminPage.css'
 
 function AdminPage() {
   const navigate = useNavigate()
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [password, setPassword] = useState('')
-  const { startUpload, isUploading } = useUploadThing("frameImageUploader")
+  // Upload frame image trực tiếp qua backend /api/upload-frame
+  const uploadFrameImage = async (file) => {
+    const formData = new FormData()
+    formData.append('frameImage', file)
+    const response = await fetch(`${API_URL}/api/upload-frame`, {
+      method: 'POST',
+      body: formData
+    })
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}))
+      throw new Error(err.error || 'Upload thất bại')
+    }
+    const data = await response.json()
+    // Trả về URL đầy đủ
+    return data.file.path.startsWith('http')
+      ? data.file.path
+      : `${API_URL}${data.file.path}`
+  }
   const [frames, setFrames] = useState([])
   const [editingFrame, setEditingFrame] = useState(null)
   const [isAddingNew, setIsAddingNew] = useState(false)
@@ -86,22 +102,15 @@ function AdminPage() {
 
       setIsProcessing(true)
 
-      // Upload frame image using UploadThing if provided
+      // Upload frame image trực tiếp qua backend nếu có file
       let frameImageUrl = null
       if (newFrame.frameImage && newFrame.frameImage instanceof File) {
         try {
-          const uploadResult = await startUpload([newFrame.frameImage])
-          if (uploadResult && uploadResult[0]) {
-            frameImageUrl = uploadResult[0].url
-          } else {
-            setIsProcessing(false)
-            showToast('Lỗi khi upload ảnh frame!', 'error')
-            return
-          }
+          frameImageUrl = await uploadFrameImage(newFrame.frameImage)
         } catch (error) {
           console.error('Upload error:', error)
           setIsProcessing(false)
-          showToast('Lỗi khi upload ảnh frame!', 'error')
+          showToast('Lỗi khi upload ảnh frame: ' + error.message, 'error')
           return
         }
       }
@@ -145,22 +154,15 @@ function AdminPage() {
   const handleUpdateFrame = async (frameId) => {
     try {
       setIsProcessing(true)
-      // Upload new frame image using UploadThing if changed
+      // Upload frame image mới nếu có file thay đổi
       let frameImageUrl = editingFrame.frameImage
       if (editingFrame.frameImage && editingFrame.frameImage instanceof File) {
         try {
-          const uploadResult = await startUpload([editingFrame.frameImage])
-          if (uploadResult && uploadResult[0]) {
-            frameImageUrl = uploadResult[0].url
-          } else {
-            setIsProcessing(false)
-            showToast('Lỗi khi upload ảnh frame!', 'error')
-            return
-          }
+          frameImageUrl = await uploadFrameImage(editingFrame.frameImage)
         } catch (error) {
           console.error('Upload error:', error)
           setIsProcessing(false)
-          showToast('Lỗi khi upload ảnh frame!', 'error')
+          showToast('Lỗi khi upload ảnh frame: ' + error.message, 'error')
           return
         }
       }
