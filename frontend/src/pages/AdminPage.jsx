@@ -13,16 +13,31 @@ function AdminPage() {
 
   // Wrapper với timeout 90s để tránh treo vô hạn
   const uploadFrameImage = async (file) => {
+    console.log('[Upload] Bắt đầu upload file:', file.name, file.size, file.type)
     const timeout = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Upload timeout (90s) - kiểm tra kết nối mạng')), 90000)
+      setTimeout(() => reject(new Error('Upload timeout (90s)')), 90000)
     )
     const upload = startUpload([file]).then(result => {
-      if (!result || !result.length) throw new Error('Upload không trả về kết quả')
+      console.log('[Upload] startUpload result (raw):', result)
+      console.log('[Upload] result type:', typeof result)
+      console.log('[Upload] result JSON:', JSON.stringify(result))
+      if (!result || !result.length) {
+        console.error('[Upload] result rỗng hoặc null!')
+        throw new Error('Upload không trả về kết quả')
+      }
       const uploaded = result[0]
-      // UploadThing v7: url có thể ở result[0].url hoặc result[0].serverData.url
+      console.log('[Upload] result[0]:', uploaded)
+      console.log('[Upload] result[0].url:', uploaded?.url)
+      console.log('[Upload] result[0].serverData:', uploaded?.serverData)
       const url = uploaded?.url || uploaded?.serverData?.url
       if (!url) throw new Error('Không lấy được URL sau upload')
+      console.log('[Upload] URL cuối:', url)
       return url
+    }).catch(err => {
+      console.error('[Upload] startUpload bị lỗi:', err)
+      console.error('[Upload] err.message:', err?.message)
+      console.error('[Upload] err stack:', err?.stack)
+      throw err
     })
     return Promise.race([upload, timeout])
   }
