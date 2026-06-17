@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Plus, Edit2, Trash2, Save, X, LogOut, Upload, Image } from 'lucide-react'
+import { API_URL, frameImageUrl } from '../config/api'
 import '../styles/AdminPage.css'
 
 function AdminPage() {
@@ -33,7 +34,7 @@ function AdminPage() {
   // Load frames from backend
   const loadFrames = async () => {
     try {
-      const response = await fetch('https://meomiry.vercel.app/api/frames')
+      const response = await fetch(`${API_URL}/api/frames`)
       if (response.ok) {
         const data = await response.json()
         setFrames(data.frames)
@@ -78,7 +79,7 @@ function AdminPage() {
         const formData = new FormData()
         formData.append('frameImage', newFrame.frameImage)
         
-        const uploadResponse = await fetch('https://meomiry.vercel.app/api/upload-frame', {
+        const uploadResponse = await fetch(`${API_URL}/api/upload-frame`, {
           method: 'POST',
           body: formData
         })
@@ -103,7 +104,7 @@ function AdminPage() {
         photoSlots: newFrame.photoSlots || []
       }
 
-      const response = await fetch('https://meomiry.vercel.app/api/frames', {
+      const response = await fetch(`${API_URL}/api/frames`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(frameData)
@@ -134,7 +135,7 @@ function AdminPage() {
         const formData = new FormData()
         formData.append('frameImage', editingFrame.frameImage)
         
-        const uploadResponse = await fetch('https://meomiry.vercel.app/api/upload-frame', {
+        const uploadResponse = await fetch(`${API_URL}/api/upload-frame`, {
           method: 'POST',
           body: formData
         })
@@ -150,7 +151,7 @@ function AdminPage() {
         frameImage: frameImageUrl
       }
 
-      const response = await fetch(`https://meomiry.vercel.app/api/frames/${frameId}`, {
+      const response = await fetch(`${API_URL}/api/frames/${frameId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(frameData)
@@ -173,7 +174,7 @@ function AdminPage() {
     if (!confirm('Bạn có chắc muốn xóa frame này?')) return
 
     try {
-      const response = await fetch(`https://meomiry.vercel.app/api/frames/${frameId}`, {
+      const response = await fetch(`${API_URL}/api/frames/${frameId}`, {
         method: 'DELETE'
       })
 
@@ -458,7 +459,7 @@ function AdminPage() {
                         <>
                           <div className="frame-image-preview-admin">
                             <img 
-                              src={`https://meomiry.vercel.app${frame.frameImage}`} 
+                              src={frameImageUrl(frame.frameImage)}
                               alt={frame.name}
                               className="admin-frame-img"
                             />
