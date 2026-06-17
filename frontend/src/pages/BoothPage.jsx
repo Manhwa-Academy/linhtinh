@@ -119,6 +119,37 @@ const renderStickerContent = (stickerItem, size = 48) => {
   return stickerItem.text
 }
 
+const makeBlackTransparent = (imgSrc) => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      try {
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+        for (let i = 0; i < data.length; i += 4) {
+          // If the pixel is very dark (black or near-black), make it transparent
+          if (data[i] < 45 && data[i+1] < 45 && data[i+2] < 45) {
+            data[i+3] = 0;
+          }
+        }
+        ctx.putImageData(imageData, 0, 0);
+        resolve(canvas.toDataURL('image/png'));
+      } catch (err) {
+        console.warn('Could not process frame transparency:', err);
+        resolve(imgSrc);
+      }
+    };
+    img.onerror = () => resolve(imgSrc);
+    img.src = imgSrc;
+  });
+};
+
 function BoothPage() {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
@@ -146,6 +177,49 @@ function BoothPage() {
   
   // Load frames from API
   const [frames, setFrames] = useState([])
+  const [processedFrameUrl, setProcessedFrameUrl] = useState(null)
+  const [debugSlots, setDebugSlots] = useState(false)
+  // Photo transform controls: per-photo { scale, x, y }
+  const [photoTransforms, setPhotoTransforms] = useState({})
+  const [activePhotoEdit, setActivePhotoEdit] = useState(null) // index of photo being edited
+  const dragRef = useRef({ dragging: false, startX: 0, startY: 0, origX: 0, origY: 0 })
+
+  const getTransform = (index) => photoTransforms[index] || { scale: 1, x: 0, y: 0 }
+
+  const updateTransform = (index, patch) => {
+    setPhotoTransforms(prev => ({
+      ...prev,
+      [index]: { ...getTransform(index), ...patch }
+    }))
+  }
+
+  const handleSlotMouseDown = (e, index) => {
+    e.stopPropagation()
+    setActivePhotoEdit(index)
+    const t = getTransform(index)
+    dragRef.current = { dragging: true, startX: e.clientX, startY: e.clientY, origX: t.x, origY: t.y }
+  }
+
+  const handleSlotMouseMove = (e) => {
+    const d = dragRef.current
+    if (!d.dragging || activePhotoEdit === null) return
+    const dx = e.clientX - d.startX
+    const dy = e.clientY - d.startY
+    updateTransform(activePhotoEdit, { x: d.origX + dx, y: d.origY + dy })
+  }
+
+  const handleSlotMouseUp = () => {
+    dragRef.current.dragging = false
+  }
+  
+  useEffect(() => {
+    if (selectedFrame?.frameImage) {
+      makeBlackTransparent(frameImageUrl(selectedFrame.frameImage))
+        .then(url => setProcessedFrameUrl(url))
+    } else {
+      setProcessedFrameUrl(null)
+    }
+  }, [selectedFrame])
   
   useEffect(() => {
     loadFrames()
@@ -349,7 +423,7 @@ function BoothPage() {
         const frameUrl = frameImageUrl(selectedFrame.frameImage)
         const frameImg = new Image()
         frameImg.crossOrigin = 'anonymous'
-        await new Promise((res, rej) => { frameImg.onload = res; frameImg.onerror = rej; frameImg.src = frameUrl })
+        await new Promise((res, rej) => { frameImg.onload = res; frameImg.onerror = rej; frameImg.src = processedFrameUrl || frameImageUrl(selectedFrame.frameImage) })
 
         const W = frameImg.naturalWidth
         const H = frameImg.naturalHeight
@@ -366,28 +440,37 @@ function BoothPage() {
           photoImg.crossOrigin = 'anonymous'
           await new Promise((res, rej) => { photoImg.onload = res; photoImg.onerror = rej; photoImg.src = capturedPhotos[i] })
 
-          const slotY = slotH * i
+          const slot = selectedFrame?.photoSlots?.[i];
+          // Use exact slot dimensions without expansion to prevent overlapping
+          const sX = slot ? (slot.x / 100 * W) : 0;
+          const sY = slot ? (slot.y / 100 * H) : slotH * i;
+          const sW = slot ? (slot.width / 100 * W) : W;
+          const sH = slot ? (slot.height / 100 * H) : slotH;
+
           // Cover-fit the photo into the slot
-          const scaleX = W / photoImg.naturalWidth
-          const scaleY = slotH / photoImg.naturalHeight
+          const scaleX = sW / photoImg.naturalWidth
+          const scaleY = sH / photoImg.naturalHeight
           const scale = Math.max(scaleX, scaleY)
           const drawW = photoImg.naturalWidth * scale
           const drawH = photoImg.naturalHeight * scale
-          const offsetX = (W - drawW) / 2
-          const offsetY = slotY + (slotH - drawH) / 2
+          const offsetX = sX + (sW - drawW) / 2
+          const offsetY = sY + (sH - drawH) / 2
 
           ctx.save()
+          if (slot?.rotation) {
+             ctx.translate(sX + sW/2, sY + sH/2)
+             ctx.rotate((slot.rotation * Math.PI) / 180)
+             ctx.translate(-(sX + sW/2), -(sY + sH/2))
+          }
           ctx.beginPath()
-          ctx.rect(0, slotY, W, slotH)
+          ctx.rect(sX, sY, sW, sH)
           ctx.clip()
           ctx.drawImage(photoImg, offsetX, offsetY, drawW, drawH)
           ctx.restore()
         }
 
-        // 2. Draw frame on top with 'screen' blend mode
-        ctx.globalCompositeOperation = 'screen'
+        // 2. Draw frame on top
         ctx.drawImage(frameImg, 0, 0, W, H)
-        ctx.globalCompositeOperation = 'source-over'
 
         const link = document.createElement('a')
         link.download = `meomiry-${selectedStripType?.id}-strip-${Date.now()}.png`
@@ -786,6 +869,14 @@ function BoothPage() {
             </div>
 
             <div className="sticker-editor">
+              {selectedFrame?.frameImage && (
+                <button
+                  onClick={() => setDebugSlots(v => !v)}
+                  style={{ marginBottom: '8px', padding: '4px 12px', borderRadius: '6px', border: '1px solid #ccc', cursor: 'pointer', fontSize: '12px', background: debugSlots ? '#FF6B9D' : '#fff', color: debugSlots ? '#fff' : '#333' }}
+                >
+                  {debugSlots ? '🔴 Ẩn Debug Slots' : '🟢 Xem vị trí Slots'}
+                </button>
+              )}
               <div 
                 className="photo-strip-card"
                 id="photo-container-edit"
@@ -803,49 +894,108 @@ function BoothPage() {
                 }}
               >
                 {selectedFrame?.frameImage ? (
-                  // === IMAGE FRAME MODE: frame sets container size, photos fill slots ===
+                  // === IMAGE FRAME MODE ===
+                  // Photos render BELOW frame in DOM. Frame uses mix-blend-mode:screen.
+                  // Wrapper gets height from frame img (position:relative).
+                  // Photos layer is absolute inset:0, but needs wrapper to have explicit height.
+                  // Solution: use a wrapping div with position:relative, height driven by frame img clone.
                   <div style={{ position: 'relative', width: '100%' }}>
-                    {/* Photos stacked absolutely, each takes equal height */}
-                    {capturedPhotos.map((photo, index) => (
-                      <div
-                        key={index}
-                        style={{
-                          position: 'absolute',
-                          top: `${(100 / capturedPhotos.length) * index}%`,
-                          left: 0,
-                          width: '100%',
-                          height: `${100 / capturedPhotos.length}%`,
-                          overflow: 'hidden'
-                        }}
-                      >
-                        <img
-                          src={photo}
-                          alt={`Photo ${index + 1}`}
-                          style={{
-                            filter: selectedFilter?.value,
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                            objectPosition: 'center',
-                            display: 'block'
-                          }}
-                        />
-                      </div>
-                    ))}
-                    {/* Frame image — renders normally to define container height */}
+                    {/* Invisible spacer to give wrapper definite height = frame natural height */}
                     <img
                       src={frameImageUrl(selectedFrame.frameImage)}
+                      alt=""
+                      style={{ display: 'block', width: '100%', height: 'auto', visibility: 'hidden', pointerEvents: 'none' }}
+                    />
+                    {/* Photos layer — absolutely fills the wrapper */}
+                    <div
+                      style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}
+                      onMouseMove={handleSlotMouseMove}
+                      onMouseUp={handleSlotMouseUp}
+                      onMouseLeave={handleSlotMouseUp}
+                    >
+                      {capturedPhotos.map((photo, index) => {
+                        const slot = selectedFrame?.photoSlots?.[index];
+                        const sY = slot ? slot.y : (100 / capturedPhotos.length) * index;
+                        const sH = slot ? slot.height : (100 / capturedPhotos.length);
+                        const sX = slot ? slot.x : 0;
+                        const sW = slot ? slot.width : 100;
+                        const t = getTransform(index);
+                        const isActive = activePhotoEdit === index;
+                        return (
+                        <div
+                          key={index}
+                          onMouseDown={(e) => handleSlotMouseDown(e, index)}
+                          style={{
+                            position: 'absolute',
+                            top: `${sY}%`,
+                            left: `${sX}%`,
+                            width: `${sW}%`,
+                            height: `${sH}%`,
+                            overflow: 'hidden',
+                            isolation: 'isolate',
+                            cursor: isActive ? 'grabbing' : 'grab',
+                            outline: isActive ? '2px solid #FF6B9D' : 'none',
+                            outlineOffset: '2px'
+                          }}
+                        >
+                          <img
+                            src={photo}
+                            alt={`Photo ${index + 1}`}
+                            draggable={false}
+                            style={{
+                              filter: selectedFilter?.value,
+                              position: 'absolute',
+                              top: '50%',
+                              left: '50%',
+                              width: `${100 * t.scale}%`,
+                              height: `${100 * t.scale}%`,
+                              objectFit: 'cover',
+                              objectPosition: 'center',
+                              display: 'block',
+                              transform: `translate(calc(-50% + ${t.x}px), calc(-50% + ${t.y}px))`,
+                              userSelect: 'none'
+                            }}
+                          />
+                        </div>
+                        );
+                      })}
+                    </div>
+                    {/* Frame overlay on top */}
+                    <img
+                      src={processedFrameUrl || frameImageUrl(selectedFrame.frameImage)}
                       alt="Frame overlay"
                       style={{
                         display: 'block',
                         width: '100%',
-                        height: 'auto',
-                        position: 'relative',
-                        mixBlendMode: 'screen',
-                        zIndex: 5,
+                        height: '100%',
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
                         pointerEvents: 'none'
                       }}
                     />
+                    {/* Debug slot overlay */}
+                    {debugSlots && selectedFrame?.photoSlots?.map((slot, i) => (
+                      <div key={i} style={{
+                        position: 'absolute',
+                        top: `${slot.y}%`,
+                        left: `${slot.x}%`,
+                        width: `${slot.width}%`,
+                        height: `${slot.height}%`,
+                        background: `hsla(${i * 90}, 100%, 50%, 0.4)`,
+                        border: '2px solid white',
+                        zIndex: 20,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'white',
+                        fontWeight: 'bold',
+                        fontSize: '18px',
+                        pointerEvents: 'none'
+                      }}>
+                        #{i + 1}
+                      </div>
+                    ))}
                   </div>
                 ) : (
                   // === GRADIENT FRAME MODE: normal strip with header/footer ===
@@ -878,7 +1028,50 @@ function BoothPage() {
                     )}
                   </>
                 )}
-                
+
+                {/* Zoom & pan controls — FIXED floating panel at bottom */}
+                {selectedFrame?.frameImage && activePhotoEdit !== null && (() => {
+                  const t = getTransform(activePhotoEdit)
+                  return (
+                    <div style={{
+                      position: 'fixed',
+                      bottom: '80px',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      background: 'rgba(20,20,20,0.92)',
+                      backdropFilter: 'blur(12px)',
+                      borderRadius: '14px',
+                      padding: '12px 18px',
+                      color: 'white',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '14px',
+                      zIndex: 9999,
+                      boxShadow: '0 4px 24px rgba(0,0,0,0.4)',
+                      minWidth: '320px',
+                      maxWidth: '90vw'
+                    }}>
+                      <span style={{ fontSize: '13px', whiteSpace: 'nowrap', opacity: 0.8 }}>📸 #{activePhotoEdit + 1}</span>
+                      <span style={{ fontSize: '12px', whiteSpace: 'nowrap', opacity: 0.7 }}>🔍 {Math.round(t.scale * 100)}%</span>
+                      <input
+                        type="range"
+                        min="50" max="300" step="5"
+                        value={Math.round(t.scale * 100)}
+                        onChange={e => updateTransform(activePhotoEdit, { scale: parseInt(e.target.value) / 100 })}
+                        style={{ flex: 1, accentColor: '#FF6B9D', height: '4px' }}
+                      />
+                      <button
+                        onClick={() => updateTransform(activePhotoEdit, { scale: 1, x: 0, y: 0 })}
+                        style={{ padding: '4px 10px', borderRadius: '6px', border: 'none', background: '#444', color: 'white', cursor: 'pointer', fontSize: '12px', whiteSpace: 'nowrap' }}
+                      >↺</button>
+                      <button
+                        onClick={() => setActivePhotoEdit(null)}
+                        style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', fontSize: '18px', lineHeight: 1, padding: '0 4px' }}
+                      >✕</button>
+                    </div>
+                  )
+                })()}
+
                 {/* Stickers Layer - TOP MOST (z-index 10) */}
                 <div className="stickers-on-photo" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, pointerEvents: 'none', zIndex: 10 }}>
                   {selectedStickers.map((sticker) => {
@@ -988,37 +1181,66 @@ function BoothPage() {
                 }}
               >
                 {selectedFrame?.frameImage ? (
-                  // IMAGE FRAME MODE: frame sets container size, photos fill slots
+                  // === IMAGE FRAME MODE ===
                   <div style={{ position: 'relative', width: '100%' }}>
-                    {capturedPhotos.map((photo, index) => (
-                      <div
-                        key={index}
-                        style={{
-                          position: 'absolute',
-                          top: `${(100 / capturedPhotos.length) * index}%`,
-                          left: 0,
-                          width: '100%',
-                          height: `${100 / capturedPhotos.length}%`,
-                          overflow: 'hidden'
-                        }}
-                      >
-                        <img
-                          src={photo}
-                          alt={`Photo ${index + 1}`}
-                          style={{ filter: selectedFilter.value, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }}
-                        />
-                      </div>
-                    ))}
+                    {/* Invisible spacer to give wrapper definite height */}
                     <img
                       src={frameImageUrl(selectedFrame.frameImage)}
+                      alt=""
+                      style={{ display: 'block', width: '100%', height: 'auto', visibility: 'hidden', pointerEvents: 'none' }}
+                    />
+                    {/* Photos layer */}
+                    {/* Photos layer — absolutely fills the wrapper */}
+                    <div style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}>
+                      {capturedPhotos.map((photo, index) => {
+                        const slot = selectedFrame?.photoSlots?.[index];
+                        const sY = slot ? slot.y : (100 / capturedPhotos.length) * index;
+                        const sH = slot ? slot.height : (100 / capturedPhotos.length);
+                        const sX = slot ? slot.x : 0;
+                        const sW = slot ? slot.width : 100;
+                        return (
+                        <div
+                          key={index}
+                          style={{
+                            position: 'absolute',
+                            top: `${sY}%`,
+                            left: `${sX}%`,
+                            width: `${sW}%`,
+                            height: `${sH}%`,
+                            overflow: 'hidden',
+                            isolation: 'isolate'
+                          }}
+                        >
+                          <img
+                            src={photo}
+                            alt={`Photo ${index + 1}`}
+                            style={{
+                              filter: selectedFilter.value,
+                              position: 'absolute',
+                              top: 0,
+                              left: 0,
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover',
+                              objectPosition: 'center',
+                              display: 'block'
+                            }}
+                          />
+                        </div>
+                        );
+                      })}
+                    </div>
+                    {/* Frame overlay on top */}
+                    <img
+                      src={processedFrameUrl || frameImageUrl(selectedFrame.frameImage)}
                       alt="Frame overlay"
                       style={{
                         display: 'block',
                         width: '100%',
-                        height: 'auto',
-                        position: 'relative',
-                        mixBlendMode: 'screen',
-                        zIndex: 5,
+                        height: '100%',
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
                         pointerEvents: 'none'
                       }}
                     />

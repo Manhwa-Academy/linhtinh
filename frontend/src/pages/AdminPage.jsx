@@ -22,6 +22,15 @@ function AdminPage() {
     photoSlots: [] // Array of photo slot positions
   })
 
+  const [toast, setToast] = useState({ show: false, message: '', type: 'success' })
+  const [isProcessing, setIsProcessing] = useState(false)
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null)
+
+  const showToast = (message, type = 'success') => {
+    setToast({ show: true, message, type })
+    setTimeout(() => setToast(prev => ({ ...prev, show: false })), 3000)
+  }
+
   // Check authentication on mount
   useEffect(() => {
     const authStatus = localStorage.getItem('adminAuthenticated')
@@ -53,7 +62,7 @@ function AdminPage() {
       localStorage.setItem('adminAuthenticated', 'true')
       loadFrames()
     } else {
-      alert('Sai mật khẩu!')
+      showToast('Sai mật khẩu!', 'error')
     }
   }
 
@@ -69,9 +78,11 @@ function AdminPage() {
     try {
       // Validate required fields - only name is required
       if (!newFrame.name) {
-        alert('Vui lòng điền tên frame!')
+        showToast('Vui lòng điền tên frame!', 'error')
         return
       }
+
+      setIsProcessing(true)
 
       // Upload frame image first if provided
       let frameImageUrl = null
@@ -88,7 +99,8 @@ function AdminPage() {
           const uploadData = await uploadResponse.json()
           frameImageUrl = uploadData.file.path
         } else {
-          alert('Lỗi khi upload ảnh frame!')
+          setIsProcessing(false)
+          showToast('Lỗi khi upload ảnh frame!', 'error')
           return
         }
       }
@@ -115,20 +127,23 @@ function AdminPage() {
         setFrames([...frames, data.frame])
         setIsAddingNew(false)
         setNewFrame({ name: '', description: '', emoji: '', color: '#FFE4E9', bgGradient: '', frameImage: null, frameImagePreview: null, photoSlots: [] })
-        alert('Thêm frame thành công!')
+        showToast('Thêm frame thành công!', 'success')
       } else {
         const error = await response.json()
-        alert('Lỗi: ' + error.error)
+        showToast('Lỗi: ' + error.error, 'error')
       }
     } catch (error) {
       console.error('Error adding frame:', error)
-      alert('Lỗi khi thêm frame: ' + error.message)
+      showToast('Lỗi khi thêm frame: ' + error.message, 'error')
+    } finally {
+      setIsProcessing(false)
     }
   }
 
   // Update frame
   const handleUpdateFrame = async (frameId) => {
     try {
+      setIsProcessing(true)
       // Upload new frame image if changed
       let frameImageUrl = editingFrame.frameImage
       if (editingFrame.frameImage && editingFrame.frameImage instanceof File) {
@@ -143,6 +158,10 @@ function AdminPage() {
         if (uploadResponse.ok) {
           const uploadData = await uploadResponse.json()
           frameImageUrl = uploadData.file.path
+        } else {
+          setIsProcessing(false)
+          showToast('Lỗi khi upload ảnh frame!', 'error')
+          return
         }
       }
 
@@ -161,30 +180,34 @@ function AdminPage() {
         const data = await response.json()
         setFrames(frames.map(f => f.id === frameId ? data.frame : f))
         setEditingFrame(null)
-        alert('Cập nhật frame thành công!')
+        showToast('Cập nhật frame thành công!', 'success')
       }
     } catch (error) {
       console.error('Error updating frame:', error)
-      alert('Lỗi khi cập nhật frame!')
+      showToast('Lỗi khi cập nhật frame!', 'error')
+    } finally {
+      setIsProcessing(false)
     }
   }
 
   // Delete frame
   const handleDeleteFrame = async (frameId) => {
-    if (!confirm('Bạn có chắc muốn xóa frame này?')) return
-
     try {
+      setIsProcessing(true)
+      setDeleteConfirmId(null)
       const response = await fetch(`${API_URL}/api/frames/${frameId}`, {
         method: 'DELETE'
       })
 
       if (response.ok) {
         setFrames(frames.filter(f => f.id !== frameId))
-        alert('Xóa frame thành công!')
+        showToast('Xóa frame thành công!', 'success')
       }
     } catch (error) {
       console.error('Error deleting frame:', error)
-      alert('Lỗi khi xóa frame!')
+      showToast('Lỗi khi xóa frame!', 'error')
+    } finally {
+      setIsProcessing(false)
     }
   }
 
@@ -194,13 +217,13 @@ function AdminPage() {
     if (file) {
       // Validate file type
       if (!file.type.startsWith('image/')) {
-        alert('Vui lòng chọn file ảnh!')
+        showToast('Vui lòng chọn file ảnh!', 'error')
         return
       }
       
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        alert('File quá lớn! Vui lòng chọn ảnh dưới 5MB')
+        showToast('File quá lớn! Vui lòng chọn ảnh dưới 5MB', 'error')
         return
       }
 
@@ -260,8 +283,89 @@ function AdminPage() {
 
   // Admin Dashboard
   return (
-    <div className="admin-page">
-      <header className="admin-header">
+    <>
+      {toast.show && (
+        <div style={{
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          background: toast.type === 'error' ? '#ef4444' : '#10b981',
+          color: 'white',
+          padding: '12px 24px',
+          borderRadius: '8px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          zIndex: 9999,
+          fontWeight: 'bold',
+          transition: 'all 0.3s ease',
+        }}>
+          {toast.message}
+        </div>
+      )}
+
+      {isProcessing && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(255,255,255,0.6)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 9998,
+          cursor: 'wait'
+        }}>
+          <div style={{
+            background: 'white',
+            padding: '15px 30px',
+            borderRadius: '8px',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+            fontWeight: 'bold',
+            color: '#FF6B9D'
+          }}>
+            Đang xử lý...
+          </div>
+        </div>
+      )}
+
+      {deleteConfirmId && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 9997
+        }}>
+          <div style={{
+            background: 'white',
+            padding: '24px',
+            borderRadius: '12px',
+            textAlign: 'center',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
+            maxWidth: '300px'
+          }}>
+            <h3 style={{ marginTop: 0, color: '#ef4444' }}>Xác nhận xóa</h3>
+            <p>Bạn có chắc chắn muốn xóa frame này không? Hành động này không thể hoàn tác.</p>
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '20px' }}>
+              <button 
+                onClick={() => setDeleteConfirmId(null)}
+                style={{ padding: '8px 16px', border: '1px solid #ccc', borderRadius: '6px', background: 'white', cursor: 'pointer' }}
+              >
+                Hủy
+              </button>
+              <button 
+                onClick={() => handleDeleteFrame(deleteConfirmId)}
+                style={{ padding: '8px 16px', border: 'none', borderRadius: '6px', background: '#ef4444', color: 'white', cursor: 'pointer', fontWeight: 'bold' }}
+              >
+                Xóa
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="admin-page">
+        <header className="admin-header">
         <button onClick={() => navigate('/')} className="back-button">
           <ArrowLeft size={18} /> Trang chủ
         </button>
@@ -474,7 +578,7 @@ function AdminPage() {
                       <button onClick={() => setEditingFrame({ ...frame })} className="edit-btn">
                         <Edit2 size={16} /> Sửa
                       </button>
-                      <button onClick={() => handleDeleteFrame(frame.id)} className="delete-btn">
+                      <button onClick={() => setDeleteConfirmId(frame.id)} className="delete-btn">
                         <Trash2 size={16} /> Xóa
                       </button>
                     </div>
@@ -486,6 +590,7 @@ function AdminPage() {
         </div>
       </div>
     </div>
+    </>
   )
 }
 

@@ -6,6 +6,9 @@ import sharp from 'sharp'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import fs from 'fs'
+import pg from 'pg'
+
+const { Pool } = pg
 
 dotenv.config()
 
@@ -72,19 +75,86 @@ if (!fs.existsSync(framesFilePath)) {
   fs.writeFileSync(framesFilePath, JSON.stringify(defaultFrames, null, 2))
 }
 
+// Database setup
+let pool = null;
+if (process.env.DATABASE_URL) {
+  pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false }
+  })
+}
+
 // Helper functions for frames
-const readFrames = () => {
-  try {
-    const data = fs.readFileSync(framesFilePath, 'utf8')
-    return JSON.parse(data)
-  } catch (error) {
-    return []
+const readFrames = async () => {
+  if (pool) {
+    try {
+      const res = await pool.query("SELECT data FROM app_data WHERE key = 'frames'")
+      if (res.rows.length > 0) {
+        return res.rows[0].data
+      }
+      return []
+    } catch (error) {
+      console.error('DB Error reading frames:', error)
+      return []
+    }
+  } else {
+    try {
+      const data = fs.readFileSync(framesFilePath, 'utf8')
+      return JSON.parse(data)
+    } catch (error) {
+      return []
+    }
   }
 }
 
-const writeFrames = (frames) => {
-  fs.writeFileSync(framesFilePath, JSON.stringify(frames, null, 2))
+const writeFrames = async (frames) => {
+  if (pool) {
+    try {
+      await pool.query(
+        "INSERT INTO app_data (key, data) VALUES ($1, $2) ON CONFLICT (key) DO UPDATE SET data = $2",
+        ['frames', JSON.stringify(frames)]
+      )
+    } catch (error) {
+      console.error('DB Error writing frames:', error)
+    }
+  } else {
+    fs.writeFileSync(framesFilePath, JSON.stringify(frames, null, 2))
+  }
 }
+
+// Initialize database
+const initDb = async () => {
+  if (pool) {
+    try {
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS app_data (
+          key VARCHAR(50) PRIMARY KEY,
+          data JSONB NOT NULL
+        )
+      `)
+      // Migrate from JSON to DB if DB is empty
+      const res = await pool.query("SELECT * FROM app_data WHERE key = 'frames'")
+      if (res.rows.length === 0) {
+        let localFrames = []
+        try {
+          if (fs.existsSync(framesFilePath)) {
+            localFrames = JSON.parse(fs.readFileSync(framesFilePath, 'utf8'))
+          }
+        } catch (e) {}
+        
+        if (localFrames.length > 0) {
+          await writeFrames(localFrames)
+          console.log('Migrated frames.json to NeonDB')
+        }
+      }
+      console.log('NeonDB initialized successfully')
+    } catch (error) {
+      console.error('Error initializing database:', error)
+    }
+  }
+}
+
+initDb()
 
 // Multer configuration
 const storage = multer.diskStorage({
@@ -148,9 +218,9 @@ app.get('/api/health', (req, res) => {
 // ============== FRAMES API ==============
 
 // Get all frames
-app.get('/api/frames', (req, res) => {
+app.get('/api/frames', async (req, res) => {
   try {
-    const frames = readFrames()
+    const frames = await readFrames()
     res.json({ success: true, frames })
   } catch (error) {
     console.error('Error reading frames:', error)
@@ -159,9 +229,9 @@ app.get('/api/frames', (req, res) => {
 })
 
 // Get single frame
-app.get('/api/frames/:id', (req, res) => {
+app.get('/api/frames/:id', async (req, res) => {
   try {
-    const frames = readFrames()
+    const frames = await readFrames()
     const frame = frames.find(f => f.id === req.params.id)
     
     if (!frame) {
@@ -176,7 +246,7 @@ app.get('/api/frames/:id', (req, res) => {
 })
 
 // Add new frame
-app.post('/api/frames', (req, res) => {
+app.post('/api/frames', async (req, res) => {
   try {
     const { name, description, emoji, color, bgGradient, frameImage, photoSlots } = req.body
     
@@ -184,7 +254,7 @@ app.post('/api/frames', (req, res) => {
       return res.status(400).json({ error: 'Thiếu tên frame' })
     }
     
-    const frames = readFrames()
+    const frames = await readFrames()
     const newFrame = {
       id: name.toLowerCase().replace(/\s+/g, '-') + '-' + Date.now(),
       name,
@@ -197,7 +267,7 @@ app.post('/api/frames', (req, res) => {
     }
     
     frames.push(newFrame)
-    writeFrames(frames)
+    await writeFrames(frames)
     
     res.json({ success: true, message: 'Thêm frame thành công', frame: newFrame })
   } catch (error) {
@@ -231,10 +301,10 @@ app.post('/api/upload-frame', uploadFrame.single('frameImage'), async (req, res)
 })
 
 // Update frame
-app.put('/api/frames/:id', (req, res) => {
+app.put('/api/frames/:id', async (req, res) => {
   try {
     const { name, description, emoji, color, bgGradient, frameImage, photoSlots } = req.body
-    const frames = readFrames()
+    const frames = await readFrames()
     const frameIndex = frames.findIndex(f => f.id === req.params.id)
     
     if (frameIndex === -1) {
@@ -252,7 +322,7 @@ app.put('/api/frames/:id', (req, res) => {
       photoSlots: photoSlots !== undefined ? photoSlots : frames[frameIndex].photoSlots || []
     }
     
-    writeFrames(frames)
+    await writeFrames(frames)
     
     res.json({ success: true, message: 'Cập nhật frame thành công', frame: frames[frameIndex] })
   } catch (error) {
@@ -262,16 +332,16 @@ app.put('/api/frames/:id', (req, res) => {
 })
 
 // Delete frame
-app.delete('/api/frames/:id', (req, res) => {
+app.delete('/api/frames/:id', async (req, res) => {
   try {
-    const frames = readFrames()
+    const frames = await readFrames()
     const filteredFrames = frames.filter(f => f.id !== req.params.id)
     
     if (frames.length === filteredFrames.length) {
       return res.status(404).json({ error: 'Không tìm thấy frame' })
     }
     
-    writeFrames(filteredFrames)
+    await writeFrames(filteredFrames)
     
     res.json({ success: true, message: 'Xóa frame thành công' })
   } catch (error) {
