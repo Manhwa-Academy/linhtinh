@@ -343,12 +343,25 @@ app.put('/api/frames/:id', async (req, res) => {
 app.delete('/api/frames/:id', async (req, res) => {
   try {
     const frames = await readFrames()
-    const filteredFrames = frames.filter(f => f.id !== req.params.id)
+    const frameToDelete = frames.find(f => f.id === req.params.id)
     
-    if (frames.length === filteredFrames.length) {
+    if (!frameToDelete) {
       return res.status(404).json({ error: 'Không tìm thấy frame' })
     }
     
+    // Delete image from UploadThing if exists
+    if (frameToDelete.frameImage) {
+      console.log('[Delete Frame] Deleting UploadThing file:', frameToDelete.frameImage);
+      const { deleteUploadThingFile } = await import('./uploadthing.js');
+      const deleted = await deleteUploadThingFile(frameToDelete.frameImage);
+      if (deleted) {
+        console.log('[Delete Frame] UploadThing file deleted successfully');
+      } else {
+        console.log('[Delete Frame] Failed to delete UploadThing file, but continuing...');
+      }
+    }
+    
+    const filteredFrames = frames.filter(f => f.id !== req.params.id)
     await writeFrames(filteredFrames)
     
     res.json({ success: true, message: 'Xóa frame thành công' })

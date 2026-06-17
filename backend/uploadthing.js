@@ -1,6 +1,42 @@
 import { createUploadthing } from "uploadthing/server";
+import { UTApi } from "uploadthing/server";
 
 const f = createUploadthing();
+
+// Initialize UTApi for file management (delete, list, etc.)
+export const utapi = new UTApi({
+  token: process.env.UPLOADTHING_TOKEN,
+});
+
+// Helper function to extract file key from UploadThing URL
+export function extractFileKey(url) {
+  if (!url) return null;
+  
+  // URL formats:
+  // https://utfs.io/f/FILE_KEY
+  // https://APP_ID.ufs.sh/f/FILE_KEY
+  const match = url.match(/\/f\/([^/?]+)/);
+  return match ? match[1] : null;
+}
+
+// Delete file from UploadThing
+export async function deleteUploadThingFile(url) {
+  const fileKey = extractFileKey(url);
+  if (!fileKey) {
+    console.log('[UploadThing] No valid file key found in URL:', url);
+    return false;
+  }
+  
+  try {
+    console.log('[UploadThing] Deleting file with key:', fileKey);
+    await utapi.deleteFiles(fileKey);
+    console.log('[UploadThing] File deleted successfully');
+    return true;
+  } catch (error) {
+    console.error('[UploadThing] Error deleting file:', error);
+    return false;
+  }
+}
 
 export const uploadRouter = {
   frameImageUploader: f({ 
