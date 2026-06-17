@@ -9,13 +9,23 @@ function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [password, setPassword] = useState('')
 
-  // Upload trực tiếp lên backend /api/upload-frame
+  // Upload trực tiếp lên backend /api/upload-frame (base64 JSON)
   const uploadFrameImageWithTimeout = async (file) => {
     console.log('[Upload] Bắt đầu upload file:', file.name, file.size, file.type)
     console.log('[Upload] API URL:', API_URL)
 
-    const formData = new FormData()
-    formData.append('frameImage', file)
+    // Đọc file thành base64
+    const base64 = await new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = () => {
+        // Lấy phần data sau "data:image/png;base64,"
+        const result = reader.result
+        const base64Data = result.split(',')[1]
+        resolve(base64Data)
+      }
+      reader.onerror = reject
+      reader.readAsDataURL(file)
+    })
 
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 30000)
@@ -23,7 +33,13 @@ function AdminPage() {
     try {
       const response = await fetch(`${API_URL}/api/upload-frame`, {
         method: 'POST',
-        body: formData,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fileData: base64,
+          fileName: file.name,
+          mimeType: file.type,
+          fileSize: file.size
+        }),
         signal: controller.signal
       })
       clearTimeout(timeoutId)

@@ -264,32 +264,48 @@ app.post('/api/frames', async (req, res) => {
   }
 })
 
-// Upload frame image — Vercel Blob (production) hoặc local disk (dev)
-app.post('/api/upload-frame', uploadFrame.single('frameImage'), async (req, res) => {
+// Upload frame image — nhận base64 JSON, upload lên Vercel Blob hoặc local disk
+app.post('/api/upload-frame', async (req, res) => {
   try {
-    if (!req.file) {
-      return res.status(400).json({ error: 'Không có file được upload' })
+    const { fileData, fileName, mimeType, fileSize } = req.body
+
+    if (!fileData || !fileName) {
+      return res.status(400).json({ error: 'Thiếu dữ liệu file (fileData, fileName)' })
     }
 
+    // Validate file type
+    const allowedMimes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif']
+    if (mimeType && !allowedMimes.includes(mimeType)) {
+      return res.status(400).json({ error: 'Chỉ chấp nhận file ảnh (jpeg, jpg, png, webp, gif)' })
+    }
+
+    // Validate file size (5MB)
+    if (fileSize && fileSize > 5 * 1024 * 1024) {
+      return res.status(400).json({ error: 'File quá lớn (tối đa 5MB)' })
+    }
+
+    // Decode base64 thành buffer
+    const buffer = Buffer.from(fileData, 'base64')
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-    const fileName = 'frame-' + uniqueSuffix + path.extname(req.file.originalname)
+    const ext = path.extname(fileName) || '.png'
+    const newFileName = 'frame-' + uniqueSuffix + ext
     let fileUrl
 
     if (process.env.BLOB_READ_WRITE_TOKEN) {
       // Production: upload lên Vercel Blob
       console.log('[Upload Frame] Uploading to Vercel Blob...')
-      const blob = await put(`frames/${fileName}`, req.file.buffer, {
+      const blob = await put(`frames/${newFileName}`, buffer, {
         access: 'public',
-        contentType: req.file.mimetype
+        contentType: mimeType || 'image/png'
       })
       fileUrl = blob.url
       console.log('[Upload Frame] Vercel Blob URL:', fileUrl)
     } else {
       // Local dev: ghi file vào disk
       console.log('[Upload Frame] Saving to local disk...')
-      const localPath = path.join(framesDir, fileName)
-      fs.writeFileSync(localPath, req.file.buffer)
-      fileUrl = `/uploads/frames/${fileName}`
+      const localPath = path.join(framesDir, newFileName)
+      fs.writeFileSync(localPath, buffer)
+      fileUrl = `/uploads/frames/${newFileName}`
       console.log('[Upload Frame] Local path:', fileUrl)
     }
 
@@ -297,10 +313,10 @@ app.post('/api/upload-frame', uploadFrame.single('frameImage'), async (req, res)
       success: true,
       message: 'Upload frame image thành công',
       file: {
-        filename: fileName,
+        filename: newFileName,
         url: fileUrl,
-        path: fileUrl.startsWith('http') ? fileUrl : `/uploads/frames/${fileName}`,
-        size: req.file.size
+        path: fileUrl.startsWith('http') ? fileUrl : `/uploads/frames/${newFileName}`,
+        size: buffer.length
       }
     })
   } catch (error) {
