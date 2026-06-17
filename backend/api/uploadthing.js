@@ -1,15 +1,15 @@
 import { createRouteHandler } from "uploadthing/server";
 import { uploadRouter } from "../uploadthing.js";
 
-// Create the UploadThing route handler
-const handlers = createRouteHandler({
+// Create the UploadThing handlers
+const { GET, POST } = createRouteHandler({
   router: uploadRouter,
   config: {
     token: process.env.UPLOADTHING_TOKEN,
   },
 });
 
-// Export for Vercel serverless - handle both GET and POST
+// Export for Vercel serverless
 export default async function handler(req, res) {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -21,6 +21,14 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
   
-  // Call UploadThing handler
-  return handlers(req, res);
+  // Route based on method
+  if (req.method === 'GET') {
+    return GET(req, res);
+  }
+  
+  if (req.method === 'POST') {
+    return POST(req, res);
+  }
+  
+  return res.status(405).json({ error: 'Method not allowed' });
 }
