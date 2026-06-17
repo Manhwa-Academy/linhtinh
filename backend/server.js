@@ -348,15 +348,21 @@ app.delete('/api/frames/:id', async (req, res) => {
       return res.status(404).json({ error: 'Không tìm thấy frame' })
     }
     
-    // Delete image from UploadThing if exists
+    // Xóa file ảnh local nếu có (lưu trong uploads/frames)
     if (frameToDelete.frameImage) {
-      console.log('[Delete Frame] Deleting UploadThing file:', frameToDelete.frameImage);
-      const { deleteUploadThingFile } = await import('./uploadthing.js');
-      const deleted = await deleteUploadThingFile(frameToDelete.frameImage);
-      if (deleted) {
-        console.log('[Delete Frame] UploadThing file deleted successfully');
-      } else {
-        console.log('[Delete Frame] Failed to delete UploadThing file, but continuing...');
+      try {
+        // Lấy tên file từ URL (vd: http://localhost:3001/uploads/frames/frame-xxx.png)
+        const urlParts = frameToDelete.frameImage.split('/uploads/frames/')
+        if (urlParts.length > 1) {
+          const localFilePath = path.join(framesDir, urlParts[1])
+          if (fs.existsSync(localFilePath)) {
+            fs.unlinkSync(localFilePath)
+            console.log('[Delete Frame] Đã xóa file local:', localFilePath)
+          }
+        }
+      } catch (fileErr) {
+        console.warn('[Delete Frame] Không thể xóa file local:', fileErr.message)
+        // Không dừng lại - tiếp tục xóa record
       }
     }
     

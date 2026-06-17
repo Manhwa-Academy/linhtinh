@@ -1,6 +1,6 @@
 // Base URL for the backend API - same domain in production
 export const API_URL = import.meta.env.VITE_API_URL || (
-  import.meta.env.PROD ? '' : 'http://localhost:3000'
+  import.meta.env.PROD ? 'https://meomiry-backend.vercel.app' : 'http://localhost:3001'
 )
 
 // Helper to build full URL for frame images stored on backend

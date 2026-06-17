@@ -2,44 +2,50 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Plus, Edit2, Trash2, Save, X, LogOut, Upload, Image } from 'lucide-react'
 import { API_URL, frameImageUrl } from '../config/api'
-import { useUploadThing, uploadFrameImage } from '../utils/uploadthing'
 import '../styles/AdminPage.css'
 
 function AdminPage() {
   const navigate = useNavigate()
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [password, setPassword] = useState('')
-  const { startUpload } = useUploadThing("frameImageUploader")
 
-  // Wrapper với timeout 90s để tránh treo vô hạn
-  const uploadFrameImage = async (file) => {
+  // Upload trực tiếp lên backend /api/upload-frame
+  const uploadFrameImageWithTimeout = async (file) => {
     console.log('[Upload] Bắt đầu upload file:', file.name, file.size, file.type)
-    const timeout = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Upload timeout (90s)')), 90000)
-    )
-    const upload = startUpload([file]).then(result => {
-      console.log('[Upload] startUpload result (raw):', result)
-      console.log('[Upload] result type:', typeof result)
-      console.log('[Upload] result JSON:', JSON.stringify(result))
-      if (!result || !result.length) {
-        console.error('[Upload] result rỗng hoặc null!')
-        throw new Error('Upload không trả về kết quả')
+    console.log('[Upload] API URL:', API_URL)
+
+    const formData = new FormData()
+    formData.append('frameImage', file)
+
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 30000)
+
+    try {
+      const response = await fetch(`${API_URL}/api/upload-frame`, {
+        method: 'POST',
+        body: formData,
+        signal: controller.signal
+      })
+      clearTimeout(timeoutId)
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}))
+        throw new Error(err.error || `HTTP ${response.status}`)
       }
-      const uploaded = result[0]
-      console.log('[Upload] result[0]:', uploaded)
-      console.log('[Upload] result[0].url:', uploaded?.url)
-      console.log('[Upload] result[0].serverData:', uploaded?.serverData)
-      const url = uploaded?.url || uploaded?.serverData?.url
-      if (!url) throw new Error('Không lấy được URL sau upload')
-      console.log('[Upload] URL cuối:', url)
+
+      const data = await response.json()
+      const filePath = data?.file?.path
+      if (!filePath) throw new Error('Không lấy được path file sau upload')
+
+      // Trả về đường dẫn tương đối, frameImageUrl() sẽ build URL đầy đủ
+      const url = `${API_URL}${filePath}`
+      console.log('[Upload] Upload thành công, URL:', url)
       return url
-    }).catch(err => {
-      console.error('[Upload] startUpload bị lỗi:', err)
-      console.error('[Upload] err.message:', err?.message)
-      console.error('[Upload] err stack:', err?.stack)
+    } catch (err) {
+      clearTimeout(timeoutId)
+      if (err.name === 'AbortError') throw new Error('Upload timeout (30s)')
       throw err
-    })
-    return Promise.race([upload, timeout])
+    }
   }
   const [frames, setFrames] = useState([])
   const [editingFrame, setEditingFrame] = useState(null)
@@ -121,7 +127,7 @@ function AdminPage() {
       let frameImageUrl = null
       if (newFrame.frameImage && newFrame.frameImage instanceof File) {
         try {
-          frameImageUrl = await uploadFrameImage(newFrame.frameImage)
+          frameImageUrl = await uploadFrameImageWithTimeout(newFrame.frameImage)
         } catch (error) {
           console.error('Upload error:', error)
           setIsProcessing(false)
@@ -173,7 +179,7 @@ function AdminPage() {
       let frameImageUrl = editingFrame.frameImage
       if (editingFrame.frameImage && editingFrame.frameImage instanceof File) {
         try {
-          frameImageUrl = await uploadFrameImage(editingFrame.frameImage)
+          frameImageUrl = await uploadFrameImageWithTimeout(editingFrame.frameImage)
         } catch (error) {
           console.error('Upload error:', error)
           setIsProcessing(false)

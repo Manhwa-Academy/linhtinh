@@ -1,7 +1,11 @@
 import { createUploadthing } from "uploadthing/server";
 import { UTApi } from "uploadthing/server";
 
-const f = createUploadthing();
+console.log('[UploadThing] Initializing... Token exists:', !!process.env.UPLOADTHING_TOKEN);
+
+const f = createUploadthing({
+  token: process.env.UPLOADTHING_TOKEN,
+});
 
 // Initialize UTApi for file management (delete, list, etc.)
 export const utapi = new UTApi({
@@ -45,12 +49,15 @@ export const uploadRouter = {
       maxFileCount: 1 
     } 
   })
-    .middleware(async () => {
+    .middleware(async ({ req }) => {
+      console.log('[UploadThing Router] middleware called for:', req?.url);
       // Không yêu cầu auth - admin page tự handle
       return {};
     })
     .onUploadComplete(async ({ file }) => {
-      console.log("Upload complete:", file.url);
+      console.log("[UploadThing Router] Upload complete:", file.url);
       return { url: file.url };
     }),
 };
+
+console.log('[UploadThing] Router created with routes:', Object.keys(uploadRouter));
