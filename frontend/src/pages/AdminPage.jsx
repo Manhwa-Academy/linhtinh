@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Plus, Edit2, Trash2, Save, X, LogOut, Upload, Image } from 'lucide-react'
 import { API_URL, frameImageUrl } from '../config/api'
-import { useUploadThing } from '../utils/uploadthing'
+import { useUploadThing, uploadFrameImage } from '../utils/uploadthing'
 import '../styles/AdminPage.css'
 
 function AdminPage() {

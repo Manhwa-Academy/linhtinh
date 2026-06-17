@@ -1,15 +1,12 @@
 import { generateReactHelpers } from "@uploadthing/react";
 
-// UploadThing cần backend có thể truy cập từ internet để xác thực presigned URL.
-// Luôn dùng production backend URL cho UploadThing negotiation.
-const UPLOADTHING_BACKEND_URL = 'https://meomiry-backend.vercel.app';
-
 export const { useUploadThing, uploadFiles } = generateReactHelpers({
-  url: `${UPLOADTHING_BACKEND_URL}/api/uploadthing`,
+  url: `${import.meta.env.VITE_API_URL || 'https://meomiry-backend.vercel.app'}/api/uploadthing`,
 });
 
 // Export helper function for direct file upload
 export async function uploadFrameImage(file) {
+  console.log('[UploadThing Client] API URL:', import.meta.env.VITE_API_URL);
   console.log('[UploadThing Client] Uploading file:', file.name, file.size);
   
   try {
@@ -18,7 +15,12 @@ export async function uploadFrameImage(file) {
     });
     
     console.log('[UploadThing Client] Upload result:', result);
-    return result;
+    
+    if (!result || !result[0] || !result[0].url) {
+      throw new Error('Upload không trả về URL');
+    }
+    
+    return result[0].url;
   } catch (error) {
     console.error('[UploadThing Client] Upload error:', error);
     throw error;
