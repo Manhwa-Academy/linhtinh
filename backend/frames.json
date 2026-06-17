@@ -41,31 +41,31 @@
     "frameImage": "/uploads/frames/frame-1781657916287-916973428.png",
     "photoSlots": [
       {
-        "x": 3,
+        "x": 5,
         "y": 2,
-        "width": 94,
+        "width": 90,
+        "height": 20,
+        "rotation": 0
+      },
+      {
+        "x": 5,
+        "y": 24,
+        "width": 90,
+        "height": 20,
+        "rotation": 0
+      },
+      {
+        "x": 5,
+        "y": 46,
+        "width": 90,
         "height": 24,
         "rotation": 0
       },
       {
-        "x": 3,
-        "y": 26,
-        "width": 94,
-        "height": 24,
-        "rotation": 0
-      },
-      {
-        "x": 3,
-        "y": 50,
-        "width": 94,
-        "height": 24,
-        "rotation": 0
-      },
-      {
-        "x": 3,
-        "y": 74,
-        "width": 94,
-        "height": 24,
+        "x": 5,
+        "y": 72,
+        "width": 90,
+        "height": 22,
         "rotation": 0
       }
     ]

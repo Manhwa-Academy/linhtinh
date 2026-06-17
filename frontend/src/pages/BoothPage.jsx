@@ -133,19 +133,28 @@ const makeBlackTransparent = (imgSrc) => {
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         const data = imageData.data;
         for (let i = 0; i < data.length; i += 4) {
-          // If the pixel is very dark (black or near-black), make it transparent
-          if (data[i] < 45 && data[i+1] < 45 && data[i+2] < 45) {
-            data[i+3] = 0;
+          const r = data[i];
+          const g = data[i+1];
+          const b = data[i+2];
+          
+          // Make black/dark pixels transparent
+          // Using higher threshold (80) to catch more dark areas
+          if (r < 80 && g < 80 && b < 80) {
+            data[i+3] = 0; // Set alpha to 0 (transparent)
           }
         }
         ctx.putImageData(imageData, 0, 0);
         resolve(canvas.toDataURL('image/png'));
       } catch (err) {
-        console.warn('Could not process frame transparency:', err);
+        console.warn('Could not process frame transparency (CORS?):', err);
+        // Fallback: return original image
         resolve(imgSrc);
       }
     };
-    img.onerror = () => resolve(imgSrc);
+    img.onerror = () => {
+      console.error('Failed to load frame image for transparency processing');
+      resolve(imgSrc);
+    };
     img.src = imgSrc;
   });
 };
