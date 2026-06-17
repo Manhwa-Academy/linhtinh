@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Plus, Edit2, Trash2, Save, X, LogOut, Upload, Image } from 'lucide-react'
 import { API_URL, frameImageUrl } from '../config/api'
+import { useUploadThing } from '../utils/uploadthing'
 import '../styles/AdminPage.css'
 
 function AdminPage() {
   const navigate = useNavigate()
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [password, setPassword] = useState('')
+  const { startUpload, isUploading } = useUploadThing("frameImageUploader")
   const [frames, setFrames] = useState([])
   const [editingFrame, setEditingFrame] = useState(null)
   const [isAddingNew, setIsAddingNew] = useState(false)
@@ -84,21 +86,20 @@ function AdminPage() {
 
       setIsProcessing(true)
 
-      // Upload frame image first if provided
+      // Upload frame image using UploadThing if provided
       let frameImageUrl = null
       if (newFrame.frameImage && newFrame.frameImage instanceof File) {
-        const formData = new FormData()
-        formData.append('frameImage', newFrame.frameImage)
-        
-        const uploadResponse = await fetch(`${API_URL}/api/upload-frame`, {
-          method: 'POST',
-          body: formData
-        })
-        
-        if (uploadResponse.ok) {
-          const uploadData = await uploadResponse.json()
-          frameImageUrl = uploadData.file.path
-        } else {
+        try {
+          const uploadResult = await startUpload([newFrame.frameImage])
+          if (uploadResult && uploadResult[0]) {
+            frameImageUrl = uploadResult[0].url
+          } else {
+            setIsProcessing(false)
+            showToast('Lỗi khi upload ảnh frame!', 'error')
+            return
+          }
+        } catch (error) {
+          console.error('Upload error:', error)
           setIsProcessing(false)
           showToast('Lỗi khi upload ảnh frame!', 'error')
           return
@@ -144,21 +145,20 @@ function AdminPage() {
   const handleUpdateFrame = async (frameId) => {
     try {
       setIsProcessing(true)
-      // Upload new frame image if changed
+      // Upload new frame image using UploadThing if changed
       let frameImageUrl = editingFrame.frameImage
       if (editingFrame.frameImage && editingFrame.frameImage instanceof File) {
-        const formData = new FormData()
-        formData.append('frameImage', editingFrame.frameImage)
-        
-        const uploadResponse = await fetch(`${API_URL}/api/upload-frame`, {
-          method: 'POST',
-          body: formData
-        })
-        
-        if (uploadResponse.ok) {
-          const uploadData = await uploadResponse.json()
-          frameImageUrl = uploadData.file.path
-        } else {
+        try {
+          const uploadResult = await startUpload([editingFrame.frameImage])
+          if (uploadResult && uploadResult[0]) {
+            frameImageUrl = uploadResult[0].url
+          } else {
+            setIsProcessing(false)
+            showToast('Lỗi khi upload ảnh frame!', 'error')
+            return
+          }
+        } catch (error) {
+          console.error('Upload error:', error)
           setIsProcessing(false)
           showToast('Lỗi khi upload ảnh frame!', 'error')
           return
