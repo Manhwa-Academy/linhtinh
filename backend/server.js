@@ -471,8 +471,13 @@ app.use((req, res) => {
   res.status(404).json({ error: 'Không tìm thấy endpoint' })
 })
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Server đang chạy tại http://localhost:${PORT}`)
-  console.log(`📁 Thư mục uploads: ${uploadsDir}`)
-})
+// Start server (only in local development)
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`🚀 Server đang chạy tại http://localhost:${PORT}`)
+    console.log(`📁 Thư mục uploads: ${uploadsDir}`)
+  })
+}
+
+// Export for Vercel serverless
+export default app
