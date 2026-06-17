@@ -1,7 +1,7 @@
 {
   "version": 2,
   "rewrites": [
-    { "source": "/api/upload-frame", "destination": "/api/upload-frame.js" },
+    { "source": "/api/uploadthing", "destination": "/api/uploadthing.js" },
     { "source": "/api/(.*)", "destination": "/api/index.js" }
   ]
 }
