@@ -1,13 +1,6 @@
 import { createUploadthing } from "uploadthing/server";
 
-const f = createUploadthing({
-  errorFormatter: (err) => {
-    console.error("UploadThing error:", err);
-    return {
-      message: err.message,
-    };
-  },
-});
+const f = createUploadthing();
 
 export const uploadRouter = {
   frameImageUploader: f({ 
@@ -16,6 +9,10 @@ export const uploadRouter = {
       maxFileCount: 1 
     } 
   })
+    .middleware(async () => {
+      // Không yêu cầu auth - admin page tự handle
+      return {};
+    })
     .onUploadComplete(async ({ file }) => {
       console.log("Upload complete:", file.url);
       return { url: file.url };

@@ -17,8 +17,12 @@ function AdminPage() {
       setTimeout(() => reject(new Error('Upload timeout (90s) - kiểm tra kết nối mạng')), 90000)
     )
     const upload = startUpload([file]).then(result => {
-      if (!result || !result[0]) throw new Error('Upload không trả về kết quả')
-      return result[0].url
+      if (!result || !result.length) throw new Error('Upload không trả về kết quả')
+      const uploaded = result[0]
+      // UploadThing v7: url có thể ở result[0].url hoặc result[0].serverData.url
+      const url = uploaded?.url || uploaded?.serverData?.url
+      if (!url) throw new Error('Không lấy được URL sau upload')
+      return url
     })
     return Promise.race([upload, timeout])
   }
