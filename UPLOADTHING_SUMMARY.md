@@ -23,10 +23,10 @@
 ## 🔑 Credentials
 
 ```
-UPLOADTHING_TOKEN=eyJhcGlLZXkiOiJza19saXZlXzE5ODk1NTY4YTZjZDBiNzU5MmJmNTYzNTZhMTU4Yzc4MzBjMDQ4OTM5ZmUwNDYzYTg0ZDM3ZGU2NjliMDJjZjciLCJhcHBJZCI6ImdzdXZwNm1hejQiLCJyZWdpb25zIjpbInNlYTEiXX0=
-
-API Key: sk_live_19895568a6cd0b7592bf56356a158c7830c048939fe0463a84d37de669b02cf7
+UPLOADTHING_TOKEN=<Your UploadThing Token - Get from Vercel Environment Variables>
 ```
+
+*Note: Không commit token vào Git. Token đã được lưu trong Vercel Environment Variables.*
 
 ## 🎯 Cách hoạt động
 
@@ -64,7 +64,7 @@ https://vercel.com/bluearchives-projects/meomiry-backend/settings/environment-va
 
 Add:
 - Name: `UPLOADTHING_TOKEN`
-- Value: (token ở trên)
+- Value: `<Your Token - Already added in Vercel>`
 - Environments: Production, Preview, Development
 
 ### 2️⃣ Redeploy

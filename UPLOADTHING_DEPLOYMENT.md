@@ -31,7 +31,7 @@
 
 2. Thêm biến môi trường mới:
    - **Name**: `UPLOADTHING_TOKEN`
-   - **Value**: `eyJhcGlLZXkiOiJza19saXZlXzE5ODk1NTY4YTZjZDBiNzU5MmJmNTYzNTZhMTU4Yzc4MzBjMDQ4OTM5ZmUwNDYzYTg0ZDM3ZGU2NjliMDJjZjciLCJhcHBJZCI6ImdzdXZwNm1hejQiLCJyZWdpb25zIjpbInNlYTEiXX0=`
+   - **Value**: `<Your UploadThing Token>`
    - **Environments**: ✅ Production, ✅ Preview, ✅ Development
 
 3. Click **Save**
