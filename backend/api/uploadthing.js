@@ -8,7 +8,7 @@ const routeHandler = createRouteHandler({
   router: uploadRouter,
   config: {
     token: process.env.UPLOADTHING_TOKEN,
-  },
+  }, 
 });
 
 // Export for Vercel serverless
