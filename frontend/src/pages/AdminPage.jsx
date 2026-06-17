@@ -9,7 +9,7 @@ function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [password, setPassword] = useState('')
 
-  // Upload trực tiếp lên backend /api/upload-frame (base64 JSON)
+  // Upload qua backend /api/upload-frame → UploadThing
   const uploadFrameImageWithTimeout = async (file) => {
     console.log('[Upload] Bắt đầu upload file:', file.name, file.size, file.type)
     console.log('[Upload] API URL:', API_URL)
@@ -18,7 +18,6 @@ function AdminPage() {
     const base64 = await new Promise((resolve, reject) => {
       const reader = new FileReader()
       reader.onload = () => {
-        // Lấy phần data sau "data:image/png;base64,"
         const result = reader.result
         const base64Data = result.split(',')[1]
         resolve(base64Data)
@@ -28,7 +27,7 @@ function AdminPage() {
     })
 
     const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 30000)
+    const timeoutId = setTimeout(() => controller.abort(), 60000) // 60s timeout
 
     try {
       const response = await fetch(`${API_URL}/api/upload-frame`, {
@@ -50,16 +49,18 @@ function AdminPage() {
       }
 
       const data = await response.json()
+      console.log('[Upload] Response:', data)
+      
       const fileUrl = data?.file?.url || data?.file?.path
       if (!fileUrl) throw new Error('Không lấy được URL file sau upload')
 
-      // Nếu URL đã là http (Vercel Blob) thì dùng luôn, còn không thì build từ API_URL
       const url = fileUrl.startsWith('http') ? fileUrl : `${API_URL}${fileUrl}`
       console.log('[Upload] Upload thành công, URL:', url)
       return url
     } catch (err) {
       clearTimeout(timeoutId)
-      if (err.name === 'AbortError') throw new Error('Upload timeout (30s)')
+      console.error('[Upload] Lỗi upload:', err)
+      if (err.name === 'AbortError') throw new Error('Upload timeout (60s)')
       throw err
     }
   }

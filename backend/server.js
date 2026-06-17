@@ -264,7 +264,7 @@ app.post('/api/frames', async (req, res) => {
   }
 })
 
-// Upload frame image — nhận base64 JSON, upload lên Vercel Blob hoặc local disk
+// Upload frame image — nhận base64 JSON, upload lên UploadThing
 app.post('/api/upload-frame', async (req, res) => {
   try {
     const { fileData, fileName, mimeType, fileSize } = req.body
@@ -284,43 +284,48 @@ app.post('/api/upload-frame', async (req, res) => {
       return res.status(400).json({ error: 'File quá lớn (tối đa 5MB)' })
     }
 
+    console.log('[Upload Frame] Uploading to UploadThing:', fileName)
+    
+    // Import UTApi
+    const { utapi } = await import('./uploadthing.js')
+    
     // Decode base64 thành buffer
     const buffer = Buffer.from(fileData, 'base64')
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-    const ext = path.extname(fileName) || '.png'
-    const newFileName = 'frame-' + uniqueSuffix + ext
-    let fileUrl
-
-    if (process.env.BLOB_READ_WRITE_TOKEN) {
-      // Production: upload lên Vercel Blob
-      console.log('[Upload Frame] Uploading to Vercel Blob...')
-      const blob = await put(`frames/${newFileName}`, buffer, {
-        access: 'public',
-        contentType: mimeType || 'image/png'
-      })
-      fileUrl = blob.url
-      console.log('[Upload Frame] Vercel Blob URL:', fileUrl)
-    } else {
-      // Local dev: ghi file vào disk
-      console.log('[Upload Frame] Saving to local disk...')
-      const localPath = path.join(framesDir, newFileName)
-      fs.writeFileSync(localPath, buffer)
-      fileUrl = `/uploads/frames/${newFileName}`
-      console.log('[Upload Frame] Local path:', fileUrl)
+    
+    // Create File object from buffer
+    const file = new File([buffer], fileName, { type: mimeType || 'image/png' })
+    
+    // Upload to UploadThing
+    const uploadResult = await utapi.uploadFiles(file)
+    
+    console.log('[Upload Frame] UploadThing result:', JSON.stringify(uploadResult))
+    
+    if (!uploadResult || !uploadResult.data) {
+      throw new Error('Upload failed: No data returned from UploadThing')
     }
+
+    const fileUrl = uploadResult.data.url
+    
+    if (!fileUrl) {
+      throw new Error('Upload failed: No URL in response')
+    }
+
+    console.log('[Upload Frame] UploadThing URL:', fileUrl)
 
     res.json({
       success: true,
       message: 'Upload frame image thành công',
       file: {
-        filename: newFileName,
+        filename: fileName,
         url: fileUrl,
-        path: fileUrl.startsWith('http') ? fileUrl : `/uploads/frames/${newFileName}`,
-        size: buffer.length
+        path: fileUrl,
+        key: uploadResult.data.key,
+        size: uploadResult.data.size || buffer.length
       }
     })
   } catch (error) {
     console.error('Lỗi upload frame:', error)
+    console.error('Error stack:', error.stack)
     res.status(500).json({ error: 'Lỗi khi upload frame image: ' + error.message })
   }
 })
