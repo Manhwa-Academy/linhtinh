@@ -1,5 +1,7 @@
-// Base URL for the backend API - automatically switches between dev and production
-export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+// Base URL for the backend API - same domain in production
+export const API_URL = import.meta.env.VITE_API_URL || (
+  import.meta.env.PROD ? '' : 'http://localhost:3000'
+)
 
 // Helper to build full URL for frame images stored on backend
 export const frameImageUrl = (path) => {
