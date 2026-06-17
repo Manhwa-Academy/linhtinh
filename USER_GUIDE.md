@@ -4,11 +4,11 @@
 
 1. Mở trang chủ http://localhost:5173
 2. Nhấn nút **"Start Photobooth"**
-3. Làm theo 5 bước dưới đây
+3. Làm theo 6 bước dưới đây
 
 ---
 
-## 📸 Workflow 5 bước
+## 📸 Workflow 6 bước
 
 ### ✅ Step 1: Choose Your Strip
 
@@ -27,7 +27,32 @@
 
 ---
 
-### 🎨 Step 2: Pick a Filter
+### 🖼️ Step 2: Choose Your Frame
+
+**Select theme for your photo strip:**
+
+| Frame | Theme | Description |
+|-------|-------|-------------|
+| 🌸 Spring | Cherry blossoms & nature | Flower season vibes |
+| ☀️ Summer | Bright & sunny | Beach and sunshine |
+| 🍂 Autumn | Warm & cozy | Fall colors |
+| ❄️ Winter | Cool & serene | Snowflakes and chill |
+
+**How to:**
+- Click on the frame card you like
+- Card will be highlighted (pink border)
+- See the themed background preview
+- Click **"Next →"** to continue
+
+**💡 Tips:**
+- Spring for fresh, natural photos
+- Summer for bright, energetic vibes
+- Autumn for warm, nostalgic feel
+- Winter for cool, elegant look
+
+---
+
+### 🎨 Step 3: Pick a Filter
 
 **Chọn phong cách cho ảnh:**
 
@@ -49,9 +74,13 @@
 - Hello Kitty cho ảnh cute, ngọt ngào
 - B&W cho ảnh nghệ thuật, đơn giản
 
+**Nút điều khiển:**
+- **← Back**: Quay lại chọn frame
+- **Next →**: Tiếp tục chụp ảnh
+
 ---
 
-### 📷 Step 3: Capture Your Moments
+### 📷 Step 4: Capture Your Moments
 
 **2 cách chụp ảnh:**
 
@@ -91,7 +120,7 @@
 
 ---
 
-### 🎭 Step 4: Add Cute Stickers
+### 🎭 Step 5: Add Cute Stickers
 
 **Trang trí ảnh với stickers:**
 
@@ -131,7 +160,7 @@
 
 ---
 
-### ✅ Step 5: Done! - Your Photo Strip
+### ✅ Step 6: Done! - Your Photo Strip
 
 **Xem và lưu sản phẩm:**
 
@@ -180,6 +209,12 @@
 - ✅ Thử nhiều pose khác nhau
 - ❌ Không backlight (ánh sáng từ sau)
 - ❌ Không quá gần camera
+
+### Chọn frame
+- **Mùa xuân**: Spring cho ảnh tươi mới
+- **Mùa hè**: Summer cho ảnh năng động
+- **Mùa thu**: Autumn cho ảnh ấm áp
+- **Mùa đông**: Winter cho ảnh thanh lịch
 
 ### Chọn filter
 - **Buổi sáng**: Y2K hoặc Hello Kitty

@@ -1,0 +1,73 @@
+[
+  {
+    "id": "spring",
+    "name": "Spring",
+    "description": "Cherry blossoms & nature",
+    "emoji": "🌸",
+    "color": "#FFE4E9",
+    "bgGradient": "linear-gradient(135deg, #FFE4E9 0%, #FFF0F5 100%)"
+  },
+  {
+    "id": "summer",
+    "name": "Summer",
+    "description": "Bright & sunny",
+    "emoji": "☀️",
+    "color": "#FFF4CC",
+    "bgGradient": "linear-gradient(135deg, #FFF4CC 0%, #FFFACD 100%)"
+  },
+  {
+    "id": "autumn",
+    "name": "Autumn",
+    "description": "Warm & cozy",
+    "emoji": "🍂",
+    "color": "#FFE5CC",
+    "bgGradient": "linear-gradient(135deg, #FFE5CC 0%, #FFDAB9 100%)"
+  },
+  {
+    "id": "winter",
+    "name": "Winter",
+    "description": "Cool & serene",
+    "emoji": "❄️",
+    "color": "#E0F2FE",
+    "bgGradient": "linear-gradient(135deg, #E0F2FE 0%, #F0F9FF 100%)"
+  },
+  {
+    "id": "pgc-1781657916385",
+    "name": "pgc",
+    "description": "",
+    "emoji": "",
+    "color": "#FFE4E9",
+    "bgGradient": "linear-gradient(135deg, #FFE4E9 0%, #ffffff 100%)",
+    "frameImage": "/uploads/frames/frame-1781657916287-916973428.png",
+    "photoSlots": [
+      {
+        "x": 5,
+        "y": 2,
+        "width": 90,
+        "height": 18,
+        "rotation": 0
+      },
+      {
+        "x": 5,
+        "y": 23,
+        "width": 90,
+        "height": 21,
+        "rotation": 0
+      },
+      {
+        "x": 5,
+        "y": 47,
+        "width": 90,
+        "height": 25,
+        "rotation": 0
+      },
+      {
+        "x": 5,
+        "y": 75,
+        "width": 90,
+        "height": 19,
+        "rotation": 0
+      }
+    ]
+  }
+]

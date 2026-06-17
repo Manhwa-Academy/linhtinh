@@ -50,3 +50,47 @@
     transform: scale(1.1);
   }
 }
+
+/* Decoration blossoms */
+.decoration-blossoms {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+  overflow: hidden;
+}
+
+.blossom-icon {
+  position: absolute;
+  top: -50px;
+  font-size: 2.5rem;
+  animation: fall linear infinite;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+  opacity: 0.8;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(-50px) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .blossom-icon {
+    font-size: 1.5rem;
+  }
+}

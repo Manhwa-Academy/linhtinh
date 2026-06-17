@@ -11,13 +11,16 @@ import {
   Rocket, Gamepad2, Palette, Bell, Coffee, Plane, Bike, Car,
   Umbrella, Trophy, Key, Glasses
 } from 'lucide-react'
+import { API_URL, frameImageUrl } from '../config/api'
 import '../styles/BoothPage.css'
 
 const stripTypes = [
-  { id: 'solo', name: 'Solo Shot', description: 'One perfect moment', count: 1, icon: Camera },
-  { id: 'triple', name: 'Triple Fun', description: 'Three memories in a row', count: 3, icon: Camera },
-  { id: 'classic', name: 'Classic Strip', description: 'The iconic four photo strip', count: 4, icon: Camera }
+  { id: 'solo', name: 'Double Shot', description: 'Two perfect moments', count: 2, icon: Camera },
+  { id: 'triple', name: 'Quad Fun', description: 'Four memories in a row', count: 4, icon: Camera },
+  { id: 'classic', name: 'Super Strip', description: 'The epic six photo strip', count: 6, icon: Camera }
 ]
+
+// Frames will be loaded from API dynamically
 
 const filters = [
   { id: 'y2k', name: 'Y2K', description: 'Glittery & futuristic', value: 'contrast(1.2) saturate(1.5) hue-rotate(330deg)', color: '#B2F5EA', icon: Sparkles },
@@ -128,6 +131,7 @@ function BoothPage() {
   
   // Multi-step workflow states
   const [selectedStripType, setSelectedStripType] = useState(null)
+  const [selectedFrame, setSelectedFrame] = useState(null)
   const [selectedFilter, setSelectedFilter] = useState(null)
   const [capturedPhotos, setCapturedPhotos] = useState([])
   const [selectedStickers, setSelectedStickers] = useState([])
@@ -135,19 +139,53 @@ function BoothPage() {
   const [countdown, setCountdown] = useState(null)
   const [showCamera, setShowCamera] = useState(false)
   const [showFilterPicker, setShowFilterPicker] = useState(false)
+  const [showFramePicker, setShowFramePicker] = useState(false)
   const [draggingSticker, setDraggingSticker] = useState(null)
-  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0) // Ảnh đang được chọn để edit
+  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0)
   const fileInputRef = useRef(null)
+  
+  // Load frames from API
+  const [frames, setFrames] = useState([])
+  
+  useEffect(() => {
+    loadFrames()
+  }, [])
+  
+  const loadFrames = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/frames`)
+      if (response.ok) {
+        const data = await response.json()
+        setFrames(data.frames)
+      }
+    } catch (error) {
+      console.error('Error loading frames:', error)
+      // Fallback to default frames if API fails
+      setFrames([
+        { id: 'spring', name: 'Spring', description: 'Cherry blossoms & nature', emoji: '🌸', color: '#FFE4E9', bgGradient: 'linear-gradient(135deg, #FFE4E9 0%, #FFF0F5 100%)' },
+        { id: 'summer', name: 'Summer', description: 'Bright & sunny', emoji: '☀️', color: '#FFF4CC', bgGradient: 'linear-gradient(135deg, #FFF4CC 0%, #FFFACD 100%)' },
+        { id: 'autumn', name: 'Autumn', description: 'Warm & cozy', emoji: '🍂', color: '#FFE5CC', bgGradient: 'linear-gradient(135deg, #FFE5CC 0%, #FFDAB9 100%)' },
+        { id: 'winter', name: 'Winter', description: 'Cool & serene', emoji: '❄️', color: '#E0F2FE', bgGradient: 'linear-gradient(135deg, #E0F2FE 0%, #F0F9FF 100%)' }
+      ])
+    }
+  }
 
   // Update URL when step changes
   const setCurrentStep = (step) => {
     setSearchParams({ step: step.toString() })
   }
 
+  // Ensure user has selected a strip type before proceeding (prevents crash on refresh)
+  useEffect(() => {
+    if (currentStep > 1 && !selectedStripType) {
+      setCurrentStep(1)
+    }
+  }, [currentStep, selectedStripType, setSearchParams])
+
   // Navigation
   const goToNextStep = () => {
-    if (currentStep < 5) {
-      if (currentStep === 3 && capturedPhotos.length === 0) {
+    if (currentStep < 6) {
+      if (currentStep === 4 && capturedPhotos.length === 0) {
         alert('Vui lòng chụp hoặc tải ảnh lên!')
         return
       }
@@ -168,6 +206,7 @@ function BoothPage() {
   const startOver = () => {
     setCurrentStep(1)
     setSelectedStripType(null)
+    setSelectedFrame(null)
     setSelectedFilter(null)
     setCapturedPhotos([])
     setSelectedStickers([])
@@ -180,12 +219,17 @@ function BoothPage() {
     setSelectedStripType(type)
   }
 
-  // Step 2: Select filter
+  // Step 2: Select frame
+  const selectFrame = (frame) => {
+    setSelectedFrame(frame)
+  }
+
+  // Step 3: Select filter
   const selectFilter = (filter) => {
     setSelectedFilter(filter)
   }
 
-  // Step 3: Capture photos
+  // Step 4: Capture photos
   const startCamera = () => {
     setShowCamera(true)
     if (capturedPhotos.length < selectedStripType.count) {
@@ -251,14 +295,13 @@ function BoothPage() {
     e.target.value = ''
   }
 
-  // Step 4: Add stickers
+  // Step 5: Add stickers
   const addSticker = (stickerItem) => {
     const newSticker = {
       id: Date.now() + Math.random(), // Ensure unique ID
       item: stickerItem,
       x: 10, // Position as percentage from left
       y: 10, // Position as percentage from top
-      photoIndex: selectedPhotoIndex // Add to currently selected photo
     }
     setSelectedStickers([...selectedStickers, newSticker])
   }
@@ -294,32 +337,87 @@ function BoothPage() {
 
   // Assign sticker to specific photo when dropped
   const handleStickerDropOnPhoto = (stickerId, photoIndex) => {
-    setSelectedStickers(selectedStickers.map(sticker =>
-      sticker.id === stickerId ? { ...sticker, photoIndex } : sticker
-    ))
+    // No longer needed as stickers are applied to the whole strip
   }
 
-  // Step 5: Download - Download each photo separately
+  // Step 6: Download - Download the entire strip
   const downloadAllPhotos = async () => {
-    for (let photoIndex = 0; photoIndex < capturedPhotos.length; photoIndex++) {
-      await downloadSinglePhoto(photoIndex)
-      // Small delay between downloads
-      await new Promise(resolve => setTimeout(resolve, 500))
-    }
-  }
+    // If using image frame, use manual canvas compositing (html2canvas can't handle mix-blend-mode)
+    if (selectedFrame?.frameImage) {
+      try {
+        // Load frame image to get natural dimensions
+        const frameUrl = frameImageUrl(selectedFrame.frameImage)
+        const frameImg = new Image()
+        frameImg.crossOrigin = 'anonymous'
+        await new Promise((res, rej) => { frameImg.onload = res; frameImg.onerror = rej; frameImg.src = frameUrl })
 
-  const downloadSinglePhoto = async (photoIndex) => {
-    const photoElement = document.getElementById(`final-photo-${photoIndex}`)
-    if (photoElement) {
-      const canvas = await html2canvas(photoElement, {
+        const W = frameImg.naturalWidth
+        const H = frameImg.naturalHeight
+        const slotH = Math.floor(H / capturedPhotos.length)
+
+        const canvas = document.createElement('canvas')
+        canvas.width = W
+        canvas.height = H
+        const ctx = canvas.getContext('2d')
+
+        // 1. Draw photos first (each fills equal vertical slot)
+        for (let i = 0; i < capturedPhotos.length; i++) {
+          const photoImg = new Image()
+          photoImg.crossOrigin = 'anonymous'
+          await new Promise((res, rej) => { photoImg.onload = res; photoImg.onerror = rej; photoImg.src = capturedPhotos[i] })
+
+          const slotY = slotH * i
+          // Cover-fit the photo into the slot
+          const scaleX = W / photoImg.naturalWidth
+          const scaleY = slotH / photoImg.naturalHeight
+          const scale = Math.max(scaleX, scaleY)
+          const drawW = photoImg.naturalWidth * scale
+          const drawH = photoImg.naturalHeight * scale
+          const offsetX = (W - drawW) / 2
+          const offsetY = slotY + (slotH - drawH) / 2
+
+          ctx.save()
+          ctx.beginPath()
+          ctx.rect(0, slotY, W, slotH)
+          ctx.clip()
+          ctx.drawImage(photoImg, offsetX, offsetY, drawW, drawH)
+          ctx.restore()
+        }
+
+        // 2. Draw frame on top with 'screen' blend mode
+        ctx.globalCompositeOperation = 'screen'
+        ctx.drawImage(frameImg, 0, 0, W, H)
+        ctx.globalCompositeOperation = 'source-over'
+
+        const link = document.createElement('a')
+        link.download = `meomiry-${selectedStripType?.id}-strip-${Date.now()}.png`
+        link.href = canvas.toDataURL('image/png')
+        link.click()
+      } catch (err) {
+        console.error('Canvas download error:', err)
+        alert('Lỗi khi tải xuống ảnh!')
+      }
+      return
+    }
+
+    // Fallback: use html2canvas for gradient frames
+    const stripElement = document.getElementById('final-photo-strip') || photoStripRef.current
+    if (stripElement) {
+      const canvas = await html2canvas(stripElement, {
         backgroundColor: null,
-        scale: 2
+        scale: 2,
+        useCORS: true
       })
       const link = document.createElement('a')
-      link.download = `meomiry-${selectedStripType.id}-photo-${photoIndex + 1}-${Date.now()}.png`
+      link.download = `meomiry-${selectedStripType?.id}-strip-${Date.now()}.png`
       link.href = canvas.toDataURL()
       link.click()
     }
+  }
+
+
+  const downloadSinglePhoto = async (photoIndex) => {
+    // Kept for compatibility if ever needed, but we now download the full strip
   }
 
   return (
@@ -334,11 +432,11 @@ function BoothPage() {
             <ArrowLeft size={18} /> Back
           </button>
         )}
-        <h2 className="booth-logo">🌸 Meomiry</h2>
+        <h2 className="booth-logo">🌸 STARLACE</h2>
         
         {/* Progress Steps */}
         <div className="progress-steps">
-          {['Strip', 'Filter', 'Capture', 'Decorate', 'Done!'].map((step, index) => (
+          {['Strip', 'Frame', 'Filter', 'Capture', 'Decorate', 'Done!'].map((step, index) => (
             <div 
               key={index} 
               className={`step ${currentStep === index + 1 ? 'active' : ''} ${currentStep > index + 1 ? 'completed' : ''}`}
@@ -372,7 +470,7 @@ function BoothPage() {
                     className={`strip-type-card ${selectedStripType?.id === type.id ? 'selected' : ''}`}
                     onClick={() => selectStripType(type)}
                   >
-                    <div className="strip-icon">
+                    <div className={`strip-icon strip-icon-${type.count}`}>
                       {Array.from({ length: type.count }).map((_, i) => (
                         <span key={i} className="photo-placeholder">
                           <IconComponent size={24} strokeWidth={2} />
@@ -396,8 +494,54 @@ function BoothPage() {
           </div>
         )}
 
-        {/* STEP 2: Pick Filter */}
+        {/* STEP 2: Choose Frame */}
         {currentStep === 2 && (
+          <div className="step-content">
+            <h2 className="step-title">Choose Your Frame</h2>
+            <p className="step-subtitle">Select theme for your photo strip</p>
+            
+            <div className="frames-grid">
+              {frames.map(frame => (
+                <div
+                  key={frame.id}
+                  className={`frame-card ${selectedFrame?.id === frame.id ? 'selected' : ''}`}
+                  onClick={() => selectFrame(frame)}
+                  style={{ background: frame.bgGradient }}
+                >
+                  {frame.frameImage ? (
+                    <div className="frame-image-icon">
+                      <img 
+                        src={frameImageUrl(frame.frameImage)} 
+                        alt={frame.name}
+                        className="frame-icon-img"
+                      />
+                    </div>
+                  ) : (
+                    <div className="frame-emoji">{frame.emoji}</div>
+                  )}
+                  <h3>{frame.name}</h3>
+                  {frame.description && <p>{frame.description}</p>}
+                </div>
+              ))}
+            </div>
+
+            <div className="step-buttons">
+              <button className="back-button-step" onClick={goToPrevStep}>
+                <ArrowLeft size={18} /> Back
+              </button>
+              <button 
+                className="next-button" 
+                onClick={goToNextStep}
+                disabled={!selectedFrame}
+              >
+                Next <ArrowRight size={18} />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* STEP 3: Pick Filter */}
+        {currentStep === 3 && (
           <div className="step-content">
             <h2 className="step-title">Pick a Filter</h2>
             <p className="step-subtitle">Set the vibe for your photos</p>
@@ -437,8 +581,8 @@ function BoothPage() {
           </div>
         )}
 
-        {/* STEP 3: Capture Photos */}
-        {currentStep === 3 && (
+        {/* STEP 4: Capture Photos */}
+        {currentStep === 4 && selectedStripType && selectedFilter && (
           <div className="step-content">
             <h2 className="step-title">Capture Your Moments</h2>
             <p className="step-subtitle">
@@ -531,8 +675,8 @@ function BoothPage() {
           </div>
         )}
 
-        {/* STEP 4: Add Stickers */}
-        {currentStep === 4 && (
+        {/* STEP 5: Add Stickers */}
+        {currentStep === 5 && selectedStripType && selectedFrame && selectedFilter && capturedPhotos.length > 0 && (
           <div className="step-content">
             <div className="step-header-with-filter">
               <div>
@@ -540,110 +684,238 @@ function BoothPage() {
                 <p className="step-subtitle">Click stickers to add them to your photos</p>
               </div>
               
-              {/* Filter selector button */}
-              <div className="current-filter-display">
-                <button 
-                  className="filter-change-btn"
-                  onClick={() => setShowFilterPicker(!showFilterPicker)}
-                >
-                  <Sparkles size={18} className="filter-icon-small" />
-                  <span className="filter-name">{selectedFilter.name}</span>
-                  <span className="dropdown-icon">{showFilterPicker ? '▲' : '▼'}</span>
-                </button>
-                
-                {/* Filter picker dropdown */}
-                {showFilterPicker && (
-                  <div className="filter-picker-dropdown">
-                    <h4>Choose Filter</h4>
-                    <div className="mini-filters-grid">
-                      {filters.map(filter => {
-                        const IconComponent = filter.icon
-                        return (
+              <div className="step-options-selectors">
+                {/* Frame selector button */}
+                <div className="current-filter-display">
+                  <button 
+                    className="filter-change-btn"
+                    onClick={() => {
+                      setShowFramePicker(!showFramePicker)
+                      setShowFilterPicker(false)
+                    }}
+                  >
+                    <span className="filter-emoji" style={{ fontSize: '18px' }}>
+                      {selectedFrame?.frameImage ? (
+                        <img 
+                          src={frameImageUrl(selectedFrame.frameImage)} 
+                          alt={selectedFrame.name}
+                          style={{ width: '18px', height: '18px', objectFit: 'contain' }}
+                        />
+                      ) : (
+                        selectedFrame?.emoji || '🖼️'
+                      )}
+                    </span>
+                    <span className="filter-name">{selectedFrame?.name || 'Frame'}</span>
+                    <span className="dropdown-icon">{showFramePicker ? '▲' : '▼'}</span>
+                  </button>
+                  
+                  {/* Frame picker dropdown */}
+                  {showFramePicker && (
+                    <div className="filter-picker-dropdown">
+                      <h4>Choose Frame</h4>
+                      <div className="mini-filters-grid">
+                        {frames.map(frame => (
                           <button
-                            key={filter.id}
-                            className={`mini-filter-card ${selectedFilter.id === filter.id ? 'selected' : ''}`}
+                            key={frame.id}
+                            className={`mini-filter-card ${selectedFrame?.id === frame.id ? 'selected' : ''}`}
                             onClick={() => {
-                              selectFilter(filter)
-                              setShowFilterPicker(false)
+                              selectFrame(frame)
+                              setShowFramePicker(false)
                             }}
-                            style={{ backgroundColor: filter.color }}
+                            style={{ background: frame.bgGradient }}
                           >
-                            <IconComponent size={28} className="mini-filter-icon" />
-                            <span className="mini-filter-name">{filter.name}</span>
+                            {frame.frameImage ? (
+                              <img 
+                                src={frameImageUrl(frame.frameImage)} 
+                                alt={frame.name}
+                                className="mini-filter-icon"
+                                style={{ width: '28px', height: '28px', objectFit: 'contain' }}
+                              />
+                            ) : (
+                              <span className="mini-filter-icon" style={{ fontSize: '24px' }}>{frame.emoji}</span>
+                            )}
+                            <span className="mini-filter-name">{frame.name}</span>
                           </button>
-                        )
-                      })}
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
+
+                {/* Filter selector button */}
+                <div className="current-filter-display">
+                  <button 
+                    className="filter-change-btn"
+                    onClick={() => {
+                      setShowFilterPicker(!showFilterPicker)
+                      setShowFramePicker(false)
+                    }}
+                  >
+                    <Sparkles size={18} className="filter-icon-small" />
+                    <span className="filter-name">{selectedFilter.name}</span>
+                    <span className="dropdown-icon">{showFilterPicker ? '▲' : '▼'}</span>
+                  </button>
+                  
+                  {/* Filter picker dropdown */}
+                  {showFilterPicker && (
+                    <div className="filter-picker-dropdown">
+                      <h4>Choose Filter</h4>
+                      <div className="mini-filters-grid">
+                        {filters.map(filter => {
+                          const IconComponent = filter.icon
+                          return (
+                            <button
+                              key={filter.id}
+                              className={`mini-filter-card ${selectedFilter.id === filter.id ? 'selected' : ''}`}
+                              onClick={() => {
+                                selectFilter(filter)
+                                setShowFilterPicker(false)
+                              }}
+                              style={{ backgroundColor: filter.color }}
+                            >
+                              <IconComponent size={28} className="mini-filter-icon" />
+                              <span className="mini-filter-name">{filter.name}</span>
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
             <div className="sticker-editor">
-              {/* Photo thumbnails selector */}
-              <div className="photo-thumbnails">
-                {capturedPhotos.map((photo, index) => (
-                  <div
-                    key={index}
-                    className={`thumbnail ${selectedPhotoIndex === index ? 'selected' : ''}`}
-                    onClick={() => setSelectedPhotoIndex(index)}
-                  >
-                    <img src={photo} alt={`Thumbnail ${index + 1}`} style={{ filter: selectedFilter.value }} />
-                    <span className="thumbnail-badge">{selectedStickers.filter(s => s.photoIndex === index).length}</span>
+              <div 
+                className="photo-strip-card"
+                id="photo-container-edit"
+                style={{
+                  background: selectedFrame?.frameImage ? '#000' : (selectedFrame?.bgGradient || '#ffffff'),
+                  borderRadius: selectedFrame?.frameImage ? '0' : '20px',
+                  padding: selectedFrame?.frameImage ? '0' : '20px',
+                  margin: '0 auto 20px',
+                  width: selectedFrame?.frameImage ? '300px' : (selectedStripType?.count <= 2 ? '360px' : '100%'),
+                  maxWidth: '500px',
+                  height: 'auto',
+                  boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}
+              >
+                {selectedFrame?.frameImage ? (
+                  // === IMAGE FRAME MODE: frame sets container size, photos fill slots ===
+                  <div style={{ position: 'relative', width: '100%' }}>
+                    {/* Photos stacked absolutely, each takes equal height */}
+                    {capturedPhotos.map((photo, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          position: 'absolute',
+                          top: `${(100 / capturedPhotos.length) * index}%`,
+                          left: 0,
+                          width: '100%',
+                          height: `${100 / capturedPhotos.length}%`,
+                          overflow: 'hidden'
+                        }}
+                      >
+                        <img
+                          src={photo}
+                          alt={`Photo ${index + 1}`}
+                          style={{
+                            filter: selectedFilter?.value,
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            objectPosition: 'center',
+                            display: 'block'
+                          }}
+                        />
+                      </div>
+                    ))}
+                    {/* Frame image — renders normally to define container height */}
+                    <img
+                      src={frameImageUrl(selectedFrame.frameImage)}
+                      alt="Frame overlay"
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        height: 'auto',
+                        position: 'relative',
+                        mixBlendMode: 'screen',
+                        zIndex: 5,
+                        pointerEvents: 'none'
+                      }}
+                    />
                   </div>
-                ))}
-              </div>
-
-              {/* Preview ảnh đang được chọn với stickers */}
-              <div className="selected-photo-preview">
-                <div className="photo-item-with-stickers" id={`photo-container-edit`}>
-                  <img
-                    src={capturedPhotos[selectedPhotoIndex]}
-                    alt={`Photo ${selectedPhotoIndex + 1}`}
-                    style={{ filter: selectedFilter.value }}
-                    className="photo-base"
-                  />
-                  {/* Hiển thị stickers chỉ cho ảnh đang chọn */}
-                  <div className="stickers-on-photo">
-                    {selectedStickers
-                      .filter(sticker => sticker.photoIndex === selectedPhotoIndex)
-                      .map((sticker) => {
-                        const isTextBubble = sticker.item.type === 'text'
-                        return (
-                          <span
-                            key={sticker.id}
-                            className={`sticker-on-photo ${isTextBubble ? 'text-bubble-on-photo' : 'emoji-on-photo'} ${draggingSticker === sticker.id ? 'dragging' : ''}`}
-                            style={{
-                              left: `${sticker.x}%`,
-                              top: `${sticker.y}%`,
-                              position: 'absolute'
-                            }}
-                            draggable
-                            onDragStart={(e) => handleStickerDragStart(e, sticker.id)}
-                            onDrag={(e) => {
-                              const container = document.getElementById(`photo-container-edit`)
-                              if (container) {
-                                handleStickerDrag(e, sticker.id, container.getBoundingClientRect())
-                              }
-                            }}
-                            onDragEnd={() => {
-                              handleStickerDragEnd()
-                              handleStickerDropOnPhoto(sticker.id, selectedPhotoIndex)
-                            }}
-                            onDoubleClick={() => removeSticker(sticker.id)}
-                            title="Drag to move, double-click to remove"
-                          >
-                            {renderStickerContent(sticker.item, 48)}
-                          </span>
-                        )
-                      })}
-                  </div>
-                </div>
-                
-                {selectedStickers.filter(s => s.photoIndex === selectedPhotoIndex).length > 0 && (
-                  <p className="sticker-hint">💡 Drag stickers to move, double-click to remove</p>
+                ) : (
+                  // === GRADIENT FRAME MODE: normal strip with header/footer ===
+                  <>
+                    {!selectedFrame?.bgGradient?.includes('url(') && (
+                      <div className="strip-header-final" style={{ background: 'transparent', boxShadow: 'none', padding: '10px 0 20px' }}>
+                        <h3 style={{ color: selectedFrame ? 'rgba(0,0,0,0.75)' : '#FF6B9D' }}>
+                          {selectedFrame?.emoji} STARLACE {selectedFrame?.emoji}
+                        </h3>
+                      </div>
+                    )}
+                    
+                    <div className={`final-photos final-photos-${selectedStripType?.count}`} style={{ marginBottom: '25px', gap: '20px' }}>
+                      {capturedPhotos.map((photo, index) => (
+                        <div key={index} className="final-photo" style={{ 
+                          border: `4px solid ${selectedFrame ? 'white' : 'transparent'}`, 
+                          borderRadius: '12px', 
+                          background: 'white',
+                          boxShadow: '0 4px 15px rgba(0, 0, 0, 0.15)'
+                        }}>
+                          <img src={photo} alt={`Photo ${index + 1}`} style={{ filter: selectedFilter?.value, display: 'block', width: '100%', height: 'auto', objectFit: 'cover' }} className="photo-base" />
+                        </div>
+                      ))}
+                    </div>
+                    
+                    {!selectedFrame?.bgGradient?.includes('url(') && (
+                      <div className="strip-footer-final" style={{ background: 'transparent', boxShadow: 'none', padding: '20px 0 10px', color: selectedFrame ? 'rgba(0,0,0,0.6)' : '#666' }}>
+                        <p style={{ fontWeight: 600 }}>{new Date().toLocaleDateString('en-US', {month: '2-digit', day: '2-digit', year: 'numeric'})}</p>
+                      </div>
+                    )}
+                  </>
                 )}
+                
+                {/* Stickers Layer - TOP MOST (z-index 10) */}
+                <div className="stickers-on-photo" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, pointerEvents: 'none', zIndex: 10 }}>
+                  {selectedStickers.map((sticker) => {
+                    const isTextBubble = sticker.item.type === 'text'
+                    return (
+                      <span
+                        key={sticker.id}
+                        className={`sticker-on-photo ${isTextBubble ? 'text-bubble-on-photo' : 'emoji-on-photo'} ${draggingSticker === sticker.id ? 'dragging' : ''}`}
+                        style={{
+                          left: `${sticker.x}%`,
+                          top: `${sticker.y}%`,
+                          position: 'absolute',
+                          pointerEvents: 'auto'
+                        }}
+                        draggable
+                        onDragStart={(e) => handleStickerDragStart(e, sticker.id)}
+                        onDrag={(e) => {
+                          const container = document.getElementById(`photo-container-edit`)
+                          if (container) {
+                            handleStickerDrag(e, sticker.id, container.getBoundingClientRect())
+                          }
+                        }}
+                        onDragEnd={() => handleStickerDragEnd()}
+                        onDoubleClick={() => removeSticker(sticker.id)}
+                        title="Drag to move, double-click to remove"
+                      >
+                        {renderStickerContent(sticker.item, 48)}
+                      </span>
+                    )
+                  })}
+                </div>
               </div>
+              
+              {selectedStickers.length > 0 && (
+                <p className="sticker-hint">💡 Drag stickers to move, double-click to remove</p>
+              )}
+
 
               {/* Sticker Picker */}
               <div className="sticker-picker">
@@ -693,50 +965,115 @@ function BoothPage() {
           </div>
         )}
 
-        {/* STEP 5: Done - Download */}
-        {currentStep === 5 && (
+        {/* STEP 6: Done - Download */}
+        {currentStep === 6 && selectedStripType && selectedFilter && (
           <div className="step-content">
             <h2 className="step-title">Your Photo Strip</h2>
             <p className="step-subtitle">Looking amazing! Save your creation</p>
 
-            <div className="final-result" ref={photoStripRef}>
-              <div className="strip-header-final">
-                <h3>🌸 Meomiry</h3>
-              </div>
-              <div className={`final-photos final-photos-${selectedStripType.count}`}>
-                {capturedPhotos.map((photo, index) => (
-                  <div key={index} className="final-photo" id={`final-photo-${index}`}>
+            <div className="final-result" ref={photoStripRef} id="final-photo-strip">
+              <div 
+                className="photo-strip-card"
+                style={{
+                  background: selectedFrame?.frameImage ? '#000' : (selectedFrame?.bgGradient || '#ffffff'),
+                  borderRadius: selectedFrame?.frameImage ? '0' : '20px',
+                  padding: selectedFrame?.frameImage ? '0' : '20px',
+                  margin: '0 auto',
+                  width: selectedFrame?.frameImage ? '300px' : (selectedStripType?.count <= 2 ? '360px' : '100%'),
+                  maxWidth: '500px',
+                  height: 'auto',
+                  boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}
+              >
+                {selectedFrame?.frameImage ? (
+                  // IMAGE FRAME MODE: frame sets container size, photos fill slots
+                  <div style={{ position: 'relative', width: '100%' }}>
+                    {capturedPhotos.map((photo, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          position: 'absolute',
+                          top: `${(100 / capturedPhotos.length) * index}%`,
+                          left: 0,
+                          width: '100%',
+                          height: `${100 / capturedPhotos.length}%`,
+                          overflow: 'hidden'
+                        }}
+                      >
+                        <img
+                          src={photo}
+                          alt={`Photo ${index + 1}`}
+                          style={{ filter: selectedFilter.value, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }}
+                        />
+                      </div>
+                    ))}
                     <img
-                      src={photo}
-                      alt={`Photo ${index + 1}`}
-                      style={{ filter: selectedFilter.value }}
+                      src={frameImageUrl(selectedFrame.frameImage)}
+                      alt="Frame overlay"
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        height: 'auto',
+                        position: 'relative',
+                        mixBlendMode: 'screen',
+                        zIndex: 5,
+                        pointerEvents: 'none'
+                      }}
                     />
-                    {/* Stickers overlay with positions - chỉ hiển thị stickers của ảnh này */}
-                    <div className="final-stickers-layer">
-                      {selectedStickers
-                        .filter(sticker => sticker.photoIndex === index)
-                        .map((sticker) => {
-                          const isTextBubble = sticker.item.type === 'text'
-                          return (
-                            <div 
-                              key={sticker.id}
-                              className={`final-sticker ${isTextBubble ? 'final-text-bubble' : 'final-emoji'}`}
-                              style={{
-                                position: 'absolute',
-                                left: `${sticker.x}%`,
-                                top: `${sticker.y}%`
-                              }}
-                            >
-                              {renderStickerContent(sticker.item, 48)}
-                            </div>
-                          )
-                        })}
-                    </div>
                   </div>
-                ))}
-              </div>
-              <div className="strip-footer-final">
-                <p>{new Date().toLocaleDateString('vi-VN')}</p>
+                ) : (
+                  // GRADIENT FRAME MODE
+                  <>
+                    {!selectedFrame?.bgGradient?.includes('url(') && (
+                      <div className="strip-header-final" style={{ background: 'transparent', boxShadow: 'none', padding: '10px 0 20px' }}>
+                        <h3 style={{ color: selectedFrame ? 'rgba(0,0,0,0.75)' : '#FF6B9D' }}>
+                          {selectedFrame?.emoji} STARLACE {selectedFrame?.emoji}
+                        </h3>
+                      </div>
+                    )}
+                    <div className={`final-photos final-photos-${selectedStripType.count}`} style={{ marginBottom: '25px', gap: '20px' }}>
+                      {capturedPhotos.map((photo, index) => (
+                        <div key={index} className="final-photo" style={{ 
+                          border: `4px solid ${selectedFrame ? 'white' : 'transparent'}`, 
+                          borderRadius: '12px', 
+                          background: 'white',
+                          boxShadow: '0 4px 15px rgba(0, 0, 0, 0.15)'
+                        }}>
+                          <img src={photo} alt={`Photo ${index + 1}`} style={{ filter: selectedFilter.value, display: 'block', width: '100%', objectFit: 'cover' }} />
+                        </div>
+                      ))}
+                    </div>
+                    {!selectedFrame?.bgGradient?.includes('url(') && (
+                      <div className="strip-footer-final" style={{ background: 'transparent', boxShadow: 'none', padding: '20px 0 10px', color: selectedFrame ? 'rgba(0,0,0,0.6)' : '#666' }}>
+                        <p style={{ fontWeight: 600 }}>{new Date().toLocaleDateString('en-US', {month: '2-digit', day: '2-digit', year: 'numeric'})}</p>
+                      </div>
+                    )}
+                  </>
+                )}
+                
+
+                {/* Stickers overlay - TOP MOST (z-index 10) */}
+
+                <div className="stickers-on-photo" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, pointerEvents: 'none', zIndex: 10 }}>
+                  {selectedStickers.map((sticker) => {
+                    const isTextBubble = sticker.item.type === 'text'
+                    return (
+                      <div 
+                        key={sticker.id}
+                        className={`final-sticker ${isTextBubble ? 'final-text-bubble' : 'final-emoji'}`}
+                        style={{
+                          position: 'absolute',
+                          left: `${sticker.x}%`,
+                          top: `${sticker.y}%`
+                        }}
+                      >
+                        {renderStickerContent(sticker.item, 48)}
+                      </div>
+                    )
+                  })}
+                </div>
               </div>
             </div>
 

@@ -1,6 +1,6 @@
 .booth-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #FFE5EC 0%, #FFB3CC 100%);
   padding: 12px;
   animation: fadeIn 0.6s ease;
   display: flex;
@@ -317,12 +317,19 @@
 }
 
 .strip-icon {
-  display: flex;
-  flex-direction: column;
+  display: grid;
   gap: 6px;
-  align-items: center;
+  justify-content: center;
   margin-bottom: 12px;
   font-size: 1.5rem;
+}
+
+.strip-icon-2 {
+  grid-template-columns: 1fr;
+}
+
+.strip-icon-4, .strip-icon-6 {
+  grid-template-columns: repeat(2, max-content);
 }
 
 .photo-placeholder {
@@ -387,6 +394,117 @@
 .filter-card p {
   color: #666;
   font-size: 0.8rem;
+}
+
+/* Frames Grid */
+.frames-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.frame-card {
+  border-radius: 15px;
+  padding: 25px 15px;
+  text-align: center;
+  cursor: pointer;
+  border: 3px solid transparent;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.frame-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.frame-card.selected {
+  border-color: #FF6B9D;
+  box-shadow: 0 8px 30px rgba(255, 107, 157, 0.4);
+  transform: scale(1.05);
+}
+
+.frame-emoji {
+  font-size: 3rem;
+  margin-bottom: 12px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.frame-image-icon {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.frame-icon-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.frame-card h3 {
+  font-size: 1.2rem;
+  color: var(--dark-color);
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+.frame-card p {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+/* Frames Grid */
+.frames-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.frame-card {
+  border-radius: 15px;
+  padding: 20px 12px;
+  text-align: center;
+  cursor: pointer;
+  border: 3px solid transparent;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.frame-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.frame-card.selected {
+  border-width: 3px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  transform: scale(1.05);
+}
+
+.frame-icon {
+  font-size: 2.2rem;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.frame-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 4px;
+}
+
+.frame-card p {
+  color: #666;
+  font-size: 0.85rem;
 }
 
 /* Capture Area */
@@ -479,6 +597,22 @@
   font-weight: 900;
   text-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
   animation: countdownPulse 1s ease;
+}
+
+/* Sticker Editor Header */
+.step-header-with-filter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.step-options-selectors {
+  display: flex;
+  gap: 12px;
+  align-items: center;
 }
 
 /* Sticker Editor */
@@ -580,18 +714,32 @@
 
 .photos-grid-1 {
   grid-template-columns: 1fr;
-  max-width: 500px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.photos-grid-2 {
+  grid-template-columns: 1fr;
+  max-width: 400px;
   margin: 0 auto;
 }
 
 .photos-grid-3 {
-  grid-template-columns: repeat(3, 1fr);
-  align-items: start;
+  grid-template-columns: 1fr;
+  max-width: 400px;
+  margin: 0 auto;
 }
 
 .photos-grid-4 {
-  grid-template-columns: repeat(2, 1fr);
-  align-items: start;
+  grid-template-columns: 1fr;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.photos-grid-6 {
+  grid-template-columns: 1fr;
+  max-width: 400px;
+  margin: 0 auto;
 }
 
 .photo-item-with-stickers {
@@ -817,20 +965,25 @@
   align-items: start;
 }
 
-.final-photos-1 {
+.final-photos-2 {
   grid-template-columns: 1fr;
-  max-width: 600px;
+  align-items: start;
+  max-width: 400px;
   margin: 0 auto;
 }
 
-.final-photos-3 {
-  grid-template-columns: repeat(3, 1fr);
+.final-photos-4 {
+  grid-template-columns: 1fr;
   align-items: start;
+  max-width: 400px;
+  margin: 0 auto;
 }
 
-.final-photos-4 {
-  grid-template-columns: repeat(2, 1fr);
+.final-photos-6 {
+  grid-template-columns: 1fr;
   align-items: start;
+  max-width: 400px;
+  margin: 0 auto;
 }
 
 .final-photo {
@@ -1080,8 +1233,9 @@
     height: 250px;
   }
 
-  .final-photos-3,
-  .final-photos-4 {
+  .final-photos-2,
+  .final-photos-4,
+  .final-photos-6 {
     grid-template-columns: 1fr;
   }
 

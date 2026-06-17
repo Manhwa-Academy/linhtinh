@@ -26,6 +26,66 @@ if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true })
 }
 
+// Tạo thư mục frames nếu chưa có
+const framesDir = path.join(__dirname, 'uploads', 'frames')
+if (!fs.existsSync(framesDir)) {
+  fs.mkdirSync(framesDir, { recursive: true })
+}
+
+// Tạo file frames.json nếu chưa có
+const framesFilePath = path.join(__dirname, 'frames.json')
+if (!fs.existsSync(framesFilePath)) {
+  const defaultFrames = [
+    { 
+      id: 'spring', 
+      name: 'Spring', 
+      description: 'Cherry blossoms & nature', 
+      emoji: '🌸', 
+      color: '#FFE4E9', 
+      bgGradient: 'linear-gradient(135deg, #FFE4E9 0%, #FFF0F5 100%)' 
+    },
+    { 
+      id: 'summer', 
+      name: 'Summer', 
+      description: 'Bright & sunny', 
+      emoji: '☀️', 
+      color: '#FFF4CC', 
+      bgGradient: 'linear-gradient(135deg, #FFF4CC 0%, #FFFACD 100%)' 
+    },
+    { 
+      id: 'autumn', 
+      name: 'Autumn', 
+      description: 'Warm & cozy', 
+      emoji: '🍂', 
+      color: '#FFE5CC', 
+      bgGradient: 'linear-gradient(135deg, #FFE5CC 0%, #FFDAB9 100%)' 
+    },
+    { 
+      id: 'winter', 
+      name: 'Winter', 
+      description: 'Cool & serene', 
+      emoji: '❄️', 
+      color: '#E0F2FE', 
+      bgGradient: 'linear-gradient(135deg, #E0F2FE 0%, #F0F9FF 100%)' 
+    }
+  ]
+  fs.writeFileSync(framesFilePath, JSON.stringify(defaultFrames, null, 2))
+}
+
+// Helper functions for frames
+const readFrames = () => {
+  try {
+    const data = fs.readFileSync(framesFilePath, 'utf8')
+    return JSON.parse(data)
+  } catch (error) {
+    return []
+  }
+}
+
+const writeFrames = (frames) => {
+  fs.writeFileSync(framesFilePath, JSON.stringify(frames, null, 2))
+}
+
 // Multer configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -52,12 +112,175 @@ const upload = multer({
   }
 })
 
+// Multer for frame images
+const frameStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, framesDir)
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+    cb(null, 'frame-' + uniqueSuffix + path.extname(file.originalname))
+  }
+})
+
+const uploadFrame = multer({
+  storage: frameStorage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB for frames
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = /jpeg|jpg|png|webp|gif/
+    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase())
+    const mimetype = allowedTypes.test(file.mimetype)
+    
+    if (mimetype && extname) {
+      return cb(null, true)
+    }
+    cb(new Error('Chỉ chấp nhận file ảnh (jpeg, jpg, png, webp, gif) cho frame'))
+  }
+})
+
 // Routes
 
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Server đang chạy' })
 })
+
+// ============== FRAMES API ==============
+
+// Get all frames
+app.get('/api/frames', (req, res) => {
+  try {
+    const frames = readFrames()
+    res.json({ success: true, frames })
+  } catch (error) {
+    console.error('Error reading frames:', error)
+    res.status(500).json({ error: 'Lỗi khi đọc frames' })
+  }
+})
+
+// Get single frame
+app.get('/api/frames/:id', (req, res) => {
+  try {
+    const frames = readFrames()
+    const frame = frames.find(f => f.id === req.params.id)
+    
+    if (!frame) {
+      return res.status(404).json({ error: 'Không tìm thấy frame' })
+    }
+    
+    res.json({ success: true, frame })
+  } catch (error) {
+    console.error('Error reading frame:', error)
+    res.status(500).json({ error: 'Lỗi khi đọc frame' })
+  }
+})
+
+// Add new frame
+app.post('/api/frames', (req, res) => {
+  try {
+    const { name, description, emoji, color, bgGradient, frameImage, photoSlots } = req.body
+    
+    if (!name) {
+      return res.status(400).json({ error: 'Thiếu tên frame' })
+    }
+    
+    const frames = readFrames()
+    const newFrame = {
+      id: name.toLowerCase().replace(/\s+/g, '-') + '-' + Date.now(),
+      name,
+      description: description || '',
+      emoji: emoji || '', // Empty string instead of default
+      color: color || '#FFE4E9',
+      bgGradient: bgGradient || `linear-gradient(135deg, ${color} 0%, ${color} 100%)`,
+      frameImage: frameImage || null, // URL to frame overlay image
+      photoSlots: photoSlots || [] // Array of {x, y, width, height, rotation} for each photo position
+    }
+    
+    frames.push(newFrame)
+    writeFrames(frames)
+    
+    res.json({ success: true, message: 'Thêm frame thành công', frame: newFrame })
+  } catch (error) {
+    console.error('Error adding frame:', error)
+    res.status(500).json({ error: 'Lỗi khi thêm frame' })
+  }
+})
+
+// Upload frame image
+app.post('/api/upload-frame', uploadFrame.single('frameImage'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'Không có file được upload' })
+    }
+
+    const fileName = req.file.filename
+
+    res.json({
+      success: true,
+      message: 'Upload frame image thành công',
+      file: {
+        filename: fileName,
+        path: `/uploads/frames/${fileName}`,
+        size: req.file.size
+      }
+    })
+  } catch (error) {
+    console.error('Lỗi upload frame:', error)
+    res.status(500).json({ error: 'Lỗi khi upload frame image' })
+  }
+})
+
+// Update frame
+app.put('/api/frames/:id', (req, res) => {
+  try {
+    const { name, description, emoji, color, bgGradient, frameImage, photoSlots } = req.body
+    const frames = readFrames()
+    const frameIndex = frames.findIndex(f => f.id === req.params.id)
+    
+    if (frameIndex === -1) {
+      return res.status(404).json({ error: 'Không tìm thấy frame' })
+    }
+    
+    frames[frameIndex] = {
+      ...frames[frameIndex],
+      name: name || frames[frameIndex].name,
+      description: description !== undefined ? description : frames[frameIndex].description,
+      emoji: emoji !== undefined ? emoji : frames[frameIndex].emoji,
+      color: color || frames[frameIndex].color,
+      bgGradient: bgGradient || frames[frameIndex].bgGradient,
+      frameImage: frameImage !== undefined ? frameImage : frames[frameIndex].frameImage,
+      photoSlots: photoSlots !== undefined ? photoSlots : frames[frameIndex].photoSlots || []
+    }
+    
+    writeFrames(frames)
+    
+    res.json({ success: true, message: 'Cập nhật frame thành công', frame: frames[frameIndex] })
+  } catch (error) {
+    console.error('Error updating frame:', error)
+    res.status(500).json({ error: 'Lỗi khi cập nhật frame' })
+  }
+})
+
+// Delete frame
+app.delete('/api/frames/:id', (req, res) => {
+  try {
+    const frames = readFrames()
+    const filteredFrames = frames.filter(f => f.id !== req.params.id)
+    
+    if (frames.length === filteredFrames.length) {
+      return res.status(404).json({ error: 'Không tìm thấy frame' })
+    }
+    
+    writeFrames(filteredFrames)
+    
+    res.json({ success: true, message: 'Xóa frame thành công' })
+  } catch (error) {
+    console.error('Error deleting frame:', error)
+    res.status(500).json({ error: 'Lỗi khi xóa frame' })
+  }
+})
+
+// ============== END FRAMES API ==============
 
 // Upload ảnh
 app.post('/api/upload', upload.single('photo'), async (req, res) => {
