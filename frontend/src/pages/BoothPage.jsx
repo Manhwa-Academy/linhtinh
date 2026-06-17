@@ -447,14 +447,22 @@ function BoothPage() {
           const sW = slot ? (slot.width / 100 * W) : W;
           const sH = slot ? (slot.height / 100 * H) : slotH;
 
-          // Cover-fit the photo into the slot
-          const scaleX = sW / photoImg.naturalWidth
-          const scaleY = sH / photoImg.naturalHeight
-          const scale = Math.max(scaleX, scaleY)
-          const drawW = photoImg.naturalWidth * scale
-          const drawH = photoImg.naturalHeight * scale
-          const offsetX = sX + (sW - drawW) / 2
-          const offsetY = sY + (sH - drawH) / 2
+          // Get user's zoom/pan transform
+          const t = getTransform(i);
+
+          // Apply transform: scale and translate
+          const baseScaleX = sW / photoImg.naturalWidth
+          const baseScaleY = sH / photoImg.naturalHeight
+          const baseScale = Math.max(baseScaleX, baseScaleY)
+          
+          // Apply user's scale on top of base scale
+          const finalScale = baseScale * t.scale
+          const drawW = photoImg.naturalWidth * finalScale
+          const drawH = photoImg.naturalHeight * finalScale
+          
+          // Center the photo and apply user's x,y offset
+          const offsetX = sX + (sW - drawW) / 2 + t.x
+          const offsetY = sY + (sH - drawH) / 2 + t.y
 
           ctx.save()
           if (slot?.rotation) {
@@ -1198,6 +1206,7 @@ function BoothPage() {
                         const sH = slot ? slot.height : (100 / capturedPhotos.length);
                         const sX = slot ? slot.x : 0;
                         const sW = slot ? slot.width : 100;
+                        const t = getTransform(index);
                         return (
                         <div
                           key={index}
@@ -1217,13 +1226,14 @@ function BoothPage() {
                             style={{
                               filter: selectedFilter.value,
                               position: 'absolute',
-                              top: 0,
-                              left: 0,
-                              width: '100%',
-                              height: '100%',
+                              top: '50%',
+                              left: '50%',
+                              width: `${100 * t.scale}%`,
+                              height: `${100 * t.scale}%`,
                               objectFit: 'cover',
                               objectPosition: 'center',
-                              display: 'block'
+                              display: 'block',
+                              transform: `translate(calc(-50% + ${t.x}px), calc(-50% + ${t.y}px))`
                             }}
                           />
                         </div>
