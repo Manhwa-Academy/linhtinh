@@ -474,6 +474,12 @@ function BoothPage() {
           const offsetY = sY + (sH - drawH) / 2 + t.y
 
           ctx.save()
+          
+          // Apply filter if selected
+          if (selectedFilter?.value) {
+            ctx.filter = selectedFilter.value
+          }
+          
           if (slot?.rotation) {
              ctx.translate(sX + sW/2, sY + sH/2)
              ctx.rotate((slot.rotation * Math.PI) / 180)
