@@ -22,7 +22,7 @@ function HomePage() {
           <div className="strip-slot"></div>
           <div className="strip-slot"></div>
           <div className="strip-slot"></div>
-          <div className="strip-label">FRAMEVERSE × 4-pic</div>
+          <div className="strip-label">FRAMEVERSE</div>
         </div>
 
         <Link to="/booth" className="start-button">
