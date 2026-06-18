@@ -12,14 +12,14 @@
 
 /* Particles Container */
 .particles-container {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   pointer-events: none;
   z-index: 0;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .particle {
@@ -28,24 +28,52 @@
   opacity: 0;
   animation: fall linear infinite;
   pointer-events: none;
+  font-size: 2rem;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.25))
+          drop-shadow(0 0 12px rgba(255, 255, 255, 0.6));
+  transition: transform 0.3s ease;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Add sparkle/glow to specific particles */
+.particle:nth-child(3n) {
+  filter: drop-shadow(0 4px 8px rgba(255, 107, 157, 0.4))
+          drop-shadow(0 0 16px rgba(255, 182, 193, 0.8));
+}
+
+.particle:nth-child(3n+1) {
+  filter: drop-shadow(0 4px 8px rgba(237, 100, 166, 0.4))
+          drop-shadow(0 0 16px rgba(246, 135, 179, 0.7));
+}
+
+.particle:nth-child(3n+2) {
+  filter: drop-shadow(0 4px 8px rgba(255, 182, 193, 0.5))
+          drop-shadow(0 0 14px rgba(255, 240, 245, 0.9));
 }
 
 @keyframes fall {
   0% {
     top: -50px;
     opacity: 0;
-    transform: translateX(0) rotate(0deg);
+    transform: translateX(0) rotate(0deg) scale(0.8);
   }
   10% {
     opacity: 1;
+    transform: translateX(10px) rotate(45deg) scale(1);
+  }
+  50% {
+    transform: translateX(25px) rotate(180deg) scale(1.1);
   }
   90% {
-    opacity: 0.7;
+    opacity: 0.8;
+    transform: translateX(40px) rotate(315deg) scale(0.9);
   }
   100% {
     top: 100vh;
     opacity: 0;
-    transform: translateX(50px) rotate(360deg);
+    transform: translateX(50px) rotate(360deg) scale(0.8);
   }
 }
 
@@ -73,15 +101,16 @@
   letter-spacing: 0.5px;
 }
 
-/* Title with script font */
+/* Title with clean font */
 .home-title {
-  font-size: 5rem;
+  font-size: 4.5rem;
   color: #2D3748;
   margin-bottom: 15px;
-  font-weight: 700;
-  font-family: 'Brush Script MT', 'Lucida Handwriting', cursive;
-  letter-spacing: -2px;
+  font-weight: 800;
+  font-family: 'Inter', 'Segoe UI', 'Arial', sans-serif;
+  letter-spacing: 2px;
   text-shadow: 3px 3px 0px rgba(255, 107, 157, 0.15);
+  text-transform: uppercase;
 }
 
 .home-description {

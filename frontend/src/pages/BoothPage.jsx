@@ -194,17 +194,16 @@ function BoothPage() {
   useEffect(() => {
     // Generate random particles for booth page
     const generateParticles = () => {
-      const icons = ['✨', '⭐', '🌸', '✨', '⭐', '🌸', '🏆']
+      const icons = ['✨', '⭐', '🌸', '🏆']
       const newParticles = []
       
-      for (let i = 0; i < 12; i++) {
+      for (let i = 0; i < 6; i++) {
         newParticles.push({
           id: i,
           icon: icons[Math.floor(Math.random() * icons.length)],
           left: Math.random() * 100,
-          animationDuration: 6 + Math.random() * 4,
-          animationDelay: Math.random() * 5,
-          size: 0.7 + Math.random() * 0.6
+          animationDuration: 8 + Math.random() * 4,
+          animationDelay: Math.random() * 8
         })
       }
       
@@ -538,8 +537,7 @@ function BoothPage() {
             style={{
               left: `${particle.left}%`,
               animationDuration: `${particle.animationDuration}s`,
-              animationDelay: `${particle.animationDelay}s`,
-              fontSize: `${particle.size}rem`
+              animationDelay: `${particle.animationDelay}s`
             }}
           >
             {particle.icon}
@@ -557,7 +555,7 @@ function BoothPage() {
             <ArrowLeft size={18} /> Back
           </button>
         )}
-        <h2 className="booth-logo">🌸 FRAMEVERSE</h2>
+        <h2 className="booth-logo">✨ FRAMEVERSE</h2>
         
         {/* Progress Steps - Updated to 4 steps */}
         <div className="progress-steps">

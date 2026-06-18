@@ -7,19 +7,18 @@ function HomePage() {
   const [particles, setParticles] = useState([])
 
   useEffect(() => {
-    // Generate random particles
+    // Generate random particles with same size
     const generateParticles = () => {
-      const icons = ['✨', '⭐', '🌸', '✨', '⭐', '🌸', '🏆']
+      const icons = ['✨', '⭐', '🌸', '']
       const newParticles = []
       
-      for (let i = 0; i < 15; i++) {
+      for (let i = 0; i < 6; i++) {
         newParticles.push({
           id: i,
           icon: icons[Math.floor(Math.random() * icons.length)],
           left: Math.random() * 100,
-          animationDuration: 5 + Math.random() * 5,
-          animationDelay: Math.random() * 5,
-          size: 0.8 + Math.random() * 0.7
+          animationDuration: 8 + Math.random() * 4,
+          animationDelay: Math.random() * 8
         })
       }
       
@@ -40,8 +39,7 @@ function HomePage() {
             style={{
               left: `${particle.left}%`,
               animationDuration: `${particle.animationDuration}s`,
-              animationDelay: `${particle.animationDelay}s`,
-              fontSize: `${particle.size}rem`
+              animationDelay: `${particle.animationDelay}s`
             }}
           >
             {particle.icon}
