@@ -7,6 +7,33 @@
   flex-direction: column;
   overflow-x: hidden;
   overflow-y: auto;
+  position: relative;
+}
+
+/* Particles for BoothPage */
+.booth-page::before {
+  content: '✨ ⭐ 🌸 ✨ ⭐ 🌸 🏆 ✨ ⭐ 🌸';
+  position: absolute;
+  top: -100px;
+  left: 0;
+  right: 0;
+  height: 200%;
+  font-size: 1.5rem;
+  letter-spacing: 80px;
+  word-spacing: 40px;
+  opacity: 0.6;
+  animation: fallDown 15s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes fallDown {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  100% {
+    transform: translateY(100vh) rotate(360deg);
+  }
 }
 
 /* Header - Combined with Progress */
@@ -139,12 +166,27 @@
   background: rgba(255, 255, 255, 0.98);
   border-radius: 20px;
   padding: 20px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-  animation: slideIn 0.5s ease;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15),
+              0 0 30px rgba(237, 100, 166, 0.1);
+  animation: slideIn 0.5s ease, glowPulse 3s ease-in-out infinite;
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - 100px);
   height: auto;
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15),
+                0 0 20px rgba(237, 100, 166, 0.1);
+  }
+  50% {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15),
+                0 0 40px rgba(237, 100, 166, 0.3),
+                0 0 60px rgba(246, 135, 179, 0.2);
+  }
 }
 
 /* Step header with filter selector */

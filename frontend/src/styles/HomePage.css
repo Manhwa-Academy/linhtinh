@@ -10,6 +10,45 @@
   animation: fadeIn 0.8s ease;
 }
 
+/* Particles Container */
+.particles-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  top: -50px;
+  opacity: 0;
+  animation: fall linear infinite;
+  pointer-events: none;
+}
+
+@keyframes fall {
+  0% {
+    top: -50px;
+    opacity: 0;
+    transform: translateX(0) rotate(0deg);
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 0.7;
+  }
+  100% {
+    top: 100vh;
+    opacity: 0;
+    transform: translateX(50px) rotate(360deg);
+  }
+}
+
 /* Home content */
 .home-content {
   text-align: center;
@@ -53,7 +92,7 @@
   font-weight: 400;
 }
 
-/* Photo Strip Preview */
+/* Photo Strip Preview with Glow Effect */
 .strip-preview {
   background: linear-gradient(135deg, #E0E7FF 0%, #F3E8FF 100%);
   border-radius: 30px;
@@ -63,6 +102,25 @@
   box-shadow: 0 10px 40px rgba(102, 126, 234, 0.15);
   border: 3px solid white;
   position: relative;
+  transition: all 0.3s ease;
+}
+
+.strip-preview.glowing {
+  animation: glow 2s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 10px 40px rgba(102, 126, 234, 0.15),
+                0 0 20px rgba(237, 100, 166, 0.3),
+                0 0 40px rgba(237, 100, 166, 0.2);
+  }
+  50% {
+    box-shadow: 0 10px 40px rgba(102, 126, 234, 0.25),
+                0 0 30px rgba(237, 100, 166, 0.5),
+                0 0 60px rgba(237, 100, 166, 0.3),
+                0 0 80px rgba(246, 135, 179, 0.2);
+  }
 }
 
 .strip-slot {

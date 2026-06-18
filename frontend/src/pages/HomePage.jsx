@@ -1,10 +1,54 @@
 import { Link } from 'react-router-dom'
-import { Camera, Film, Palette, Download, Settings, Sparkles, Image, Wand2 } from 'lucide-react'
+import { Camera, Film, Settings, Wand2 } from 'lucide-react'
+import { useState, useEffect } from 'react'
 import '../styles/HomePage.css'
 
 function HomePage() {
+  const [particles, setParticles] = useState([])
+
+  useEffect(() => {
+    // Generate random particles
+    const generateParticles = () => {
+      const icons = ['✨', '⭐', '🌸', '✨', '⭐', '🌸', '🏆']
+      const newParticles = []
+      
+      for (let i = 0; i < 15; i++) {
+        newParticles.push({
+          id: i,
+          icon: icons[Math.floor(Math.random() * icons.length)],
+          left: Math.random() * 100,
+          animationDuration: 5 + Math.random() * 5,
+          animationDelay: Math.random() * 5,
+          size: 0.8 + Math.random() * 0.7
+        })
+      }
+      
+      setParticles(newParticles)
+    }
+
+    generateParticles()
+  }, [])
+
   return (
     <div className="home-page">
+      {/* Falling particles */}
+      <div className="particles-container">
+        {particles.map(particle => (
+          <div
+            key={particle.id}
+            className="particle"
+            style={{
+              left: `${particle.left}%`,
+              animationDuration: `${particle.animationDuration}s`,
+              animationDelay: `${particle.animationDelay}s`,
+              fontSize: `${particle.size}rem`
+            }}
+          >
+            {particle.icon}
+          </div>
+        ))}
+      </div>
+
       <div className="home-content">
         <div className="logo-badge">Photo Booth ✨</div>
         
@@ -16,8 +60,8 @@ function HomePage() {
           Capture Today, Remember Forever
         </p>
 
-        {/* Photo Strip Preview */}
-        <div className="strip-preview">
+        {/* Photo Strip Preview with glow */}
+        <div className="strip-preview glowing">
           <div className="strip-slot"></div>
           <div className="strip-slot"></div>
           <div className="strip-slot"></div>
@@ -30,28 +74,7 @@ function HomePage() {
           Start
         </Link>
 
-        {/* Features */}
-        <div className="features-grid">
-          <div className="feature-item">
-            <div className="feature-icon">
-              <Camera size={28} />
-            </div>
-            <div className="feature-label">Auto Capture</div>
-          </div>
-          <div className="feature-item">
-            <div className="feature-icon">
-              <Film size={28} />
-            </div>
-            <div className="feature-label">4-Pic Frames</div>
-          </div>
-          <div className="feature-item">
-            <div className="feature-icon">
-              <Wand2 size={28} />
-            </div>
-            <div className="feature-label">QR Export</div>
-          </div>
-        </div>
-
+        <br />
         <Link to="/admin" className="admin-link">
           <Settings size={16} /> Gallery
         </Link>
@@ -59,7 +82,7 @@ function HomePage() {
       </div>
 
       <footer className="home-footer">
-        Made with ♡ — Meomiry Station
+        Made with ♡ — FRAMEVERSE
       </footer>
     </div>
   )
