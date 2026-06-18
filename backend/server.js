@@ -259,6 +259,22 @@ app.get('/api/seed-frames', async (req, res) => {
         emoji: '❄️', 
         color: '#E0F2FE', 
         bgGradient: 'linear-gradient(135deg, #E0F2FE 0%, #F0F9FF 100%)' 
+      },
+      {
+        id: 'polaroid',
+        name: 'Polaroid',
+        description: 'Classic instant photo',
+        emoji: '📸',
+        color: '#F8F9FA',
+        bgGradient: 'linear-gradient(135deg, #F8F9FA 0%, #E9ECEF 100%)'
+      },
+      {
+        id: 'filmframe',
+        name: 'Film Frame',
+        description: 'Vintage film look',
+        emoji: '🎞️',
+        color: '#2C2C2C',
+        bgGradient: 'linear-gradient(135deg, #2C2C2C 0%, #1A1A1A 100%)'
       }
     ]
     
