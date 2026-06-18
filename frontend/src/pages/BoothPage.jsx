@@ -1,6 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import Webcam from 'react-webcam'
 import html2canvas from 'html2canvas'
 import { 
   Camera, Upload, Sparkles, ArrowLeft, ArrowRight, 
@@ -12,6 +11,8 @@ import {
   Umbrella, Trophy, Key, Glasses
 } from 'lucide-react'
 import { API_URL, frameImageUrl } from '../config/api'
+import SetupStep from '../components/SetupStep'
+import CaptureStep from '../components/CaptureStep'
 import '../styles/BoothPage.css'
 
 const stripTypes = [
@@ -162,7 +163,6 @@ const makeBlackTransparent = (imgSrc) => {
 function BoothPage() {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
-  const webcamRef = useRef(null)
   const photoStripRef = useRef(null)
   const canvasRef = useRef(null)
   
@@ -176,13 +176,10 @@ function BoothPage() {
   const [capturedPhotos, setCapturedPhotos] = useState([])
   const [selectedStickers, setSelectedStickers] = useState([])
   const [stickerCategory, setStickerCategory] = useState('shapes')
-  const [countdown, setCountdown] = useState(null)
-  const [showCamera, setShowCamera] = useState(false)
   const [showFilterPicker, setShowFilterPicker] = useState(false)
   const [showFramePicker, setShowFramePicker] = useState(false)
   const [draggingSticker, setDraggingSticker] = useState(null)
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0)
-  const fileInputRef = useRef(null)
   
   // Load frames from API
   const [frames, setFrames] = useState([])
@@ -267,8 +264,8 @@ function BoothPage() {
 
   // Navigation
   const goToNextStep = () => {
-    if (currentStep < 6) {
-      if (currentStep === 4 && capturedPhotos.length === 0) {
+    if (currentStep < 4) {
+      if (currentStep === 2 && capturedPhotos.length === 0) {
         alert('Vui lòng chụp hoặc tải ảnh lên!')
         return
       }
@@ -293,8 +290,6 @@ function BoothPage() {
     setSelectedFilter(null)
     setCapturedPhotos([])
     setSelectedStickers([])
-    setShowCamera(false)
-    setCountdown(null)
   }
 
   // Step 1: Select strip type
@@ -310,72 +305,6 @@ function BoothPage() {
   // Step 3: Select filter
   const selectFilter = (filter) => {
     setSelectedFilter(filter)
-  }
-
-  // Step 4: Capture photos
-  const startCamera = () => {
-    setShowCamera(true)
-    if (capturedPhotos.length < selectedStripType.count) {
-      startCountdown()
-    }
-  }
-
-  const capture = useCallback(() => {
-    if (webcamRef.current && capturedPhotos.length < selectedStripType.count) {
-      const imageSrc = webcamRef.current.getScreenshot()
-      const newPhotos = [...capturedPhotos, imageSrc]
-      setCapturedPhotos(newPhotos)
-      
-      if (newPhotos.length < selectedStripType.count) {
-        startCountdown()
-      } else {
-        setShowCamera(false)
-      }
-    }
-  }, [capturedPhotos, selectedStripType])
-
-  const startCountdown = () => {
-    let count = 3
-    setCountdown(count)
-    
-    const interval = setInterval(() => {
-      count--
-      if (count > 0) {
-        setCountdown(count)
-      } else {
-        setCountdown(null)
-        clearInterval(interval)
-        capture()
-      }
-    }, 1000)
-  }
-
-  const handleFileUpload = (e) => {
-    const files = Array.from(e.target.files)
-    const maxPhotos = selectedStripType.count - capturedPhotos.length
-    
-    if (maxPhotos <= 0) {
-      alert(`Bạn đã có đủ ${selectedStripType.count} ảnh!`)
-      return
-    }
-    
-    const filesToProcess = files.slice(0, maxPhotos)
-    
-    filesToProcess.forEach(file => {
-      const reader = new FileReader()
-      reader.onload = (event) => {
-        setCapturedPhotos(prev => {
-          if (prev.length < selectedStripType.count) {
-            return [...prev, event.target.result]
-          }
-          return prev
-        })
-      }
-      reader.readAsDataURL(file)
-    })
-    
-    // Reset input để có thể upload lại
-    e.target.value = ''
   }
 
   // Step 5: Add stickers
@@ -540,9 +469,9 @@ function BoothPage() {
         )}
         <h2 className="booth-logo">🌸 STARLACE</h2>
         
-        {/* Progress Steps */}
+        {/* Progress Steps - Updated to 4 steps */}
         <div className="progress-steps">
-          {['Strip', 'Frame', 'Filter', 'Capture', 'Decorate', 'Done!'].map((step, index) => (
+          {['Setup', 'Capture', 'Decorate', 'Done!'].map((step, index) => (
             <div 
               key={index} 
               className={`step ${currentStep === index + 1 ? 'active' : ''} ${currentStep > index + 1 ? 'completed' : ''}`}
@@ -561,228 +490,36 @@ function BoothPage() {
       </header>
 
       <div className="booth-container">
-        {/* STEP 1: Choose Strip Type */}
+        {/* STEP 1: Combined Setup (Strip Type + Frame + Filter) with Live Preview */}
         {currentStep === 1 && (
-          <div className="step-content">
-            <h2 className="step-title">Choose Your Strip</h2>
-            <p className="step-subtitle">How many photos do you want?</p>
-            
-            <div className="strip-types-grid">
-              {stripTypes.map(type => {
-                const IconComponent = type.icon
-                return (
-                  <div
-                    key={type.id}
-                    className={`strip-type-card ${selectedStripType?.id === type.id ? 'selected' : ''}`}
-                    onClick={() => selectStripType(type)}
-                  >
-                    <div className={`strip-icon strip-icon-${type.count}`}>
-                      {Array.from({ length: type.count }).map((_, i) => (
-                        <span key={i} className="photo-placeholder">
-                          <IconComponent size={24} strokeWidth={2} />
-                        </span>
-                      ))}
-                    </div>
-                    <h3>{type.name}</h3>
-                    <p>{type.description}</p>
-                  </div>
-                )
-              })}
-            </div>
-
-            <button 
-              className="next-button" 
-              onClick={goToNextStep}
-              disabled={!selectedStripType}
-            >
-              Next <ArrowRight size={18} />
-            </button>
-          </div>
+          <SetupStep
+            stripTypes={stripTypes}
+            frames={frames}
+            filters={filters}
+            selectedStripType={selectedStripType}
+            selectedFrame={selectedFrame}
+            selectedFilter={selectedFilter}
+            onSelectStripType={selectStripType}
+            onSelectFrame={selectFrame}
+            onSelectFilter={selectFilter}
+            onContinue={goToNextStep}
+          />
         )}
 
-        {/* STEP 2: Choose Frame */}
-        {currentStep === 2 && (
-          <div className="step-content">
-            <h2 className="step-title">Choose Your Frame</h2>
-            <p className="step-subtitle">Select theme for your photo strip</p>
-            
-            <div className="frames-grid">
-              {frames.map(frame => (
-                <div
-                  key={frame.id}
-                  className={`frame-card ${selectedFrame?.id === frame.id ? 'selected' : ''}`}
-                  onClick={() => selectFrame(frame)}
-                  style={{ background: frame.bgGradient }}
-                >
-                  {frame.frameImage ? (
-                    <div className="frame-image-icon">
-                      <img 
-                        src={frameImageUrl(frame.frameImage)} 
-                        alt={frame.name}
-                        className="frame-icon-img"
-                      />
-                    </div>
-                  ) : (
-                    <div className="frame-emoji">{frame.emoji}</div>
-                  )}
-                  <h3>{frame.name}</h3>
-                  {frame.description && <p>{frame.description}</p>}
-                </div>
-              ))}
-            </div>
-
-            <div className="step-buttons">
-              <button className="back-button-step" onClick={goToPrevStep}>
-                <ArrowLeft size={18} /> Back
-              </button>
-              <button 
-                className="next-button" 
-                onClick={goToNextStep}
-                disabled={!selectedFrame}
-              >
-                Next <ArrowRight size={18} />
-              </button>
-            </div>
-          </div>
+        {/* STEP 2: Capture Photos (previously Step 4) */}
+        {currentStep === 2 && selectedStripType && selectedFilter && (
+          <CaptureStep
+            stripType={selectedStripType}
+            filter={selectedFilter}
+            capturedPhotos={capturedPhotos}
+            onPhotosChange={setCapturedPhotos}
+            onContinue={goToNextStep}
+            onBack={goToPrevStep}
+          />
         )}
 
-        {/* STEP 3: Pick Filter */}
-        {currentStep === 3 && (
-          <div className="step-content">
-            <h2 className="step-title">Pick a Filter</h2>
-            <p className="step-subtitle">Set the vibe for your photos</p>
-            
-            <div className="filters-grid-new">
-              {filters.map(filter => {
-                const IconComponent = filter.icon
-                return (
-                  <div
-                    key={filter.id}
-                    className={`filter-card ${selectedFilter?.id === filter.id ? 'selected' : ''}`}
-                    onClick={() => selectFilter(filter)}
-                    style={{ backgroundColor: filter.color }}
-                  >
-                    <div className="filter-icon">
-                      <IconComponent size={36} strokeWidth={2} />
-                    </div>
-                    <h3>{filter.name}</h3>
-                    <p>{filter.description}</p>
-                  </div>
-                )
-              })}
-            </div>
-
-            <div className="step-buttons">
-              <button className="back-button-step" onClick={goToPrevStep}>
-                <ArrowLeft size={18} /> Back
-              </button>
-              <button 
-                className="next-button" 
-                onClick={goToNextStep}
-                disabled={!selectedFilter}
-              >
-                Next <ArrowRight size={18} />
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* STEP 4: Capture Photos */}
-        {currentStep === 4 && selectedStripType && selectedFilter && (
-          <div className="step-content">
-            <h2 className="step-title">Capture Your Moments</h2>
-            <p className="step-subtitle">
-              {capturedPhotos.length > 0 
-                ? `${capturedPhotos.length}/${selectedStripType.count} photos captured`
-                : `Need ${selectedStripType.count} photo${selectedStripType.count > 1 ? 's' : ''}`
-              }
-            </p>
-
-            {/* Hidden file input - dùng chung cho tất cả */}
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              multiple
-              style={{ display: 'none' }}
-              onChange={handleFileUpload}
-            />
-
-            <div className="capture-area">
-              {countdown && (
-                <div className="countdown-overlay">
-                  <div className="countdown-number">{countdown}</div>
-                </div>
-              )}
-
-              {showCamera && capturedPhotos.length < selectedStripType.count ? (
-                <div className="webcam-wrapper" style={{ filter: selectedFilter.value }}>
-                  <Webcam
-                    ref={webcamRef}
-                    audio={false}
-                    screenshotFormat="image/png"
-                    videoConstraints={{
-                      width: 640,
-                      height: 480,
-                      facingMode: "user"
-                    }}
-                    className="webcam"
-                  />
-                </div>
-              ) : capturedPhotos.length === 0 ? (
-                <div className="capture-placeholder">
-                  <div className="camera-icon">
-                    <Camera size={64} strokeWidth={1.5} />
-                  </div>
-                  <p>Start camera or upload photos</p>
-                  <div className="capture-buttons">
-                    <button className="control-btn" onClick={startCamera}>
-                      <Camera size={20} /> Start Camera
-                    </button>
-                    <button className="control-btn" onClick={() => fileInputRef.current?.click()}>
-                      <Upload size={20} /> Upload ({selectedStripType.count} photos)
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="captured-preview">
-                  {capturedPhotos.map((photo, index) => (
-                    <img
-                      key={index}
-                      src={photo}
-                      alt={`Captured ${index + 1}`}
-                      style={{ filter: selectedFilter.value }}
-                      className="preview-photo"
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="step-buttons">
-              <button className="back-button-step" onClick={goToPrevStep}>
-                <ArrowLeft size={18} /> Back
-              </button>
-              
-              {/* Nút Add More khi chưa đủ ảnh */}
-              {capturedPhotos.length > 0 && capturedPhotos.length < selectedStripType.count && (
-                <button className="control-btn add-more-btn" onClick={() => fileInputRef.current?.click()}>
-                  <Upload size={20} /> Add More ({selectedStripType.count - capturedPhotos.length} left)
-                </button>
-              )}
-              
-              {/* Nút Next khi đã đủ ảnh */}
-              {capturedPhotos.length === selectedStripType.count && (
-                <button className="next-button" onClick={goToNextStep}>
-                  Add Stickers <ArrowRight size={18} />
-                </button>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* STEP 5: Add Stickers */}
-        {currentStep === 5 && selectedStripType && selectedFrame && selectedFilter && capturedPhotos.length > 0 && (
+        {/* STEP 3: Add Stickers (previously Step 5) */}
+        {currentStep === 3 && selectedStripType && selectedFrame && selectedFilter && capturedPhotos.length > 0 && (
           <div className="step-content">
             <div className="step-header-with-filter">
               <div>
@@ -1185,8 +922,8 @@ function BoothPage() {
           </div>
         )}
 
-        {/* STEP 6: Done - Download */}
-        {currentStep === 6 && selectedStripType && selectedFilter && (
+        {/* STEP 4: Done - Download (previously Step 6) */}
+        {currentStep === 4 && selectedStripType && selectedFilter && (
           <div className="step-content">
             <h2 className="step-title">Your Photo Strip</h2>
             <p className="step-subtitle">Looking amazing! Save your creation</p>

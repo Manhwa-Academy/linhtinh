@@ -4,7 +4,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #FFE5EC 0%, #FFB3CC 100%);
+  background: linear-gradient(135deg, #FFE5F1 0%, #FFF5F8 50%, #E8F4F8 100%);
   position: relative;
   overflow: hidden;
   animation: fadeIn 0.8s ease;
@@ -14,90 +14,109 @@
 .home-content {
   text-align: center;
   z-index: 1;
-  padding: 40px 20px;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 30px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  max-width: 600px;
+  padding: 60px 40px;
+  max-width: 700px;
   margin: 20px;
   animation: bounceIn 1s ease;
 }
 
-.home-title {
-  font-size: 3.5rem;
-  color: var(--primary-color);
-  margin-bottom: 20px;
-  font-weight: 800;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+/* Logo badge */
+.logo-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #FF6B9D20, #FF8FB320);
+  color: #FF6B9D;
+  padding: 8px 20px;
+  border-radius: 25px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 25px;
+  border: 1.5px solid #FF6B9D40;
+  letter-spacing: 0.5px;
 }
 
-.home-title .emoji {
-  display: inline-block;
-  animation: pulse 2s ease-in-out infinite;
+/* Title with script font */
+.home-title {
+  font-size: 5rem;
+  color: #2D3748;
+  margin-bottom: 15px;
+  font-weight: 700;
+  font-family: 'Brush Script MT', 'Lucida Handwriting', cursive;
+  letter-spacing: -2px;
+  text-shadow: 3px 3px 0px rgba(255, 107, 157, 0.15);
 }
 
 .home-description {
-  font-size: 1.3rem;
-  color: var(--dark-color);
-  margin-bottom: 40px;
+  font-size: 1.15rem;
+  color: #718096;
+  margin-bottom: 45px;
   line-height: 1.6;
+  font-weight: 400;
+}
+
+/* Photo Strip Preview */
+.strip-preview {
+  background: linear-gradient(135deg, #E0E7FF 0%, #F3E8FF 100%);
+  border-radius: 30px;
+  padding: 20px;
+  margin: 35px auto 40px;
+  max-width: 280px;
+  box-shadow: 0 10px 40px rgba(102, 126, 234, 0.15);
+  border: 3px solid white;
+  position: relative;
+}
+
+.strip-slot {
+  background: rgba(255, 255, 255, 0.7);
+  border: 2px dashed #CBD5E0;
+  border-radius: 15px;
+  height: 80px;
+  margin-bottom: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.strip-slot:last-of-type {
+  margin-bottom: 0;
+}
+
+.strip-label {
+  text-align: center;
+  color: #667eea;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-top: 15px;
+  letter-spacing: 0.5px;
 }
 
 /* Start button */
 .start-button {
   display: inline-flex;
   align-items: center;
-  gap: 15px;
-  background: linear-gradient(135deg, var(--primary-color), #FF8E53);
+  justify-content: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #ED64A6, #F687B3);
   color: white;
-  padding: 20px 50px;
+  padding: 18px 55px;
   border-radius: 50px;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-weight: 700;
-  box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
+  box-shadow: 0 10px 30px rgba(237, 100, 166, 0.35);
   transition: all 0.3s ease;
   text-decoration: none;
+  border: none;
 }
 
 .start-button:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 40px rgba(255, 107, 107, 0.6);
+  transform: translateY(-4px);
+  box-shadow: 0 15px 40px rgba(237, 100, 166, 0.45);
+  background: linear-gradient(135deg, #F687B3, #FBB6CE);
 }
 
-.start-button .button-icon {
-  font-size: 2rem;
-  animation: pulse 1.5s ease-in-out infinite;
-}
-
-/* Admin Link */
-.admin-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 20px;
-  padding: 10px 20px;
-  background: rgba(102, 126, 234, 0.1);
-  color: #667eea;
-  border-radius: 12px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  border: 2px solid rgba(102, 126, 234, 0.2);
-}
-
-.admin-link:hover {
-  background: rgba(102, 126, 234, 0.2);
-  border-color: #667eea;
-  transform: translateY(-2px);
-}
-
-/* Features */
-.features {
+/* Features Grid */
+.features-grid {
   display: flex;
   justify-content: center;
-  gap: 30px;
-  margin-top: 50px;
+  gap: 25px;
+  margin-top: 45px;
   flex-wrap: wrap;
 }
 
@@ -106,55 +125,100 @@
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.5);
-  border-radius: 20px;
   transition: all 0.3s ease;
 }
 
-.feature-item:hover {
-  background: rgba(255, 255, 255, 0.8);
-  transform: translateY(-5px);
-}
-
 .feature-icon {
-  font-size: 2.5rem;
+  width: 65px;
+  height: 65px;
+  border-radius: 20px;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  color: #667eea;
+  transition: all 0.3s ease;
 }
 
-.feature-item span:last-child {
-  color: var(--dark-color);
+.feature-item:hover .feature-icon {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+}
+
+.feature-label {
+  color: #4A5568;
   font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* Admin Link */
+.admin-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 30px;
+  padding: 10px 20px;
+  background: transparent;
+  color: #667eea;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.admin-link:hover {
+  background: rgba(102, 126, 234, 0.1);
+  border-color: #667eea;
+  transform: translateY(-2px);
 }
 
 /* Footer */
 .home-footer {
   position: absolute;
   bottom: 20px;
-  color: white;
-  font-size: 1.1rem;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  color: #A0AEC0;
+  font-size: 0.95rem;
+  font-weight: 500;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
+  .home-content {
+    padding: 40px 20px;
+  }
+
   .home-title {
-    font-size: 2.5rem;
+    font-size: 3.5rem;
   }
 
   .home-description {
-    font-size: 1.1rem;
+    font-size: 1rem;
   }
 
   .start-button {
-    padding: 15px 35px;
-    font-size: 1.2rem;
+    padding: 15px 40px;
+    font-size: 1.15rem;
   }
 
-  .features {
-    gap: 15px;
+  .strip-preview {
+    max-width: 220px;
   }
 
-  .feature-item {
-    padding: 15px;
+  .strip-slot {
+    height: 60px;
+  }
+
+  .features-grid {
+    gap: 20px;
+  }
+
+  .feature-icon {
+    width: 55px;
+    height: 55px;
   }
 }
