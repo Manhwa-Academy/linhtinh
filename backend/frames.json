@@ -48,31 +48,31 @@
     "bgGradient": "linear-gradient(135deg, #2C2C2C 0%, #1A1A1A 100%)"
   },
   {
-    "id": "a-1781764360580",
-    "name": "a",
+    "id": "pgc-2025-1781793537243",
+    "name": "PGC 2025",
     "description": "",
     "emoji": "",
     "color": "#FFE4E9",
     "bgGradient": "linear-gradient(135deg, #FFE4E9 0%, #ffffff 100%)",
-    "frameImage": "http://localhost:3001/uploads/frames/frame-1781764360557-739622303.png",
+    "frameImage": "http://localhost:3001/uploads/frames/frame-1781793537200-641412976.jpg",
     "photoSlots": [
       {
         "x": 0,
         "y": 0,
         "width": 100,
-        "height": 22,
+        "height": 23,
         "rotation": 0
       },
       {
         "x": 0,
-        "y": 24,
+        "y": 23,
         "width": 100,
-        "height": 22,
+        "height": 23,
         "rotation": 0
       },
       {
         "x": 0,
-        "y": 47,
+        "y": 46,
         "width": 100,
         "height": 22,
         "rotation": 0
@@ -81,7 +81,7 @@
         "x": 0,
         "y": 69,
         "width": 100,
-        "height": 22,
+        "height": 24,
         "rotation": 0
       }
     ]

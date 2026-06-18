@@ -141,6 +141,8 @@ function AdminPage() {
   const [frames, setFrames] = useState([])
   const [editingFrame, setEditingFrame] = useState(null)
   const [isAddingNew, setIsAddingNew] = useState(false)
+  const [editMode, setEditMode] = useState('add') // 'add' or 'edit'
+  const [editingFrameId, setEditingFrameId] = useState(null) // Store frame ID when editing
   const [newFrame, setNewFrame] = useState({
     name: '',
     description: '',
@@ -155,6 +157,8 @@ function AdminPage() {
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' })
   const [isProcessing, setIsProcessing] = useState(false)
   const [deleteConfirmId, setDeleteConfirmId] = useState(null)
+  const [editingSlotsFrameId, setEditingSlotsFrameId] = useState(null)
+  const [showSlotsEditor, setShowSlotsEditor] = useState(false)
 
   const showToast = (message, type = 'success') => {
     setToast({ show: true, message, type })
@@ -203,8 +207,8 @@ function AdminPage() {
     setPassword('')
   }
 
-  // Add new frame
-  const handleAddFrame = async () => {
+  // Add new frame or update existing frame
+  const handleSaveFrame = async () => {
     try {
       // Validate required fields - only name is required
       if (!newFrame.name) {
@@ -214,7 +218,7 @@ function AdminPage() {
 
       setIsProcessing(true)
 
-      // Upload frame image trực tiếp qua backend nếu có file
+      // Upload frame image if new file
       let frameImageUrl = null
       if (newFrame.frameImage && newFrame.frameImage instanceof File) {
         try {
@@ -225,42 +229,73 @@ function AdminPage() {
           showToast('Lỗi khi upload ảnh frame: ' + error.message, 'error')
           return
         }
+      } else if (newFrame.frameImagePreview && !newFrame.frameImage) {
+        // Keep existing image URL when editing
+        frameImageUrl = newFrame.frameImagePreview
       }
 
       // Auto-generate gradient if not provided
       const frameData = {
         name: newFrame.name,
         description: newFrame.description || '',
-        emoji: newFrame.emoji || '', // Empty string instead of default emoji
+        emoji: newFrame.emoji || '',
         color: newFrame.color,
         bgGradient: newFrame.bgGradient || `linear-gradient(135deg, ${newFrame.color} 0%, ${adjustColor(newFrame.color, 20)} 100%)`,
         frameImage: frameImageUrl,
         photoSlots: newFrame.photoSlots || []
       }
 
-      const response = await fetch(`${API_URL}/api/frames`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(frameData)
-      })
+      if (editMode === 'edit' && editingFrameId) {
+        // UPDATE existing frame
+        const response = await fetch(`${API_URL}/api/frames/${editingFrameId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(frameData)
+        })
 
-      if (response.ok) {
-        const data = await response.json()
-        setFrames([...frames, data.frame])
-        setIsAddingNew(false)
-        setNewFrame({ name: '', description: '', emoji: '', color: '#FFE4E9', bgGradient: '', frameImage: null, frameImagePreview: null, photoSlots: [] })
-        showToast('Thêm frame thành công!', 'success')
+        if (response.ok) {
+          const data = await response.json()
+          setFrames(frames.map(f => f.id === editingFrameId ? data.frame : f))
+          showToast('Cập nhật frame thành công!', 'success')
+        } else {
+          const error = await response.json()
+          showToast('Lỗi: ' + error.error, 'error')
+        }
       } else {
-        const error = await response.json()
-        showToast('Lỗi: ' + error.error, 'error')
+        // ADD new frame
+        const response = await fetch(`${API_URL}/api/frames`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(frameData)
+        })
+
+        if (response.ok) {
+          const data = await response.json()
+          setFrames([...frames, data.frame])
+          showToast('Thêm frame thành công!', 'success')
+        } else {
+          const error = await response.json()
+          showToast('Lỗi: ' + error.error, 'error')
+        }
       }
+
+      // Reset form
+      setIsAddingNew(false)
+      setEditMode('add')
+      setEditingFrameId(null)
+      setShowSlotsEditor(false)
+      setNewFrame({ name: '', description: '', emoji: '', color: '#FFE4E9', bgGradient: '', frameImage: null, frameImagePreview: null, photoSlots: [] })
+      
     } catch (error) {
-      console.error('Error adding frame:', error)
-      showToast('Lỗi khi thêm frame: ' + error.message, 'error')
+      console.error('Error saving frame:', error)
+      showToast('Lỗi khi lưu frame: ' + error.message, 'error')
     } finally {
       setIsProcessing(false)
     }
   }
+
+  // Keep old functions for compatibility (will be removed later)
+  const handleAddFrame = handleSaveFrame
 
   // Update frame
   const handleUpdateFrame = async (frameId) => {
@@ -320,6 +355,30 @@ function AdminPage() {
     } catch (error) {
       console.error('Error deleting frame:', error)
       showToast('Lỗi khi xóa frame!', 'error')
+    } finally {
+      setIsProcessing(false)
+    }
+  }
+
+  // Fix slots for a specific frame
+  const handleFixSlots = async (frameId) => {
+    try {
+      setIsProcessing(true)
+      const response = await fetch(`${API_URL}/api/frames/${frameId}/fix-slots`, {
+        method: 'POST'
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        setFrames(frames.map(f => f.id === frameId ? data.frame : f))
+        showToast('Đã thêm slots mặc định! Bạn có thể điều chỉnh trong code nếu cần.', 'success')
+      } else {
+        const error = await response.json()
+        showToast(error.error || 'Lỗi khi fix slots!', 'error')
+      }
+    } catch (error) {
+      console.error('Error fixing slots:', error)
+      showToast('Lỗi khi fix slots!', 'error')
     } finally {
       setIsProcessing(false)
     }
@@ -491,15 +550,21 @@ function AdminPage() {
 
       <div className="admin-container">
         <div className="admin-actions">
-          <button onClick={() => setIsAddingNew(true)} className="add-frame-btn">
+          <button onClick={() => {
+            setEditMode('add')
+            setEditingFrameId(null)
+            setShowSlotsEditor(false)
+            setNewFrame({ name: '', description: '', emoji: '', color: '#FFE4E9', bgGradient: '', frameImage: null, frameImagePreview: null, photoSlots: [] })
+            setIsAddingNew(true)
+          }} className="add-frame-btn">
             <Plus size={20} /> Thêm Frame Mới
           </button>
         </div>
 
-        {/* Add New Frame Form */}
+        {/* Add/Edit Frame Form */}
         {isAddingNew && (
           <div className="frame-form-card">
-            <h3>Thêm Frame Mới</h3>
+            <h3>{editMode === 'edit' ? '✏️ Chỉnh sửa Frame' : '➕ Thêm Frame Mới'}</h3>
             <div className="form-row">
               <div className="form-group">
                 <label>Tên Frame: *</label>
@@ -563,7 +628,7 @@ function AdminPage() {
               {newFrame.frameImagePreview && (
                 <div className="file-preview-container">
                   <div className="file-info">
-                    <Image size={16} /> {newFrame.frameImage.name}
+                    <Image size={16} /> {newFrame.frameImage?.name || 'Frame image'}
                   </div>
                   <div className="image-preview-box">
                     <img 
@@ -605,17 +670,236 @@ function AdminPage() {
                   💡 Nhập số ô ảnh (VD: 4 ô). Vị trí sẽ được tự động phân bố đều.
                 </small>
                 {newFrame.photoSlots.length > 0 && (
-                  <div className="slots-info">
-                    ✅ {newFrame.photoSlots.length} ô ảnh đã được tạo tự động
-                  </div>
+                  <>
+                    <div className="slots-info">
+                      ✅ {newFrame.photoSlots.length} ô ảnh đã được tạo tự động
+                    </div>
+                    <button 
+                      type="button"
+                      onClick={() => setShowSlotsEditor(!showSlotsEditor)} 
+                      className="edit-slots-btn"
+                    >
+                      {showSlotsEditor ? '🔼 Ẩn Editor' : '🔧 Chỉnh sửa vị trí & kích thước'}
+                    </button>
+                  </>
                 )}
+              </div>
+            )}
+
+            {/* Photo Slots Editor */}
+            {newFrame.frameImagePreview && showSlotsEditor && newFrame.photoSlots.length > 0 && (
+              <div className="slots-editor">
+                <h3>📐 Editor: Điều chỉnh vị trí ô ảnh</h3>
+                <div className="slots-editor-layout">
+                  {/* Preview */}
+                  <div className="slots-preview-container">
+                    <div className="slots-preview-frame">
+                      {/* Sample photos in slots */}
+                      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}>
+                        {newFrame.photoSlots.map((slot, index) => (
+                          <div
+                            key={`photo-${index}`}
+                            style={{
+                              position: 'absolute',
+                              left: `${slot.x}%`,
+                              top: `${slot.y}%`,
+                              width: `${slot.width}%`,
+                              height: `${slot.height}%`,
+                              overflow: 'hidden',
+                              background: `linear-gradient(135deg, ${
+                                index === 0 ? '#FF6B9D, #C94C73' :
+                                index === 1 ? '#43E97B, #38C96B' :
+                                index === 2 ? '#667EEA, #5568D3' :
+                                '#FFA500, #FF8C00'
+                              })`,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              border: '2px solid rgba(255,255,255,0.8)',
+                              boxShadow: 'inset 0 0 20px rgba(0,0,0,0.2)'
+                            }}
+                          >
+                            <span style={{
+                              fontSize: '3rem',
+                              fontWeight: 'bold',
+                              color: 'rgba(255,255,255,0.9)',
+                              textShadow: '0 2px 8px rgba(0,0,0,0.3)'
+                            }}>
+                              {index + 1}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      {/* Frame overlay on top */}
+                      <img 
+                        src={newFrame.frameImagePreview} 
+                        alt="Frame" 
+                        className="slots-preview-image"
+                        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 1 }}
+                      />
+                      
+                      {/* Debug overlay boxes */}
+                      {newFrame.photoSlots.map((slot, index) => (
+                        <div
+                          key={`debug-${index}`}
+                          className="slots-preview-box"
+                          style={{
+                            left: `${slot.x}%`,
+                            top: `${slot.y}%`,
+                            width: `${slot.width}%`,
+                            height: `${slot.height}%`,
+                            transform: `rotate(${slot.rotation}deg)`,
+                            background: 'transparent',
+                            zIndex: 2
+                          }}
+                        >
+                          <span className="slot-number" style={{
+                            background: 'rgba(0,0,0,0.7)',
+                            padding: '4px 8px',
+                            borderRadius: '4px',
+                            fontSize: '0.85rem'
+                          }}>
+                            Ô {index + 1}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                    <div style={{ marginTop: '10px', fontSize: '0.85rem', color: '#64748b', textAlign: 'center' }}>
+                      💡 Các màu gradient là ảnh mẫu. Điều chỉnh để khớp với ô đen trong frame.
+                    </div>
+                  </div>
+
+                  {/* Controls */}
+                  <div className="slots-controls">
+                    {newFrame.photoSlots.map((slot, index) => (
+                      <div key={index} className="slot-control-group">
+                        <h4>📷 Ô ảnh {index + 1}</h4>
+                        <div className="slot-control-row">
+                          <label>X (trái):</label>
+                          <input
+                            type="range"
+                            min="0"
+                            max="100"
+                            value={slot.x}
+                            onChange={(e) => {
+                              const updated = [...newFrame.photoSlots]
+                              updated[index].x = parseInt(e.target.value)
+                              setNewFrame({ ...newFrame, photoSlots: updated })
+                            }}
+                          />
+                          <input
+                            type="number"
+                            min="0"
+                            max="100"
+                            value={slot.x}
+                            onChange={(e) => {
+                              const updated = [...newFrame.photoSlots]
+                              updated[index].x = parseInt(e.target.value) || 0
+                              setNewFrame({ ...newFrame, photoSlots: updated })
+                            }}
+                            className="slot-number-input"
+                          />
+                          <span>%</span>
+                        </div>
+                        <div className="slot-control-row">
+                          <label>Y (trên):</label>
+                          <input
+                            type="range"
+                            min="0"
+                            max="100"
+                            value={slot.y}
+                            onChange={(e) => {
+                              const updated = [...newFrame.photoSlots]
+                              updated[index].y = parseInt(e.target.value)
+                              setNewFrame({ ...newFrame, photoSlots: updated })
+                            }}
+                          />
+                          <input
+                            type="number"
+                            min="0"
+                            max="100"
+                            value={slot.y}
+                            onChange={(e) => {
+                              const updated = [...newFrame.photoSlots]
+                              updated[index].y = parseInt(e.target.value) || 0
+                              setNewFrame({ ...newFrame, photoSlots: updated })
+                            }}
+                            className="slot-number-input"
+                          />
+                          <span>%</span>
+                        </div>
+                        <div className="slot-control-row">
+                          <label>Rộng:</label>
+                          <input
+                            type="range"
+                            min="10"
+                            max="100"
+                            value={slot.width}
+                            onChange={(e) => {
+                              const updated = [...newFrame.photoSlots]
+                              updated[index].width = parseInt(e.target.value)
+                              setNewFrame({ ...newFrame, photoSlots: updated })
+                            }}
+                          />
+                          <input
+                            type="number"
+                            min="10"
+                            max="100"
+                            value={slot.width}
+                            onChange={(e) => {
+                              const updated = [...newFrame.photoSlots]
+                              updated[index].width = parseInt(e.target.value) || 10
+                              setNewFrame({ ...newFrame, photoSlots: updated })
+                            }}
+                            className="slot-number-input"
+                          />
+                          <span>%</span>
+                        </div>
+                        <div className="slot-control-row">
+                          <label>Cao:</label>
+                          <input
+                            type="range"
+                            min="5"
+                            max="100"
+                            value={slot.height}
+                            onChange={(e) => {
+                              const updated = [...newFrame.photoSlots]
+                              updated[index].height = parseInt(e.target.value)
+                              setNewFrame({ ...newFrame, photoSlots: updated })
+                            }}
+                          />
+                          <input
+                            type="number"
+                            min="5"
+                            max="100"
+                            value={slot.height}
+                            onChange={(e) => {
+                              const updated = [...newFrame.photoSlots]
+                              updated[index].height = parseInt(e.target.value) || 5
+                              setNewFrame({ ...newFrame, photoSlots: updated })
+                            }}
+                            className="slot-number-input"
+                          />
+                          <span>%</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             )}
             <div className="form-actions">
               <button onClick={handleAddFrame} className="save-btn">
                 <Save size={18} /> Lưu
               </button>
-              <button onClick={() => setIsAddingNew(false)} className="cancel-btn">
+              <button onClick={() => {
+                setIsAddingNew(false)
+                setEditMode('add')
+                setEditingFrameId(null)
+                setShowSlotsEditor(false)
+                setNewFrame({ name: '', description: '', emoji: '', color: '#FFE4E9', bgGradient: '', frameImage: null, frameImagePreview: null, photoSlots: [] })
+              }} className="cancel-btn">
                 <X size={18} /> Hủy
               </button>
             </div>
@@ -685,13 +969,39 @@ function AdminPage() {
                           <div className="frame-has-overlay">
                             <Image size={20} /> Has frame overlay
                           </div>
+                          {(!frame.photoSlots || frame.photoSlots.length === 0) && (
+                            <div className="frame-warning">
+                              ⚠️ Chưa có photoSlots
+                            </div>
+                          )}
                         </>
                       )}
                     </div>
                     <div className="frame-actions">
-                      <button onClick={() => setEditingFrame({ ...frame })} className="edit-btn">
+                      <button onClick={() => {
+                        // Load frame data into newFrame form
+                        setNewFrame({
+                          name: frame.name,
+                          description: frame.description || '',
+                          emoji: frame.emoji || '',
+                          color: frame.color || '#FFE4E9',
+                          bgGradient: frame.bgGradient || '',
+                          frameImage: null,
+                          frameImagePreview: frame.frameImage ? frameImageUrl(frame.frameImage) : null,
+                          photoSlots: frame.photoSlots || []
+                        })
+                        setEditMode('edit')
+                        setEditingFrameId(frame.id)
+                        setIsAddingNew(true)
+                        window.scrollTo({ top: 0, behavior: 'smooth' })
+                      }} className="edit-btn">
                         <Edit2 size={16} /> Sửa
                       </button>
+                      {frame.frameImage && (!frame.photoSlots || frame.photoSlots.length === 0) && (
+                        <button onClick={() => handleFixSlots(frame.id)} className="fix-slots-btn" disabled={isProcessing}>
+                          🔧 Fix Slots
+                        </button>
+                      )}
                       <button onClick={() => setDeleteConfirmId(frame.id)} className="delete-btn">
                         <Trash2 size={16} /> Xóa
                       </button>

@@ -21,7 +21,7 @@ const PORT = process.env.PORT || 3001
 
 // Middleware
 app.use(cors({
-  origin: ['https://meomiry.vercel.app', 'http://localhost:5173'],
+  origin: ['https://meomiry.vercel.app', 'http://localhost:5173', 'https://noriframeverse.vercel.app/'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -311,16 +311,63 @@ app.get('/api/fix-frame-slots', async (req, res) => {
       { x: 0, y: 69, width: 100, height: 22, rotation: 0 }
     ]
     
-    // Update tất cả frames có frameImage
+    // Update tất cả frames có frameImage nhưng chưa có slots hoặc slots rỗng
     const updatedFrames = frames.map(frame => {
-      if (frame.frameImage) {
+      if (frame.frameImage && (!frame.photoSlots || frame.photoSlots.length === 0)) {
         return { ...frame, photoSlots: standardSlots }
       }
       return frame
     })
     
     await writeFrames(updatedFrames)
-    res.json({ success: true, message: 'Đã fix slots cho tất cả frames', frames: updatedFrames })
+    
+    const fixedCount = updatedFrames.filter((f, i) => 
+      f.photoSlots && f.photoSlots.length > 0 && 
+      frames[i].photoSlots && frames[i].photoSlots.length === 0
+    ).length
+    
+    res.json({ 
+      success: true, 
+      message: `Đã fix slots cho ${fixedCount} frames`, 
+      frames: updatedFrames,
+      note: 'Slots mặc định có thể không khớp với frame. Vui lòng điều chỉnh thủ công nếu cần.'
+    })
+  } catch (error) {
+    console.error('Error fixing frame slots:', error)
+    res.status(500).json({ error: 'Lỗi khi fix slots' })
+  }
+})
+
+// Fix slots cho 1 frame cụ thể
+app.post('/api/frames/:id/fix-slots', async (req, res) => {
+  try {
+    const frames = await readFrames()
+    const frameIndex = frames.findIndex(f => f.id === req.params.id)
+    
+    if (frameIndex === -1) {
+      return res.status(404).json({ error: 'Không tìm thấy frame' })
+    }
+    
+    if (!frames[frameIndex].frameImage) {
+      return res.status(400).json({ error: 'Frame không có frameImage' })
+    }
+    
+    // Standard slots
+    frames[frameIndex].photoSlots = [
+      { x: 0, y: 0, width: 100, height: 22, rotation: 0 },
+      { x: 0, y: 24, width: 100, height: 22, rotation: 0 },
+      { x: 0, y: 47, width: 100, height: 22, rotation: 0 },
+      { x: 0, y: 69, width: 100, height: 22, rotation: 0 }
+    ]
+    
+    await writeFrames(frames)
+    
+    res.json({ 
+      success: true, 
+      message: 'Đã thêm slots mặc định cho frame', 
+      frame: frames[frameIndex],
+      note: 'Slots mặc định có thể không khớp. Vui lòng điều chỉnh thủ công.'
+    })
   } catch (error) {
     console.error('Error fixing frame slots:', error)
     res.status(500).json({ error: 'Lỗi khi fix slots' })
@@ -366,16 +413,25 @@ app.post('/api/frames', async (req, res) => {
       return res.status(400).json({ error: 'Thiếu tên frame' })
     }
     
+    // Validate: if frameImage exists, photoSlots must be provided
+    if (frameImage && (!photoSlots || photoSlots.length === 0)) {
+      return res.status(400).json({ 
+        error: 'Frame có ảnh phải có photoSlots. Vui lòng thêm vị trí slots cho frame này.',
+        hint: 'Sử dụng /api/fix-frame-slots để tạo slots mặc định, sau đó điều chỉnh lại.'
+      })
+    }
+    
     const frames = await readFrames()
+    
     const newFrame = {
       id: name.toLowerCase().replace(/\s+/g, '-') + '-' + Date.now(),
       name,
       description: description || '',
-      emoji: emoji || '', // Empty string instead of default
+      emoji: emoji || '',
       color: color || '#FFE4E9',
       bgGradient: bgGradient || `linear-gradient(135deg, ${color} 0%, ${color} 100%)`,
-      frameImage: frameImage || null, // URL to frame overlay image
-      photoSlots: photoSlots || [] // Array of {x, y, width, height, rotation} for each photo position
+      frameImage: frameImage || null,
+      photoSlots: photoSlots || []
     }
     
     frames.push(newFrame)

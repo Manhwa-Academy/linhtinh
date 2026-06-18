@@ -237,7 +237,7 @@ function BoothPage() {
   // Load frames from API
   const [frames, setFrames] = useState([])
   const [processedFrameUrl, setProcessedFrameUrl] = useState(null)
-  const [debugSlots, setDebugSlots] = useState(false)
+  const [debugSlots, setDebugSlots] = useState(true) // Enable debug by default
   // Photo transform controls: per-photo { scale, x, y }
   const [photoTransforms, setPhotoTransforms] = useState({})
   const [activePhotoEdit, setActivePhotoEdit] = useState(null) // index of photo being edited
@@ -796,12 +796,8 @@ function BoothPage() {
                               position: 'absolute',
                               top: '50%',
                               left: '50%',
-                              minWidth: `${100 * t.scale}%`,
-                              minHeight: `${100 * t.scale}%`,
-                              width: `${100 * t.scale}%`,
-                              height: `${100 * t.scale}%`,
-                              maxWidth: 'none',
-                              maxHeight: 'none',
+                              width: `${120 * t.scale}%`,
+                              height: `${120 * t.scale}%`,
                               objectFit: 'cover',
                               objectPosition: 'center',
                               display: 'block',
@@ -1153,8 +1149,8 @@ function BoothPage() {
                               position: 'absolute',
                               top: '50%',
                               left: '50%',
-                              width: `${100 * t.scale}%`,
-                              height: `${100 * t.scale}%`,
+                              width: `${120 * t.scale}%`,
+                              height: `${120 * t.scale}%`,
                               objectFit: 'cover',
                               objectPosition: 'center',
                               display: 'block',
