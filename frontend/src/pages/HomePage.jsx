@@ -6,14 +6,14 @@ function HomePage() {
   return (
     <div className="home-page">
       <div className="home-content">
-        <div className="logo-badge">✨ Retro-Style Photo Booth</div>
+        <div className="logo-badge">Photo Booth ✨</div>
         
         <h1 className="home-title">
-          STARLACE
+          FRAMEVERSE 
         </h1>
         
         <p className="home-description">
-          Capture your moment, frame your memory forever
+          Capture Today, Remember Forever
         </p>
 
         {/* Photo Strip Preview */}
@@ -22,12 +22,12 @@ function HomePage() {
           <div className="strip-slot"></div>
           <div className="strip-slot"></div>
           <div className="strip-slot"></div>
-          <div className="strip-label">Frame idea × 4-pic</div>
+          <div className="strip-label">FRAMEVERSE × 4-pic</div>
         </div>
 
         <Link to="/booth" className="start-button">
           <Camera size={24} />
-          Start Shooting
+          Start
         </Link>
 
         {/* Features */}

@@ -1,10 +1,12 @@
 import { useState, useRef, useCallback } from 'react'
 import Webcam from 'react-webcam'
 import { Camera, Upload, RotateCcw, X } from 'lucide-react'
+import { frameImageUrl } from '../config/api'
 import '../styles/CaptureStep.css'
 
 function CaptureStep({
   stripType,
+  frame,
   filter,
   capturedPhotos,
   onPhotosChange,

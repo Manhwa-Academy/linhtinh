@@ -1,4 +1,5 @@
-import { Camera } from 'lucide-react'
+import { Camera, ChevronDown } from 'lucide-react'
+import { frameImageUrl } from '../config/api'
 import '../styles/SetupStep.css'
 
 function SetupStep({ 
@@ -18,24 +19,49 @@ function SetupStep({
     if (!selectedStripType) {
       return (
         <div className="preview-placeholder">
-          <Camera size={64} strokeWidth={1} />
+          <Camera size={40} strokeWidth={1} />
           <p>Select a strip type to see preview</p>
         </div>
       )
     }
 
     const slotCount = selectedStripType.count
+    const isGridLayout = selectedStripType.layout === 'grid'
+    
+    // Check if frame has image
+    const hasFrameImage = selectedFrame?.frameImage
+    
+    if (hasFrameImage) {
+      // Frame with image - show only frame, hide slots
+      return (
+        <div className="preview-strip-with-image">
+          <div className="preview-image-container">
+            {/* Frame image only */}
+            <img 
+              src={frameImageUrl(selectedFrame.frameImage)} 
+              alt={selectedFrame.name}
+              className="preview-frame-img"
+            />
+          </div>
+          <div className="preview-label">{selectedStripType.name}</div>
+        </div>
+      )
+    }
+
+    // Regular gradient frame
     const frameStyle = selectedFrame?.bgGradient 
       ? { background: selectedFrame.bgGradient }
       : { background: 'linear-gradient(135deg, #F7FAFC 0%, #EDF2F7 100%)' }
 
     return (
       <div className="preview-strip" style={frameStyle}>
-        {Array.from({ length: slotCount }).map((_, i) => (
-          <div key={i} className="preview-slot">
-            <Camera size={32} strokeWidth={1.5} />
-          </div>
-        ))}
+        <div className={`preview-slots-container ${isGridLayout ? 'grid-layout' : 'vertical-layout'}`}>
+          {Array.from({ length: slotCount }).map((_, i) => (
+            <div key={i} className="preview-slot">
+              <Camera size={isGridLayout ? 18 : 20} strokeWidth={1.5} />
+            </div>
+          ))}
+        </div>
         <div className="preview-label">{selectedStripType.name}</div>
       </div>
     )
@@ -71,59 +97,80 @@ function SetupStep({
             </div>
           </div>
 
+          {/* Frame selector with icon */}
           <div className="option-section">
-            <h3 className="section-title">Frames</h3>
-            <div className="frames-grid-compact">
-              {frames.map(frame => (
-                <div
-                  key={frame.id}
-                  className={`frame-option ${selectedFrame?.id === frame.id ? 'selected' : ''}`}
-                  onClick={() => onSelectFrame(frame)}
-                  style={{ background: frame.bgGradient || frame.color }}
-                >
-                  {frame.emoji && <span className="frame-emoji-mini">{frame.emoji}</span>}
-                  {frame.frameImage && (
-                    <img 
-                      src={frame.frameImage} 
-                      alt={frame.name}
-                      className="frame-img-mini"
-                    />
-                  )}
-                  <span className="frame-name-mini">{frame.name}</span>
-                </div>
-              ))}
+            <h3 className="section-title">Frame</h3>
+            <div className="custom-select-wrapper">
+              <select 
+                className="custom-select"
+                value={selectedFrame?.id || ''}
+                onChange={(e) => {
+                  const frame = frames.find(f => f.id === e.target.value)
+                  onSelectFrame(frame)
+                }}
+              >
+                <option value="">Select frame...</option>
+                {frames.map(frame => (
+                  <option key={frame.id} value={frame.id}>
+                    {frame.emoji ? `${frame.emoji} ` : ''}{frame.name}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="select-icon" size={18} />
             </div>
+            {selectedFrame && (
+              <div className="selected-display">
+                {selectedFrame.frameImage ? (
+                  <img 
+                    src={frameImageUrl(selectedFrame.frameImage)} 
+                    alt={selectedFrame.name}
+                    className="selected-frame-img"
+                  />
+                ) : (
+                  <span className="selected-emoji">{selectedFrame.emoji}</span>
+                )}
+                <span className="selected-name">{selectedFrame.name}</span>
+              </div>
+            )}
           </div>
 
+          {/* Filter selector with icon */}
           <div className="option-section">
-            <h3 className="section-title">Filters</h3>
-            <div className="filters-grid-compact">
-              {filters.map(filter => (
-                <div
-                  key={filter.id}
-                  className={`filter-option ${selectedFilter?.id === filter.id ? 'selected' : ''}`}
-                  onClick={() => onSelectFilter(filter)}
-                >
-                  <div className="filter-preview" style={{ backgroundColor: filter.color }}>
-                    {filter.name[0]}
-                  </div>
-                  <span className="filter-name-mini">{filter.name}</span>
-                </div>
-              ))}
+            <h3 className="section-title">Filter</h3>
+            <div className="custom-select-wrapper">
+              <select 
+                className="custom-select"
+                value={selectedFilter?.id || ''}
+                onChange={(e) => {
+                  const filter = filters.find(f => f.id === e.target.value)
+                  onSelectFilter(filter)
+                }}
+              >
+                <option value="">Select filter...</option>
+                {filters.map(filter => (
+                  <option key={filter.id} value={filter.id}>
+                    {filter.name}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="select-icon" size={18} />
             </div>
+            {selectedFilter && (
+              <div className="selected-display">
+                <div 
+                  className="selected-color-dot" 
+                  style={{ backgroundColor: selectedFilter.color }}
+                />
+                <span className="selected-name">{selectedFilter.name}</span>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Right: Preview */}
+        {/* Right: Preview only */}
         <div className="setup-preview">
           <h3 className="preview-title">Preview</h3>
           {renderPreview()}
-          
-          {selectedFilter && (
-            <div className="selected-filter-badge">
-              Filter: {selectedFilter.name}
-            </div>
-          )}
         </div>
       </div>
 

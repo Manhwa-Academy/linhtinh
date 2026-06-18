@@ -32,13 +32,29 @@
     "bgGradient": "linear-gradient(135deg, #E0F2FE 0%, #F0F9FF 100%)"
   },
   {
-    "id": "a-1781748105761",
+    "id": "polaroid",
+    "name": "Polaroid",
+    "description": "Classic instant photo",
+    "emoji": "📸",
+    "color": "#F8F9FA",
+    "bgGradient": "linear-gradient(135deg, #F8F9FA 0%, #E9ECEF 100%)"
+  },
+  {
+    "id": "filmframe",
+    "name": "Film Frame",
+    "description": "Vintage film look",
+    "emoji": "🎞️",
+    "color": "#2C2C2C",
+    "bgGradient": "linear-gradient(135deg, #2C2C2C 0%, #1A1A1A 100%)"
+  },
+  {
+    "id": "a-1781764360580",
     "name": "a",
     "description": "",
     "emoji": "",
     "color": "#FFE4E9",
     "bgGradient": "linear-gradient(135deg, #FFE4E9 0%, #ffffff 100%)",
-    "frameImage": "https://meomiry-backend.vercel.app/uploads/frames/frame-1781748105727-836811246.png",
+    "frameImage": "http://localhost:3001/uploads/frames/frame-1781764360557-739622303.png",
     "photoSlots": [
       {
         "x": 0,

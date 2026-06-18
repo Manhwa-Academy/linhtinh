@@ -16,9 +16,9 @@ import CaptureStep from '../components/CaptureStep'
 import '../styles/BoothPage.css'
 
 const stripTypes = [
-  { id: 'solo', name: 'Double Shot', description: 'Two perfect moments', count: 2, icon: Camera },
-  { id: 'triple', name: 'Quad Fun', description: 'Four memories in a row', count: 4, icon: Camera },
-  { id: 'classic', name: 'Super Strip', description: 'The epic six photo strip', count: 6, icon: Camera }
+  { id: 'solo', name: 'Double Shot', description: 'Two perfect moments', count: 2, icon: Camera, layout: 'vertical' },
+  { id: 'triple', name: 'Quad Fun', description: 'Four memories in a row', count: 4, icon: Camera, layout: 'vertical' },
+  { id: 'classic', name: 'Super Strip', description: 'Six photos in grid', count: 6, icon: Camera, layout: 'grid' }
 ]
 
 // Frames will be loaded from API dynamically
@@ -27,7 +27,12 @@ const filters = [
   { id: 'y2k', name: 'Y2K', description: 'Glittery & futuristic', value: 'contrast(1.2) saturate(1.5) hue-rotate(330deg)', color: '#B2F5EA', icon: Sparkles },
   { id: 'vintage', name: 'Vintage', description: 'Warm & nostalgic', value: 'sepia(40%) contrast(1.1)', color: '#FEF08A', icon: Sparkles },
   { id: 'hellokitty', name: 'Hello Kitty', description: 'Sweet & dreamy', value: 'saturate(1.3) brightness(1.1) hue-rotate(320deg)', color: '#FBC2EB', icon: Sparkles },
-  { id: 'bw', name: 'B&W', description: 'Timeless classic', value: 'grayscale(100%) contrast(1.2)', color: '#E2E8F0', icon: Sparkles }
+  { id: 'bw', name: 'B&W', description: 'Timeless classic', value: 'grayscale(100%) contrast(1.2)', color: '#E2E8F0', icon: Sparkles },
+  { id: 'warm', name: 'Warm', description: 'Cozy & golden', value: 'sepia(20%) saturate(1.2) brightness(1.05)', color: '#FED7AA', icon: Sparkles },
+  { id: 'cool', name: 'Cool', description: 'Fresh & crisp', value: 'saturate(0.9) brightness(1.05) hue-rotate(180deg) contrast(1.1)', color: '#BAE6FD', icon: Sparkles },
+  { id: 'koreanglow', name: 'Korean Glow', description: 'Bright & dewy', value: 'brightness(1.15) contrast(0.95) saturate(1.1)', color: '#FBCFE8', icon: Sparkles },
+  { id: 'softpink', name: 'Soft Pink', description: 'Delicate & sweet', value: 'saturate(1.2) brightness(1.08) hue-rotate(340deg)', color: '#FCE7F3', icon: Sparkles },
+  { id: 'dreamy', name: 'Dreamy', description: 'Soft & ethereal', value: 'contrast(0.9) brightness(1.1) saturate(1.15) blur(0.3px)', color: '#E9D5FF', icon: Sparkles }
 ]
 
 const stickerIconsMap = {
@@ -117,6 +122,19 @@ const renderStickerContent = (stickerItem, size = 48) => {
     const IconCmp = stickerIconsMap[stickerItem.name]
     return <IconCmp size={size} {...stickerItem.props} />
   }
+  if (stickerItem.type === 'customText') {
+    return (
+      <span style={{
+        fontFamily: stickerItem.font,
+        fontSize: `${stickerItem.size}px`,
+        color: stickerItem.color,
+        fontWeight: '700',
+        whiteSpace: 'nowrap'
+      }}>
+        {stickerItem.text}
+      </span>
+    )
+  }
   return stickerItem.text
 }
 
@@ -180,6 +198,12 @@ function BoothPage() {
   const [showFramePicker, setShowFramePicker] = useState(false)
   const [draggingSticker, setDraggingSticker] = useState(null)
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0)
+  
+  // Custom text states
+  const [customText, setCustomText] = useState('')
+  const [customTextFont, setCustomTextFont] = useState('Quicksand')
+  const [customTextSize, setCustomTextSize] = useState('18')
+  const [customTextColor, setCustomTextColor] = useState('#FF1493')
   
   // Load frames from API
   const [frames, setFrames] = useState([])
@@ -316,6 +340,24 @@ function BoothPage() {
       y: 10, // Position as percentage from top
     }
     setSelectedStickers([...selectedStickers, newSticker])
+  }
+
+  const addCustomText = () => {
+    if (!customText.trim()) {
+      alert('Vui lòng nhập text!')
+      return
+    }
+    
+    const customTextItem = {
+      type: 'customText',
+      text: customText,
+      font: customTextFont,
+      size: customTextSize,
+      color: customTextColor
+    }
+    
+    addSticker(customTextItem)
+    setCustomText('') // Reset input
   }
 
   const removeSticker = (stickerId) => {
@@ -467,7 +509,7 @@ function BoothPage() {
             <ArrowLeft size={18} /> Back
           </button>
         )}
-        <h2 className="booth-logo">🌸 STARLACE</h2>
+        <h2 className="booth-logo">🌸 FRAMEVERSE</h2>
         
         {/* Progress Steps - Updated to 4 steps */}
         <div className="progress-steps">
@@ -510,6 +552,7 @@ function BoothPage() {
         {currentStep === 2 && selectedStripType && selectedFilter && (
           <CaptureStep
             stripType={selectedStripType}
+            frame={selectedFrame}
             filter={selectedFilter}
             capturedPhotos={capturedPhotos}
             onPhotosChange={setCapturedPhotos}
@@ -767,7 +810,7 @@ function BoothPage() {
                     {!selectedFrame?.bgGradient?.includes('url(') && (
                       <div className="strip-header-final" style={{ background: 'transparent', boxShadow: 'none', padding: '10px 0 20px' }}>
                         <h3 style={{ color: selectedFrame ? 'rgba(0,0,0,0.75)' : '#FF6B9D' }}>
-                          {selectedFrame?.emoji} STARLACE {selectedFrame?.emoji}
+                          {selectedFrame?.emoji} FRAMEVERSE {selectedFrame?.emoji}
                         </h3>
                       </div>
                     )}
@@ -840,15 +883,22 @@ function BoothPage() {
                 <div className="stickers-on-photo" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, pointerEvents: 'none', zIndex: 10 }}>
                   {selectedStickers.map((sticker) => {
                     const isTextBubble = sticker.item.type === 'text'
+                    const isCustomText = sticker.item.type === 'customText'
                     return (
                       <span
                         key={sticker.id}
-                        className={`sticker-on-photo ${isTextBubble ? 'text-bubble-on-photo' : 'emoji-on-photo'} ${draggingSticker === sticker.id ? 'dragging' : ''}`}
+                        className={`sticker-on-photo ${isTextBubble || isCustomText ? 'text-bubble-on-photo' : 'emoji-on-photo'} ${draggingSticker === sticker.id ? 'dragging' : ''}`}
                         style={{
                           left: `${sticker.x}%`,
                           top: `${sticker.y}%`,
                           position: 'absolute',
-                          pointerEvents: 'auto'
+                          pointerEvents: 'auto',
+                          ...(isCustomText && {
+                            background: 'white',
+                            padding: '8px 16px',
+                            borderRadius: '20px',
+                            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
+                          })
                         }}
                         draggable
                         onDragStart={(e) => handleStickerDragStart(e, sticker.id)}
@@ -893,6 +943,79 @@ function BoothPage() {
                     )
                   })}
                 </div>
+
+                {/* Custom Text Input - Show when text category is selected */}
+                {stickerCategory === 'text' && (
+                  <div className="custom-text-panel">
+                    <h4 className="custom-text-title">TEXT</h4>
+                    <input
+                      type="text"
+                      className="custom-text-input"
+                      placeholder="Type your text..."
+                      value={customText}
+                      onChange={(e) => setCustomText(e.target.value)}
+                      maxLength={50}
+                    />
+                    
+                    <div className="text-controls">
+                      <div className="text-control-group">
+                        <select 
+                          className="font-select"
+                          value={customTextFont}
+                          onChange={(e) => setCustomTextFont(e.target.value)}
+                        >
+                          <option value="Quicksand">Quicksand</option>
+                          <option value="Arial">Arial</option>
+                          <option value="Comic Sans MS">Comic Sans</option>
+                          <option value="Courier New">Courier</option>
+                          <option value="Georgia">Georgia</option>
+                          <option value="Impact">Impact</option>
+                          <option value="Times New Roman">Times</option>
+                          <option value="Verdana">Verdana</option>
+                        </select>
+                        
+                        <input 
+                          type="number"
+                          className="size-input"
+                          min="12"
+                          max="72"
+                          value={customTextSize}
+                          onChange={(e) => setCustomTextSize(e.target.value)}
+                        />
+                      </div>
+                      
+                      <div className="color-picker-row">
+                        {[
+                          { name: 'Black', value: '#000000' },
+                          { name: 'White', value: '#FFFFFF' },
+                          { name: 'Pink', value: '#FF1493' },
+                          { name: 'Purple', value: '#9333EA' },
+                          { name: 'Blue', value: '#3B82F6' },
+                          { name: 'Orange', value: '#F97316' },
+                          { name: 'Green', value: '#22C55E' },
+                          { name: 'Red', value: '#EF4444' }
+                        ].map(color => (
+                          <button
+                            key={color.value}
+                            className={`color-btn ${customTextColor === color.value ? 'selected' : ''}`}
+                            style={{ backgroundColor: color.value }}
+                            onClick={() => setCustomTextColor(color.value)}
+                            title={color.name}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <button 
+                      className="add-text-btn"
+                      onClick={addCustomText}
+                      disabled={!customText.trim()}
+                    >
+                      + Add Text
+                    </button>
+                  </div>
+                )}
+
                 <div className="stickers-grid">
                   {stickerCategories[stickerCategory].map((stickerItem, index) => {
                     const isTextBubble = stickerItem.type === 'text'
@@ -1017,7 +1140,7 @@ function BoothPage() {
                     {!selectedFrame?.bgGradient?.includes('url(') && (
                       <div className="strip-header-final" style={{ background: 'transparent', boxShadow: 'none', padding: '10px 0 20px' }}>
                         <h3 style={{ color: selectedFrame ? 'rgba(0,0,0,0.75)' : '#FF6B9D' }}>
-                          {selectedFrame?.emoji} STARLACE {selectedFrame?.emoji}
+                          {selectedFrame?.emoji} FRAMEVERSE {selectedFrame?.emoji}
                         </h3>
                       </div>
                     )}
@@ -1047,14 +1170,21 @@ function BoothPage() {
                 <div className="stickers-on-photo" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, pointerEvents: 'none', zIndex: 10 }}>
                   {selectedStickers.map((sticker) => {
                     const isTextBubble = sticker.item.type === 'text'
+                    const isCustomText = sticker.item.type === 'customText'
                     return (
                       <div 
                         key={sticker.id}
-                        className={`final-sticker ${isTextBubble ? 'final-text-bubble' : 'final-emoji'}`}
+                        className={`final-sticker ${isTextBubble || isCustomText ? 'final-text-bubble' : 'final-emoji'}`}
                         style={{
                           position: 'absolute',
                           left: `${sticker.x}%`,
-                          top: `${sticker.y}%`
+                          top: `${sticker.y}%`,
+                          ...(isCustomText && {
+                            background: 'white',
+                            padding: '8px 16px',
+                            borderRadius: '20px',
+                            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
+                          })
                         }}
                       >
                         {renderStickerContent(sticker.item, 48)}
