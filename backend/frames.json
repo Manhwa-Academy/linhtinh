@@ -38,7 +38,7 @@
     "emoji": "",
     "color": "#FFE4E9",
     "bgGradient": "linear-gradient(135deg, #FFE4E9 0%, #ffffff 100%)",
-    "frameImage": "http://localhost:3001/uploads/frames/frame-1781748105727-836811246.png",
+    "frameImage": "https://meomiry-backend.vercel.app/uploads/frames/frame-1781748105727-836811246.png",
     "photoSlots": [
       {
         "x": 0,

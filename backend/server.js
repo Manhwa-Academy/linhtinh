@@ -208,6 +208,89 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Server đang chạy' })
 })
 
+// Seed default frames (chỉ dùng 1 lần để init DB)
+app.post('/api/seed-frames', async (req, res) => {
+  try {
+    const defaultFrames = [
+      { 
+        id: 'spring', 
+        name: 'Spring', 
+        description: 'Cherry blossoms & nature', 
+        emoji: '🌸', 
+        color: '#FFE4E9', 
+        bgGradient: 'linear-gradient(135deg, #FFE4E9 0%, #FFF0F5 100%)' 
+      },
+      { 
+        id: 'summer', 
+        name: 'Summer', 
+        description: 'Bright & sunny', 
+        emoji: '☀️', 
+        color: '#FFF4CC', 
+        bgGradient: 'linear-gradient(135deg, #FFF4CC 0%, #FFFACD 100%)' 
+      },
+      { 
+        id: 'autumn', 
+        name: 'Autumn', 
+        description: 'Warm & cozy', 
+        emoji: '🍂', 
+        color: '#FFE5CC', 
+        bgGradient: 'linear-gradient(135deg, #FFE5CC 0%, #FFDAB9 100%)' 
+      },
+      { 
+        id: 'winter', 
+        name: 'Winter', 
+        description: 'Cool & serene', 
+        emoji: '❄️', 
+        color: '#E0F2FE', 
+        bgGradient: 'linear-gradient(135deg, #E0F2FE 0%, #F0F9FF 100%)' 
+      }
+    ]
+    
+    const existingFrames = await readFrames()
+    const allFrames = [...defaultFrames, ...existingFrames]
+    
+    // Remove duplicates by id
+    const uniqueFrames = allFrames.filter((frame, index, self) =>
+      index === self.findIndex((f) => f.id === frame.id)
+    )
+    
+    await writeFrames(uniqueFrames)
+    res.json({ success: true, message: 'Đã seed frames mặc định', frames: uniqueFrames })
+  } catch (error) {
+    console.error('Error seeding frames:', error)
+    res.status(500).json({ error: 'Lỗi khi seed frames' })
+  }
+})
+
+// Fix photoSlots cho tất cả frames có frameImage
+app.post('/api/fix-frame-slots', async (req, res) => {
+  try {
+    const frames = await readFrames()
+    
+    // Chuẩn photoSlots mới (full width, không thừa đen)
+    const standardSlots = [
+      { x: 0, y: 0, width: 100, height: 22, rotation: 0 },
+      { x: 0, y: 24, width: 100, height: 22, rotation: 0 },
+      { x: 0, y: 47, width: 100, height: 22, rotation: 0 },
+      { x: 0, y: 69, width: 100, height: 22, rotation: 0 }
+    ]
+    
+    // Update tất cả frames có frameImage
+    const updatedFrames = frames.map(frame => {
+      if (frame.frameImage) {
+        return { ...frame, photoSlots: standardSlots }
+      }
+      return frame
+    })
+    
+    await writeFrames(updatedFrames)
+    res.json({ success: true, message: 'Đã fix slots cho tất cả frames', frames: updatedFrames })
+  } catch (error) {
+    console.error('Error fixing frame slots:', error)
+    res.status(500).json({ error: 'Lỗi khi fix slots' })
+  }
+})
+
 // ============== FRAMES API ==============
 
 // Get all frames
