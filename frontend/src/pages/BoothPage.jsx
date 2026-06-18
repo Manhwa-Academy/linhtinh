@@ -156,9 +156,13 @@ const makeBlackTransparent = (imgSrc) => {
           const g = data[i+1];
           const b = data[i+2];
           
-          // Make black/dark pixels transparent
-          // Using higher threshold (80) to catch more dark areas
-          if (r < 80 && g < 80 && b < 80) {
+          // Make WHITE/light pixels transparent (for photo cutout frames)
+          // Using threshold (200) to catch white/light areas where photos should show
+          if (r > 200 && g > 200 && b > 200) {
+            data[i+3] = 0; // Set alpha to 0 (transparent)
+          }
+          // Also make black/dark pixels transparent (for dark borders)
+          else if (r < 80 && g < 80 && b < 80) {
             data[i+3] = 0; // Set alpha to 0 (transparent)
           }
         }

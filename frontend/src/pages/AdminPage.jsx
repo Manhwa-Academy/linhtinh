@@ -9,19 +9,19 @@ function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [password, setPassword] = useState('')
 
-  // Compress image before upload
-  const compressImage = async (file, maxSizeMB = 1) => {
+  // Compress image before upload - support up to 4MB
+  const compressImage = async (file, maxSizeMB = 4) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader()
       reader.onload = (e) => {
-        const img = new Image()
+        const img = document.createElement('img')
         img.onload = () => {
           const canvas = document.createElement('canvas')
           let width = img.width
           let height = img.height
           
-          // Calculate new dimensions to keep under 1MB
-          const maxDimension = 1500 // Max width or height
+          // Calculate new dimensions to keep under maxSizeMB
+          const maxDimension = 2000 // Max width or height
           if (width > height && width > maxDimension) {
             height = (height / width) * maxDimension
             width = maxDimension
@@ -47,17 +47,17 @@ function AdminPage() {
               
               console.log('[Compress] Original:', (file.size / 1024 / 1024).toFixed(2), 'MB → Compressed:', (blob.size / 1024 / 1024).toFixed(2), 'MB at quality', quality)
               
-              if (blob.size > maxSizeMB * 1024 * 1024 && quality > 0.5) {
+              if (blob.size > maxSizeMB * 1024 * 1024 && quality > 0.4) {
                 quality -= 0.1
                 tryCompress()
               } else {
                 const compressedFile = new File([blob], file.name, {
-                  type: file.type,
+                  type: file.type || 'image/png',
                   lastModified: Date.now()
                 })
                 resolve(compressedFile)
               }
-            }, file.type, quality)
+            }, file.type || 'image/png', quality)
           }
           
           tryCompress()
@@ -75,12 +75,12 @@ function AdminPage() {
     console.log('[Upload] Bắt đầu upload file:', file.name, file.size, file.type)
     console.log('[Upload] API URL:', API_URL)
 
-    // Compress image if over 1MB
+    // Compress image if over 4MB
     let fileToUpload = file
-    if (file.size > 1024 * 1024) {
-      console.log('[Upload] File lớn hơn 1MB, đang compress...')
+    if (file.size > 4 * 1024 * 1024) {
+      console.log('[Upload] File lớn hơn 4MB, đang compress...')
       try {
-        fileToUpload = await compressImage(file, 1)
+        fileToUpload = await compressImage(file, 4)
       } catch (err) {
         console.error('[Upload] Lỗi compress:', err)
         showToast('Lỗi khi nén ảnh: ' + err.message, 'error')
