@@ -9,10 +9,84 @@ function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [password, setPassword] = useState('')
 
+  // Compress image before upload
+  const compressImage = async (file, maxSizeMB = 1) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        const img = new Image()
+        img.onload = () => {
+          const canvas = document.createElement('canvas')
+          let width = img.width
+          let height = img.height
+          
+          // Calculate new dimensions to keep under 1MB
+          const maxDimension = 1500 // Max width or height
+          if (width > height && width > maxDimension) {
+            height = (height / width) * maxDimension
+            width = maxDimension
+          } else if (height > maxDimension) {
+            width = (width / height) * maxDimension
+            height = maxDimension
+          }
+          
+          canvas.width = width
+          canvas.height = height
+          
+          const ctx = canvas.getContext('2d')
+          ctx.drawImage(img, 0, 0, width, height)
+          
+          // Try different quality levels to get under maxSizeMB
+          let quality = 0.9
+          const tryCompress = () => {
+            canvas.toBlob((blob) => {
+              if (!blob) {
+                reject(new Error('Failed to compress image'))
+                return
+              }
+              
+              console.log('[Compress] Original:', (file.size / 1024 / 1024).toFixed(2), 'MB → Compressed:', (blob.size / 1024 / 1024).toFixed(2), 'MB at quality', quality)
+              
+              if (blob.size > maxSizeMB * 1024 * 1024 && quality > 0.5) {
+                quality -= 0.1
+                tryCompress()
+              } else {
+                const compressedFile = new File([blob], file.name, {
+                  type: file.type,
+                  lastModified: Date.now()
+                })
+                resolve(compressedFile)
+              }
+            }, file.type, quality)
+          }
+          
+          tryCompress()
+        }
+        img.onerror = () => reject(new Error('Failed to load image'))
+        img.src = e.target.result
+      }
+      reader.onerror = () => reject(new Error('Failed to read file'))
+      reader.readAsDataURL(file)
+    })
+  }
+
   // Upload qua backend /api/upload-frame → UploadThing
   const uploadFrameImageWithTimeout = async (file) => {
     console.log('[Upload] Bắt đầu upload file:', file.name, file.size, file.type)
     console.log('[Upload] API URL:', API_URL)
+
+    // Compress image if over 1MB
+    let fileToUpload = file
+    if (file.size > 1024 * 1024) {
+      console.log('[Upload] File lớn hơn 1MB, đang compress...')
+      try {
+        fileToUpload = await compressImage(file, 1)
+      } catch (err) {
+        console.error('[Upload] Lỗi compress:', err)
+        showToast('Lỗi khi nén ảnh: ' + err.message, 'error')
+        throw err
+      }
+    }
 
     // Đọc file thành base64
     const base64 = await new Promise((resolve, reject) => {
@@ -23,7 +97,7 @@ function AdminPage() {
         resolve(base64Data)
       }
       reader.onerror = reject
-      reader.readAsDataURL(file)
+      reader.readAsDataURL(fileToUpload)
     })
 
     const controller = new AbortController()
@@ -35,9 +109,9 @@ function AdminPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           fileData: base64,
-          fileName: file.name,
-          mimeType: file.type,
-          fileSize: file.size
+          fileName: fileToUpload.name,
+          mimeType: fileToUpload.type,
+          fileSize: fileToUpload.size
         }),
         signal: controller.signal
       })
