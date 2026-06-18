@@ -26,6 +26,10 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }))
+
+// Handle preflight requests
+app.options('*', cors())
+
 app.use(express.json({ limit: '50mb' }))
 app.use(express.urlencoded({ extended: true, limit: '50mb' }))
 
@@ -386,6 +390,12 @@ app.post('/api/frames', async (req, res) => {
 
 // Upload frame image — Local: lưu vào uploads/frames/, Production: UploadThing
 app.post('/api/upload-frame', async (req, res) => {
+  // Set CORS headers explicitly
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*')
+  res.header('Access-Control-Allow-Credentials', 'true')
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+  
   try {
     const { fileData, fileName, mimeType, fileSize } = req.body
 
