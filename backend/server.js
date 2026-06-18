@@ -209,7 +209,7 @@ app.get('/api/health', (req, res) => {
 })
 
 // Seed default frames (chỉ dùng 1 lần để init DB)
-app.post('/api/seed-frames', async (req, res) => {
+app.get('/api/seed-frames', async (req, res) => {
   try {
     const defaultFrames = [
       { 
@@ -263,7 +263,7 @@ app.post('/api/seed-frames', async (req, res) => {
 })
 
 // Fix photoSlots cho tất cả frames có frameImage
-app.post('/api/fix-frame-slots', async (req, res) => {
+app.get('/api/fix-frame-slots', async (req, res) => {
   try {
     const frames = await readFrames()
     
