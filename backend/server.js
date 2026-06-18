@@ -264,7 +264,7 @@ app.post('/api/frames', async (req, res) => {
   }
 })
 
-// Upload frame image — nhận base64 JSON, upload lên UploadThing
+// Upload frame image — Local: lưu vào uploads/frames/, Production: UploadThing
 app.post('/api/upload-frame', async (req, res) => {
   try {
     const { fileData, fileName, mimeType, fileSize } = req.body
@@ -284,13 +284,41 @@ app.post('/api/upload-frame', async (req, res) => {
       return res.status(400).json({ error: 'File quá lớn (tối đa 5MB)' })
     }
 
+    // Decode base64 thành buffer
+    const buffer = Buffer.from(fileData, 'base64')
+    
+    // LOCAL: Lưu vào thư mục uploads/frames/
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[Upload Frame] Saving to local disk:', fileName)
+      
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+      const ext = path.extname(fileName)
+      const localFileName = 'frame-' + uniqueSuffix + ext
+      const localFilePath = path.join(framesDir, localFileName)
+      
+      fs.writeFileSync(localFilePath, buffer)
+      
+      const fileUrl = `http://localhost:${PORT}/uploads/frames/${localFileName}`
+      
+      console.log('[Upload Frame] Local URL:', fileUrl)
+      
+      return res.json({
+        success: true,
+        message: 'Upload frame image thành công (local)',
+        file: {
+          filename: localFileName,
+          url: fileUrl,
+          path: `/uploads/frames/${localFileName}`,
+          size: buffer.length
+        }
+      })
+    }
+    
+    // PRODUCTION: Upload to UploadThing
     console.log('[Upload Frame] Uploading to UploadThing:', fileName)
     
     // Import UTApi
     const { utapi } = await import('./uploadthing.js')
-    
-    // Decode base64 thành buffer
-    const buffer = Buffer.from(fileData, 'base64')
     
     // Create File object from buffer
     const file = new File([buffer], fileName, { type: mimeType || 'image/png' })
