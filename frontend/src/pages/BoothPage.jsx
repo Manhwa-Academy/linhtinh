@@ -188,6 +188,32 @@ function BoothPage() {
   const photoStripRef = useRef(null)
   const canvasRef = useRef(null)
   
+  // Particles state
+  const [particles, setParticles] = useState([])
+
+  useEffect(() => {
+    // Generate random particles for booth page
+    const generateParticles = () => {
+      const icons = ['✨', '⭐', '🌸', '✨', '⭐', '🌸', '🏆']
+      const newParticles = []
+      
+      for (let i = 0; i < 12; i++) {
+        newParticles.push({
+          id: i,
+          icon: icons[Math.floor(Math.random() * icons.length)],
+          left: Math.random() * 100,
+          animationDuration: 6 + Math.random() * 4,
+          animationDelay: Math.random() * 5,
+          size: 0.7 + Math.random() * 0.6
+        })
+      }
+      
+      setParticles(newParticles)
+    }
+
+    generateParticles()
+  }, [])
+  
   // Get current step from URL, default to 1
   const currentStep = parseInt(searchParams.get('step') || '1', 10)
   
@@ -503,6 +529,24 @@ function BoothPage() {
 
   return (
     <div className="booth-page">
+      {/* Falling particles */}
+      <div className="particles-container">
+        {particles.map(particle => (
+          <div
+            key={particle.id}
+            className="particle"
+            style={{
+              left: `${particle.left}%`,
+              animationDuration: `${particle.animationDuration}s`,
+              animationDelay: `${particle.animationDelay}s`,
+              fontSize: `${particle.size}rem`
+            }}
+          >
+            {particle.icon}
+          </div>
+        ))}
+      </div>
+
       <header className="booth-header">
         {currentStep === 1 ? (
           <Link to="/" className="back-button">
