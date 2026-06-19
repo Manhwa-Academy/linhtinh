@@ -13,6 +13,7 @@ import {
 import { API_URL, frameImageUrl } from '../config/api'
 import SetupStep from '../components/SetupStep'
 import CaptureStep from '../components/CaptureStep'
+import FallingParticles from '../components/FallingParticles'
 import '../styles/BoothPage.css'
 
 const stripTypes = [
@@ -188,31 +189,6 @@ function BoothPage() {
   const photoStripRef = useRef(null)
   const canvasRef = useRef(null)
   
-  // Particles state
-  const [particles, setParticles] = useState([])
-
-  useEffect(() => {
-    // Generate random particles for booth page
-    const generateParticles = () => {
-      const icons = ['✨', '⭐', '🌸', '🏆']
-      const newParticles = []
-      
-      for (let i = 0; i < 6; i++) {
-        newParticles.push({
-          id: i,
-          icon: icons[Math.floor(Math.random() * icons.length)],
-          left: Math.random() * 100,
-          animationDuration: 8 + Math.random() * 4,
-          animationDelay: Math.random() * 8
-        })
-      }
-      
-      setParticles(newParticles)
-    }
-
-    generateParticles()
-  }, [])
-  
   // Get current step from URL, default to 1
   const currentStep = parseInt(searchParams.get('step') || '1', 10)
   
@@ -237,13 +213,13 @@ function BoothPage() {
   // Load frames from API
   const [frames, setFrames] = useState([])
   const [processedFrameUrl, setProcessedFrameUrl] = useState(null)
-  const [debugSlots, setDebugSlots] = useState(true) // Enable debug by default
+  const [debugSlots, setDebugSlots] = useState(false) // Disable debug by default
   // Photo transform controls: per-photo { scale, x, y }
   const [photoTransforms, setPhotoTransforms] = useState({})
   const [activePhotoEdit, setActivePhotoEdit] = useState(null) // index of photo being edited
   const dragRef = useRef({ dragging: false, startX: 0, startY: 0, origX: 0, origY: 0 })
 
-  const getTransform = (index) => photoTransforms[index] || { scale: 1, x: 0, y: 0 }
+  const getTransform = (index) => photoTransforms[index] || { scale: 1.0, x: 0, y: 0 }
 
   const updateTransform = (index, patch) => {
     setPhotoTransforms(prev => ({
@@ -528,22 +504,7 @@ function BoothPage() {
 
   return (
     <div className="booth-page">
-      {/* Falling particles */}
-      <div className="particles-container">
-        {particles.map(particle => (
-          <div
-            key={particle.id}
-            className="particle"
-            style={{
-              left: `${particle.left}%`,
-              animationDuration: `${particle.animationDuration}s`,
-              animationDelay: `${particle.animationDelay}s`
-            }}
-          >
-            {particle.icon}
-          </div>
-        ))}
-      </div>
+      <FallingParticles count={15} />
 
       <header className="booth-header">
         {currentStep === 1 ? (
@@ -718,14 +679,6 @@ function BoothPage() {
             </div>
 
             <div className="sticker-editor">
-              {selectedFrame?.frameImage && (
-                <button
-                  onClick={() => setDebugSlots(v => !v)}
-                  style={{ marginBottom: '8px', padding: '4px 12px', borderRadius: '6px', border: '1px solid #ccc', cursor: 'pointer', fontSize: '12px', background: debugSlots ? '#FF6B9D' : '#fff', color: debugSlots ? '#fff' : '#333' }}
-                >
-                  {debugSlots ? '🔴 Ẩn Debug Slots' : '🟢 Xem vị trí Slots'}
-                </button>
-              )}
               <div 
                 className="photo-strip-card"
                 id="photo-container-edit"
@@ -796,8 +749,8 @@ function BoothPage() {
                               position: 'absolute',
                               top: '50%',
                               left: '50%',
-                              width: `${120 * t.scale}%`,
-                              height: `${120 * t.scale}%`,
+                              width: `${100 * t.scale}%`,
+                              height: `${100 * t.scale}%`,
                               objectFit: 'cover',
                               objectPosition: 'center',
                               display: 'block',
@@ -1149,8 +1102,8 @@ function BoothPage() {
                               position: 'absolute',
                               top: '50%',
                               left: '50%',
-                              width: `${120 * t.scale}%`,
-                              height: `${120 * t.scale}%`,
+                              width: `${100 * t.scale}%`,
+                              height: `${100 * t.scale}%`,
                               objectFit: 'cover',
                               objectPosition: 'center',
                               display: 'block',

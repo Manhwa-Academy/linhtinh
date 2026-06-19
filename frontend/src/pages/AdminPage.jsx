@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Plus, Edit2, Trash2, Save, X, LogOut, Upload, Image } from 'lucide-react'
 import { API_URL, frameImageUrl } from '../config/api'
+import FallingParticles from '../components/FallingParticles'
 import '../styles/AdminPage.css'
 
 function AdminPage() {
@@ -428,6 +429,9 @@ function AdminPage() {
   if (!isAuthenticated) {
     return (
       <div className="admin-page">
+        {/* Falling particles */}
+        <FallingParticles count={15} />
+
         <div className="admin-login-container">
           <div className="admin-login-card">
             <h1>🔐 Admin Login</h1>
@@ -538,6 +542,9 @@ function AdminPage() {
       )}
 
       <div className="admin-page">
+        {/* Falling particles */}
+        <FallingParticles count={15} />
+        
         <header className="admin-header">
         <button onClick={() => navigate('/')} className="back-button">
           <ArrowLeft size={18} /> Trang chủ

@@ -23,7 +23,7 @@ function CaptureStep({
   const totalPhotos = stripType.count
   const allCaptured = capturedPhotos.length === totalPhotos
 
-  const capture = useCallback(() => {
+  const capture = useCallback(async () => {
     if (webcamRef.current && capturedPhotos.length < totalPhotos) {
       const imageSrc = webcamRef.current.getScreenshot()
       onPhotosChange([...capturedPhotos, imageSrc])
@@ -62,7 +62,7 @@ function CaptureStep({
     }
   }
 
-  const handleFileUpload = (e) => {
+  const handleFileUpload = async (e) => {
     const files = Array.from(e.target.files)
     const maxPhotos = totalPhotos - capturedPhotos.length
     
@@ -74,20 +74,19 @@ function CaptureStep({
     const filesToProcess = files.slice(0, maxPhotos)
     
     let newPhotos = [...capturedPhotos]
-    let processed = 0
     
-    filesToProcess.forEach(file => {
+    // Process each file
+    for (const file of filesToProcess) {
       const reader = new FileReader()
-      reader.onload = (event) => {
-        newPhotos.push(event.target.result)
-        processed++
-        if (processed === filesToProcess.length) {
-          onPhotosChange(newPhotos)
-        }
-      }
-      reader.readAsDataURL(file)
-    })
+      const imageSrc = await new Promise((resolve) => {
+        reader.onload = (event) => resolve(event.target.result)
+        reader.readAsDataURL(file)
+      })
+      
+      newPhotos.push(imageSrc)
+    }
     
+    onPhotosChange(newPhotos)
     e.target.value = ''
   }
 
