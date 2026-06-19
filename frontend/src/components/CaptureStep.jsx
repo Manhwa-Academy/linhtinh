@@ -23,21 +23,25 @@ function CaptureStep({
   const totalPhotos = stripType.count
   const allCaptured = capturedPhotos.length === totalPhotos
 
-  const capture = useCallback(async () => {
-    if (webcamRef.current && capturedPhotos.length < totalPhotos) {
+  const capture = useCallback(() => {
+    if (webcamRef.current) {
       const imageSrc = webcamRef.current.getScreenshot()
-      onPhotosChange([...capturedPhotos, imageSrc])
-      
-      // Auto continue countdown if more photos needed
-      if (capturedPhotos.length + 1 < totalPhotos) {
-        setTimeout(() => startCountdown(), 800)
+      if (imageSrc) {
+        onPhotosChange(prev => {
+          const newPhotos = [...prev, imageSrc]
+          // Auto continue countdown if more photos needed
+          if (newPhotos.length < totalPhotos) {
+            setTimeout(() => startCountdown(), 1500)
+          }
+          return newPhotos
+        })
       }
     }
-  }, [capturedPhotos, totalPhotos, onPhotosChange])
+  }, [totalPhotos, onPhotosChange])
 
-  const startCountdown = () => {
+  const startCountdown = useCallback(() => {
     setIsCapturing(true)
-    let count = 3
+    let count = 5
     setCountdown(count)
     
     const interval = setInterval(() => {
@@ -51,7 +55,7 @@ function CaptureStep({
         setIsCapturing(false)
       }
     }, 1000)
-  }
+  }, [capture])
 
   const handleCaptureClick = () => {
     if (!showCamera) {
