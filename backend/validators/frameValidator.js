@@ -3,9 +3,9 @@
  * Comprehensive validation for frame strip uploads including file format, size, dimensions, and photo slots
  */
 
-const path = require('path')
-const sharp = require('sharp')
-const {
+import path from 'path'
+import sharp from 'sharp'
+import {
   VALIDATION_CONFIG,
   getStandardDimensions,
   getFrameTypeFromSlotCount,
@@ -15,7 +15,7 @@ const {
   isAllowedFormat,
   isAllowedExtension,
   getExpectedMimeType
-} = require('../config/frameStandards')
+} from '../config/frameStandards.js'
 
 /**
  * Validation Result class
@@ -435,7 +435,7 @@ function detectFrameType(slotCount) {
   return getFrameTypeFromSlotCount(slotCount)
 }
 
-module.exports = {
+export {
   ValidationResult,
   validateFrameUpload,
   validateFileFormat,

@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url'
 import fs from 'fs'
 import pg from 'pg'
 import { put } from '@vercel/blob'
+import { validateFrameUpload } from './validators/frameValidator.js'
 
 const { Pool } = pg
 
@@ -453,25 +454,44 @@ app.post('/api/upload-frame', async (req, res) => {
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
   
   try {
-    const { fileData, fileName, mimeType, fileSize } = req.body
+    const { fileData, fileName, mimeType, fileSize, photoSlots } = req.body
 
     if (!fileData || !fileName) {
       return res.status(400).json({ error: 'Thiếu dữ liệu file (fileData, fileName)' })
     }
 
-    // Validate file type
+    // Decode base64 thành buffer
+    const buffer = Buffer.from(fileData, 'base64')
+    
+    // ===== RUN VALIDATION =====
+    console.log('[Validation] Starting frame validation...')
+    
+    const validationResult = await validateFrameUpload({
+      filename: fileName,
+      mimeType: mimeType || 'image/png',
+      photoSlots: photoSlots || []
+    }, buffer)
+    
+    // If validation fails, return errors
+    if (!validationResult.valid) {
+      console.log('[Validation] Failed:', validationResult.errors)
+      return res.status(400).json({
+        error: 'Validation failed',
+        validationErrors: validationResult.errors
+      })
+    }
+    
+    console.log('[Validation] Passed!')
+    if (validationResult.warnings.length > 0) {
+      console.log('[Validation] Warnings:', validationResult.warnings)
+    }
+    // ===== END VALIDATION =====
+
+    // Validate file type (backup check)
     const allowedMimes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif']
     if (mimeType && !allowedMimes.includes(mimeType)) {
       return res.status(400).json({ error: 'Chỉ chấp nhận file ảnh (jpeg, jpg, png, webp, gif)' })
     }
-
-    // Validate file size (5MB)
-    if (fileSize && fileSize > 5 * 1024 * 1024) {
-      return res.status(400).json({ error: 'File quá lớn (tối đa 5MB)' })
-    }
-
-    // Decode base64 thành buffer
-    const buffer = Buffer.from(fileData, 'base64')
     
     // LOCAL: Lưu vào thư mục uploads/frames/
     if (process.env.NODE_ENV !== 'production') {
@@ -490,13 +510,16 @@ app.post('/api/upload-frame', async (req, res) => {
       
       return res.json({
         success: true,
-        message: 'Upload frame image thành công (local)',
+        message: 'Frame upload validated successfully',
         file: {
           filename: localFileName,
           url: fileUrl,
           path: `/uploads/frames/${localFileName}`,
-          size: buffer.length
-        }
+          size: buffer.length,
+          dimensions: validationResult.metadata.dimensions,
+          frameType: validationResult.metadata.frameType
+        },
+        warnings: validationResult.warnings.length > 0 ? validationResult.warnings : undefined
       })
     }
     
@@ -528,14 +551,17 @@ app.post('/api/upload-frame', async (req, res) => {
 
     res.json({
       success: true,
-      message: 'Upload frame image thành công',
+      message: 'Frame upload validated successfully',
       file: {
         filename: fileName,
         url: fileUrl,
         path: fileUrl,
         key: uploadResult.data.key,
-        size: uploadResult.data.size || buffer.length
-      }
+        size: uploadResult.data.size || buffer.length,
+        dimensions: validationResult.metadata.dimensions,
+        frameType: validationResult.metadata.frameType
+      },
+      warnings: validationResult.warnings.length > 0 ? validationResult.warnings : undefined
     })
   } catch (error) {
     console.error('Lỗi upload frame:', error)
@@ -553,6 +579,13 @@ app.put('/api/frames/:id', async (req, res) => {
     
     if (frameIndex === -1) {
       return res.status(404).json({ error: 'Không tìm thấy frame' })
+    }
+    
+    // Validate: if frameImage exists, photoSlots must be provided
+    if (frameImage && (!photoSlots || photoSlots.length === 0)) {
+      return res.status(400).json({ 
+        error: 'Frame có ảnh phải có photoSlots. Vui lòng thêm vị trí slots cho frame này.'
+      })
     }
     
     frames[frameIndex] = {

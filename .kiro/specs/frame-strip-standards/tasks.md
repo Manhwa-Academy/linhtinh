@@ -68,7 +68,7 @@
 ---
 
 ## Task 4: Update Frame Upload API Endpoint
-**Status**: pending
+**Status**: completed
 **Requirements**: Requirement 9, 10
 **Description**: Integrate validation module into POST /api/frames endpoint
 
@@ -91,7 +91,7 @@
 ---
 
 ## Task 5: Add Client-Side Pre-Validation
-**Status**: pending
+**Status**: completed
 **Requirements**: Requirement 12, 15
 **Description**: Implement real-time validation feedback in Admin Panel before upload
 
@@ -115,7 +115,7 @@
 ---
 
 ## Task 6: Enhance Photo Slot Editor with Safe Zone Overlay
-**Status**: pending
+**Status**: completed
 **Requirements**: Requirement 7, 12
 **Description**: Add visual safe zone boundaries to photo slot editor
 

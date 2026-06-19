@@ -141,7 +141,7 @@ function getExpectedMimeType(extension) {
   return VALIDATION_CONFIG.mimeTypeMap[extension.toLowerCase()] || null
 }
 
-module.exports = {
+export {
   FRAME_STANDARDS,
   VALIDATION_CONFIG,
   getStandardDimensions,

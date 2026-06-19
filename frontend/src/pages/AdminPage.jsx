@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Plus, Edit2, Trash2, Save, X, LogOut, Upload, Image } from 'lucide-react'
 import { API_URL, frameImageUrl } from '../config/api'
 import FallingParticles from '../components/FallingParticles'
+import FileValidationPreview from '../components/FileValidationPreview'
+import SafeZoneOverlay from '../components/SafeZoneOverlay'
 import '../styles/AdminPage.css'
 
 function AdminPage() {
@@ -72,9 +74,10 @@ function AdminPage() {
   }
 
   // Upload qua backend /api/upload-frame → UploadThing
-  const uploadFrameImageWithTimeout = async (file) => {
+  const uploadFrameImageWithTimeout = async (file, photoSlots = []) => {
     console.log('[Upload] Bắt đầu upload file:', file.name, file.size, file.type)
     console.log('[Upload] API URL:', API_URL)
+    console.log('[Upload] Photo slots:', photoSlots)
 
     // Compress image if over 4MB
     let fileToUpload = file
@@ -112,7 +115,8 @@ function AdminPage() {
           fileData: base64,
           fileName: fileToUpload.name,
           mimeType: fileToUpload.type,
-          fileSize: fileToUpload.size
+          fileSize: fileToUpload.size,
+          photoSlots: photoSlots  // Add photoSlots for validation
         }),
         signal: controller.signal
       })
@@ -120,11 +124,22 @@ function AdminPage() {
 
       if (!response.ok) {
         const err = await response.json().catch(() => ({}))
+        // Show validation errors if present
+        if (err.validationErrors && err.validationErrors.length > 0) {
+          throw new Error(err.validationErrors.join('; '))
+        }
         throw new Error(err.error || `HTTP ${response.status}`)
       }
 
       const data = await response.json()
       console.log('[Upload] Response:', data)
+      
+      // Show warnings if present
+      if (data.warnings && data.warnings.length > 0) {
+        data.warnings.forEach(warning => {
+          showToast(warning, 'warning')
+        })
+      }
       
       const fileUrl = data?.file?.url || data?.file?.path
       if (!fileUrl) throw new Error('Không lấy được URL file sau upload')
@@ -223,7 +238,7 @@ function AdminPage() {
       let frameImageUrl = null
       if (newFrame.frameImage && newFrame.frameImage instanceof File) {
         try {
-          frameImageUrl = await uploadFrameImageWithTimeout(newFrame.frameImage)
+          frameImageUrl = await uploadFrameImageWithTimeout(newFrame.frameImage, newFrame.photoSlots)
         } catch (error) {
           console.error('Upload error:', error)
           setIsProcessing(false)
@@ -306,7 +321,7 @@ function AdminPage() {
       let frameImageUrl = editingFrame.frameImage
       if (editingFrame.frameImage && editingFrame.frameImage instanceof File) {
         try {
-          frameImageUrl = await uploadFrameImageWithTimeout(editingFrame.frameImage)
+          frameImageUrl = await uploadFrameImageWithTimeout(editingFrame.frameImage, editingFrame.photoSlots)
         } catch (error) {
           console.error('Upload error:', error)
           setIsProcessing(false)
@@ -466,7 +481,7 @@ function AdminPage() {
           position: 'fixed',
           top: '20px',
           right: '20px',
-          background: toast.type === 'error' ? '#ef4444' : '#10b981',
+          background: toast.type === 'error' ? '#ef4444' : toast.type === 'warning' ? '#f59e0b' : '#10b981',
           color: 'white',
           padding: '12px 24px',
           borderRadius: '8px',
@@ -632,6 +647,19 @@ function AdminPage() {
                 onChange={(e) => handleFileChange(e, false)}
                 className="file-input"
               />
+              
+              {/* Real-time validation feedback */}
+              {newFrame.frameImage && (
+                <FileValidationPreview 
+                  file={newFrame.frameImage} 
+                  photoSlots={newFrame.photoSlots}
+                  onValidationChange={(result) => {
+                    // Can use this to disable upload button if validation fails
+                    console.log('Validation result:', result)
+                  }}
+                />
+              )}
+              
               {newFrame.frameImagePreview && (
                 <div className="file-preview-container">
                   <div className="file-info">
@@ -701,6 +729,9 @@ function AdminPage() {
                   {/* Preview */}
                   <div className="slots-preview-container">
                     <div className="slots-preview-frame">
+                      {/* Safe Zone Overlay */}
+                      <SafeZoneOverlay />
+                      
                       {/* Sample photos in slots */}
                       <div style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}>
                         {newFrame.photoSlots.map((slot, index) => (
