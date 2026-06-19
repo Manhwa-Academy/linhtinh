@@ -4,7 +4,7 @@ const ParticleIcon = ({ type, color }) => {
   switch (type) {
     case 'sparkle':
       return (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
           <path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z" 
                 fill={color} stroke="white" strokeWidth="1" 
                 style={{ filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.8))' }} />
@@ -12,17 +12,17 @@ const ParticleIcon = ({ type, color }) => {
       )
     case 'star':
       return (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
           <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" 
                 fill={color} stroke="white" strokeWidth="1"
                 style={{ filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.8))' }} />
         </svg>
       )
     case 'flower':
-      return <span style={{ fontSize: '24px', filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.6))' }}>🌸</span>
+      return <span style={{ fontSize: '48px', filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.6))' }}>🌸</span>
     case 'trophy':
       return (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
           <path d="M7 4V8C7 10.2 8.8 12 11 12H13C15.2 12 17 10.2 17 8V4H7Z" 
                 fill={color} stroke="white" strokeWidth="1" />
           <path d="M12 12V16M10 16H14M9 20H15" stroke="white" strokeWidth="2" strokeLinecap="round" />
@@ -31,7 +31,7 @@ const ParticleIcon = ({ type, color }) => {
       )
     case 'heart':
       return (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
           <path d="M12 21C12 21 3 15 3 9C3 6 5 4 7.5 4C9.5 4 11 5 12 6.5C13 5 14.5 4 16.5 4C19 4 21 6 21 9C21 15 12 21 12 21Z" 
                 fill={color} stroke="white" strokeWidth="1"
                 style={{ filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.6))' }} />
