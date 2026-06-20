@@ -452,9 +452,9 @@ function BoothPage() {
           const drawW = photoImg.naturalWidth * finalScale
           const drawH = photoImg.naturalHeight * finalScale
           
-          // Align from TOP instead of center, and apply user's x,y offset
-          const offsetX = sX + (sW - drawW) / 2 + t.x // Keep horizontal centering
-          const offsetY = sY + t.y // Align from top, no vertical centering
+          // Center the photo and apply user's x,y offset
+          const offsetX = sX + (sW - drawW) / 2 + t.x
+          const offsetY = sY + (sH - drawH) / 2 + t.y
 
           ctx.save()
           
@@ -754,15 +754,14 @@ function BoothPage() {
                             style={{
                               filter: selectedFilter?.value,
                               position: 'absolute',
-                              top: '0',
+                              top: '50%',
                               left: '50%',
-                              width: '100%',
-                              height: '100%',
-                              objectFit: 'cover', // Cover to fill the slot
-                              objectPosition: 'top center', // Align from top - shows face/head first
+                              width: `${100 * t.scale}%`,
+                              height: `${100 * t.scale}%`,
+                              objectFit: 'contain', // Fit inside without cropping
+                              objectPosition: 'center',
                               display: 'block',
-                              transform: `translate(-50%, 0) scale(${t.scale})`,
-                              transformOrigin: 'top center',
+                              transform: `translate(calc(-50% + ${t.x}px), calc(-50% + ${t.y}px))`,
                               userSelect: 'none'
                             }}
                           />
@@ -1108,15 +1107,14 @@ function BoothPage() {
                             style={{
                               filter: selectedFilter.value,
                               position: 'absolute',
-                              top: '0',
+                              top: '50%',
                               left: '50%',
-                              width: '100%',
-                              height: '100%',
-                              objectFit: 'cover', // Cover to fill the slot
-                              objectPosition: 'top center', // Align from top - shows face/head first
+                              width: `${100 * t.scale}%`,
+                              height: `${100 * t.scale}%`,
+                              objectFit: 'contain', // Fit inside without cropping
+                              objectPosition: 'center',
                               display: 'block',
-                              transform: `translate(-50%, 0) scale(${t.scale})`,
-                              transformOrigin: 'top center'
+                              transform: `translate(calc(-50% + ${t.x}px), calc(-50% + ${t.y}px))`
                             }}
                           />
                         </div>
