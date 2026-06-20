@@ -758,7 +758,7 @@ function BoothPage() {
                               left: '50%',
                               width: `${100 * t.scale}%`,
                               height: `${100 * t.scale}%`,
-                              objectFit: 'cover',
+                              objectFit: 'contain', // Changed to contain - fits without cropping
                               objectPosition: 'center',
                               display: 'block',
                               transform: `translate(calc(-50% + ${t.x}px), calc(-50% + ${t.y}px))`,
@@ -825,7 +825,7 @@ function BoothPage() {
                           background: 'white',
                           boxShadow: '0 4px 15px rgba(0, 0, 0, 0.15)'
                         }}>
-                          <img src={photo} alt={`Photo ${index + 1}`} style={{ filter: selectedFilter?.value, display: 'block', width: '100%', height: 'auto', objectFit: 'cover' }} className="photo-base" />
+                          <img src={photo} alt={`Photo ${index + 1}`} style={{ filter: selectedFilter?.value, display: 'block', width: '100%', height: 'auto', objectFit: 'contain' }} className="photo-base" />
                         </div>
                       ))}
                     </div>
@@ -1111,7 +1111,7 @@ function BoothPage() {
                               left: '50%',
                               width: `${100 * t.scale}%`,
                               height: `${100 * t.scale}%`,
-                              objectFit: 'cover',
+                              objectFit: 'contain',
                               objectPosition: 'center',
                               display: 'block',
                               transform: `translate(calc(-50% + ${t.x}px), calc(-50% + ${t.y}px))`
@@ -1154,7 +1154,7 @@ function BoothPage() {
                           background: 'white',
                           boxShadow: '0 4px 15px rgba(0, 0, 0, 0.15)'
                         }}>
-                          <img src={photo} alt={`Photo ${index + 1}`} style={{ filter: selectedFilter.value, display: 'block', width: '100%', objectFit: 'cover' }} />
+                          <img src={photo} alt={`Photo ${index + 1}`} style={{ filter: selectedFilter.value, display: 'block', width: '100%', objectFit: 'contain' }} />
                         </div>
                       ))}
                     </div>
