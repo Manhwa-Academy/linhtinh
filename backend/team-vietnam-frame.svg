@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1080" height="2160" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="redYellowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#DA251D;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#E53935;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFD700;stop-opacity:0.3" />
+      <stop offset="70%" style="stop-color:#E53935;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#DA251D;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#DA251D;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#DA251D;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="footerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#DA251D;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFD700;stop-opacity:1" />
+    </linearGradient>
+
+    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#FFA500;stop-opacity:0.8" />
+    </linearGradient>
+
+    <!-- Mask to cut transparent holes for photos -->
+    <mask id="frameMask">
+      <rect width="1080" height="2160" fill="white"/>
+      <!-- Cut transparent holes for 4 photo slots -->
+      <rect x="108" y="152" width="864" height="460" fill="black" rx="8"/>
+      <rect x="108" y="644" width="864" height="460" fill="black" rx="8"/>
+      <rect x="108" y="1120" width="864" height="460" fill="black" rx="8"/>
+      <rect x="108" y="1600" width="864" height="460" fill="black" rx="8"/>
+    </mask>
+  </defs>
+
+  <!-- Background with mask -->
+  <rect width="1080" height="2160" fill="url(#redYellowGrad)" mask="url(#frameMask)"/>
+  
+  <!-- Gold and Red borders -->
+  <rect x="10" y="10" width="1060" height="2140" 
+        fill="none" stroke="#FFD700" stroke-width="16"/>
+  <rect x="26" y="26" width="1028" height="2108" 
+        fill="none" stroke="#DA251D" stroke-width="4"/>
+
+  <!-- Header Section -->
+  <rect width="1080" height="100" fill="url(#headerGrad)" opacity="0.95"/>
+  
+  <!-- Main Title TEAM VIETNAM -->
+  <text x="540" y="50" font-family="'Impact', 'Arial Black', sans-serif" 
+        font-size="48" font-weight="900" text-anchor="middle" 
+        fill="#FFD700" stroke="#DA251D" stroke-width="4" letter-spacing="4">⭐ TEAM VIETNAM ⭐</text>
+  
+  <!-- Subtitle PNC 2026 -->
+  <text x="540" y="85" font-family="'Arial', sans-serif" 
+        font-size="22" font-weight="bold" text-anchor="middle" 
+        fill="#FFFFFF" stroke="#DA251D" stroke-width="2" letter-spacing="2">PNC 2026</text>
+
+  <!-- Gold Star decorations -->
+  <g transform="translate(70, 35) scale(2)">
+    <path d="M10 2 L12 8 L18 9 L14 13 L15 19 L10 16 L5 19 L6 13 L2 9 L8 8 Z" 
+          fill="#FFD700" stroke="#DA251D" stroke-width="0.5"/>
+  </g>
+  
+  <g transform="translate(960, 35) scale(2)">
+    <path d="M10 2 L12 8 L18 9 L14 13 L15 19 L10 16 L5 19 L6 13 L2 9 L8 8 Z" 
+          fill="#FFD700" stroke="#DA251D" stroke-width="0.5"/>
+  </g>
+
+  <!-- Photo Slot 1: TANVUU -->
+  <g id="slot1">
+    <rect x="108" y="152" width="864" height="460" 
+          fill="none" stroke="url(#borderGrad)" stroke-width="6" rx="8"/>
+    <rect x="108" y="152" width="864" height="460" 
+          fill="none" stroke="rgba(255,215,0,0.3)" stroke-width="2" rx="8"/>
+    
+    <!-- Player name (left side) -->
+    <text x="30" y="137" font-family="'Arial Black', sans-serif" 
+          font-size="32" font-weight="900" 
+          fill="#FFD700" stroke="#DA251D" stroke-width="3" letter-spacing="1">TANVUU</text>
+    
+    <!-- VN flag -->
+    <text x="1000" y="140" font-size="40">🇻🇳</text>
+  </g>
+
+  <!-- Photo Slot 2: HIMASS -->
+  <g id="slot2">
+    <rect x="108" y="644" width="864" height="460" 
+          fill="none" stroke="url(#borderGrad)" stroke-width="6" rx="8"/>
+    <rect x="108" y="644" width="864" height="460" 
+          fill="none" stroke="rgba(255,215,0,0.3)" stroke-width="2" rx="8"/>
+    
+    <!-- Player name (left side) -->
+    <text x="30" y="629" font-family="'Arial Black', sans-serif" 
+          font-size="32" font-weight="900" 
+          fill="#FFD700" stroke="#DA251D" stroke-width="3" letter-spacing="1">HIMASS</text>
+    
+    <!-- VN flag -->
+    <text x="1000" y="632" font-size="40">🇻🇳</text>
+  </g>
+
+  <!-- Photo Slot 3: DELWYN -->
+  <g id="slot3">
+    <rect x="108" y="1120" width="864" height="460" 
+          fill="none" stroke="url(#borderGrad)" stroke-width="6" rx="8"/>
+    <rect x="108" y="1120" width="864" height="460" 
+          fill="none" stroke="rgba(255,215,0,0.3)" stroke-width="2" rx="8"/>
+    
+    <!-- Player name (left side) -->
+    <text x="30" y="1105" font-family="'Arial Black', sans-serif" 
+          font-size="32" font-weight="900" 
+          fill="#FFD700" stroke="#DA251D" stroke-width="3" letter-spacing="1">DELWYN</text>
+    
+    <!-- VN flag -->
+    <text x="1000" y="1108" font-size="40">🇻🇳</text>
+  </g>
+
+  <!-- Photo Slot 4: SOLOLZY -->
+  <g id="slot4">
+    <rect x="108" y="1600" width="864" height="460" 
+          fill="none" stroke="url(#borderGrad)" stroke-width="6" rx="8"/>
+    <rect x="108" y="1600" width="864" height="460" 
+          fill="none" stroke="rgba(255,215,0,0.3)" stroke-width="2" rx="8"/>
+    
+    <!-- Player name (left side) -->
+    <text x="30" y="1585" font-family="'Arial Black', sans-serif" 
+          font-size="32" font-weight="900" 
+          fill="#FFD700" stroke="#DA251D" stroke-width="3" letter-spacing="1">SOLOLZY</text>
+    
+    <!-- VN flag -->
+    <text x="1000" y="1588" font-size="40">🇻🇳</text>
+  </g>
+
+  <!-- Decorative VN flags -->
+  <text x="50" y="1000" font-size="48" opacity="0.4">🇻🇳</text>
+  <text x="980" y="1400" font-size="48" opacity="0.4">🇻🇳</text>
+
+  <!-- Footer Section -->
+  <rect y="2060" width="1080" height="100" fill="url(#footerGrad)" opacity="0.95"/>
+  
+  <!-- Gold Star Left Footer -->
+  <g transform="translate(160, 2070) scale(2)">
+    <path d="M10 2 L12 8 L18 9 L14 13 L15 19 L10 16 L5 19 L6 13 L2 9 L8 8 Z" 
+          fill="#FFD700" stroke="#DA251D" stroke-width="0.5"/>
+  </g>
+  
+  <!-- VN flag right footer -->
+  <text x="880" y="2120" font-size="42">🇻🇳</text>
+  
+  <!-- VIET NAM WIN text -->
+  <text x="540" y="2120" font-family="'Impact', 'Arial Black', sans-serif" 
+        font-size="56" font-weight="900" text-anchor="middle" 
+        fill="#FFD700" stroke="#DA251D" stroke-width="3" letter-spacing="8">VIET NAM WIN</text>
+
+  <!-- Corner decorations - targeting reticle style -->
+  <g opacity="0.5">
+    <!-- Top-left corners -->
+    <line x1="30" y1="120" x2="80" y2="120" stroke="#FFD700" stroke-width="3"/>
+    <line x1="30" y1="120" x2="30" y2="170" stroke="#FFD700" stroke-width="3"/>
+    
+    <!-- Top-right corners -->
+    <line x1="1000" y1="120" x2="1050" y2="120" stroke="#FFD700" stroke-width="3"/>
+    <line x1="1050" y1="120" x2="1050" y2="170" stroke="#FFD700" stroke-width="3"/>
+    
+    <!-- Bottom-left corners -->
+    <line x1="30" y1="2040" x2="80" y2="2040" stroke="#FFD700" stroke-width="3"/>
+    <line x1="30" y1="1990" x2="30" y2="2040" stroke="#FFD700" stroke-width="3"/>
+    
+    <!-- Bottom-right corners -->
+    <line x1="1000" y1="2040" x2="1050" y2="2040" stroke="#FFD700" stroke-width="3"/>
+    <line x1="1050" y1="1990" x2="1050" y2="2040" stroke="#FFD700" stroke-width="3"/>
+  </g>
+
+  <!-- Star pattern decoration -->
+  <g opacity="0.3">
+    <text x="540" y="330" font-size="28" fill="#FFD700">⭐</text>
+    <text x="540" y="820" font-size="28" fill="#FFD700">⭐</text>
+    <text x="540" y="1300" font-size="28" fill="#FFD700">⭐</text>
+    <text x="540" y="1780" font-size="28" fill="#FFD700">⭐</text>
+  </g>
+</svg>

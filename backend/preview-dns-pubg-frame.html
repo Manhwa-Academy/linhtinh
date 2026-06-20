@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DNS PUBG 2026 Frame Preview</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      color: white;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    .container {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      max-width: 600px;
+      width: 100%;
+    }
+
+    .frame-preview {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 9/16;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      margin-bottom: 30px;
+    }
+
+    .frame-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .info-section {
+      margin-top: 20px;
+    }
+
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #E5E7EB;
+    }
+
+    .info-item:last-child {
+      border-bottom: none;
+    }
+
+    .info-label {
+      font-weight: bold;
+      color: #1F2937;
+    }
+
+    .info-value {
+      color: #6B7280;
+      text-align: right;
+    }
+
+    .team-list {
+      background: #F9FAFB;
+      border-radius: 10px;
+      padding: 15px;
+      margin-top: 15px;
+    }
+
+    .team-member {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background: white;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .team-member:last-child {
+      margin-bottom: 0;
+    }
+
+    .team-name {
+      font-weight: bold;
+      color: #1E3A8A;
+    }
+
+    .team-emoji {
+      font-size: 1.5rem;
+    }
+
+    .features {
+      background: linear-gradient(135deg, #3B82F6 0%, #1E3A8A 100%);
+      color: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    .features h3 {
+      font-size: 1.3rem;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .features ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .features li {
+      padding: 8px 0;
+      padding-left: 25px;
+      position: relative;
+    }
+
+    .features li:before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: #60A5FA;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 25px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 15px 25px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      text-align: center;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #3B82F6, #1E3A8A);
+      color: white;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+    }
+
+    .btn-secondary {
+      background: #F3F4F6;
+      color: #374151;
+    }
+
+    .btn-secondary:hover {
+      background: #E5E7EB;
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 2rem;
+      }
+      
+      .container {
+        padding: 20px;
+      }
+
+      .buttons {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🎮 DNS PUBG 2026 Frame</h1>
+    <p>Erangel Theme - Preview & Details</p>
+  </div>
+
+  <div class="container">
+    <div class="frame-preview">
+      <img src="uploads/frames/dns-pubg-2026.png" alt="DNS PUBG 2026 Frame">
+    </div>
+
+    <div class="info-section">
+      <div class="info-item">
+        <span class="info-label">Frame Name</span>
+        <span class="info-value">DNS PUBG 2026</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Theme</span>
+        <span class="info-value">Erangel Battle Royale</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Size</span>
+        <span class="info-value">1080 x 1920 px</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">File Size</span>
+        <span class="info-value">~322 KB</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Photo Slots</span>
+        <span class="info-value">4 slots</span>
+      </div>
+    </div>
+
+    <div class="team-list">
+      <h3 style="margin-bottom: 12px; color: #1E3A8A; font-size: 1.1rem;">🏆 DNS Team Members</h3>
+      <div class="team-member">
+        <span class="team-name">GYUMIN</span>
+        <span class="team-emoji">🦝</span>
+      </div>
+      <div class="team-member">
+        <span class="team-name">HEAVEN</span>
+        <span class="team-emoji">😇</span>
+      </div>
+      <div class="team-member">
+        <span class="team-name">DIEL</span>
+        <span class="team-emoji">🐶</span>
+      </div>
+      <div class="team-member">
+        <span class="team-name">REX</span>
+        <span class="team-emoji">🦖</span>
+      </div>
+    </div>
+
+    <div class="features">
+      <h3>✨ Frame Features</h3>
+      <ul>
+        <li>Tông màu xanh dương - trắng Erangel</li>
+        <li>Nền trong suốt để nhìn rõ nhân vật</li>
+        <li>Tên màu trắng bên trái, emoji bên phải</li>
+        <li>Biểu tượng PUBG: 🪖 🎯 📦</li>
+        <li>Border gradient xanh dương hiện đại</li>
+        <li>Crosshair decoration giữa các slot</li>
+      </ul>
+    </div>
+
+    <div class="buttons">
+      <a href="http://localhost:3001/admin" class="btn btn-primary">
+        📤 Upload to Admin
+      </a>
+      <a href="dns-pubg-2026-frame.svg" class="btn btn-secondary" download>
+        💾 Download SVG
+      </a>
+    </div>
+  </div>
+</body>
+</html>

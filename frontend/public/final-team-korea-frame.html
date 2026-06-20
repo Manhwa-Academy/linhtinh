@@ -94,10 +94,16 @@
             ctx.fillText('PNC 2026', 0, 0);
             ctx.restore();
 
-            // === BLUE BORDER ONLY ===
+            // === KOREAN FLAG BORDERS ===
+            // Outer Blue border
             ctx.strokeStyle = COLORS.blue;
             ctx.lineWidth = 18;
             ctx.strokeRect(9, 9, canvas.width - 18, canvas.height - 18);
+
+            // Inner Red border
+            ctx.strokeStyle = COLORS.red;
+            ctx.lineWidth = 10;
+            ctx.strokeRect(30, 30, canvas.width - 60, canvas.height - 60);
 
             // === HEADER ===
             const headerGrad = createGradient(ctx, 0, 0, canvas.width, 110,

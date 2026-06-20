@@ -6,7 +6,6 @@ import FallingParticles from '../components/FallingParticles'
 import FileValidationPreview from '../components/FileValidationPreview'
 import SafeZoneOverlay from '../components/SafeZoneOverlay'
 import FrameDesigner from '../components/FrameDesigner'
-import UploadPUBGFrames from '../components/UploadPUBGFrames'
 import '../styles/AdminPage.css'
 
 function AdminPage() {
@@ -178,7 +177,6 @@ function AdminPage() {
   const [editingSlotsFrameId, setEditingSlotsFrameId] = useState(null)
   const [showSlotsEditor, setShowSlotsEditor] = useState(false)
   const [showFrameDesigner, setShowFrameDesigner] = useState(false)
-  const [showPUBGUploader, setShowPUBGUploader] = useState(false)
 
   const showToast = (message, type = 'success') => {
     setToast({ show: true, message, type })
@@ -657,11 +655,6 @@ function AdminPage() {
         </div>
       )}
 
-      {/* PUBG Frames Uploader Modal */}
-      {showPUBGUploader && (
-        <UploadPUBGFrames onClose={() => setShowPUBGUploader(false)} />
-      )}
-
       <div className="admin-page">
         {/* Falling particles */}
         <FallingParticles count={25} />
@@ -693,13 +686,6 @@ function AdminPage() {
             marginLeft: '15px'
           }}>
             <Palette size={20} /> 🎨 Thiết kế Frame
-          </button>
-
-          <button onClick={() => setShowPUBGUploader(true)} className="add-frame-btn" style={{ 
-            background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-            marginLeft: '15px'
-          }}>
-            <Upload size={20} /> 🎮 Upload PUBG Frames
           </button>
         </div>
 

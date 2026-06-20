@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="2160" viewBox="0 0 1080 2160">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1E3A8A;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#3B82F6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1E3A8A;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#1E3A8A;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#60A5FA;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1E3A8A;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="footerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#1E3A8A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3B82F6;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Border gradient for slots -->
+    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#60A5FA;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#3B82F6;stop-opacity:0.8" />
+    </linearGradient>
+    
+    <!-- Subtle texture pattern -->
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+    </pattern>
+    
+    <!-- Mask to cut holes for photo slots -->
+    <mask id="frameMask">
+      <!-- White = visible, Black = transparent -->
+      <rect width="1080" height="2160" fill="white"/>
+      <!-- Cut holes for photo slots (black rectangles) -->
+      <rect x="108" y="150" width="864" height="460" fill="black" rx="8"/>
+      <rect x="108" y="640" width="864" height="460" fill="black" rx="8"/>
+      <rect x="108" y="1120" width="864" height="460" fill="black" rx="8"/>
+      <rect x="108" y="1600" width="864" height="460" fill="black" rx="8"/>
+    </mask>
+  </defs>
+
+  <!-- Main Background with gradient and mask -->
+  <rect width="1080" height="2160" fill="url(#blueGrad)" mask="url(#frameMask)"/>
+  <rect width="1080" height="2160" fill="url(#grid)" mask="url(#frameMask)"/>
+
+  <!-- Top Header Section -->
+  <rect x="0" y="0" width="1080" height="100" fill="url(#headerGrad)" opacity="0.95"/>
+  
+  <!-- DNS Logo Text -->
+  <text x="540" y="60" font-family="'Impact', 'Arial Black', sans-serif" font-size="48" font-weight="900" 
+        fill="white" text-anchor="middle" letter-spacing="4">DNS PUBG</text>
+
+  <!-- Decorative PUBG icons top -->
+  <text x="100" y="70" font-size="36">🪖</text>
+  <text x="980" y="70" font-size="36">📦</text>
+
+  <!-- Photo Slot 1: GYUMIN 🦝 -->
+  <g id="slot1">
+    <!-- Player name (left, OUTSIDE photo area) -->
+    <text x="30" y="135" font-family="'Arial Black', sans-serif" font-size="32" font-weight="900" 
+          fill="white" letter-spacing="1" text-shadow="2px 2px 4px rgba(0,0,0,0.8)">GYUMIN</text>
+    
+    <!-- Emoji (right, OUTSIDE photo area) -->
+    <text x="1000" y="140" font-size="48" filter="drop-shadow(2px 2px 4px rgba(0,0,0,0.8))">🦝</text>
+    
+    <!-- Slot border frame (transparent for photo) -->
+    <rect x="108" y="150" width="864" height="460" fill="none" stroke="url(#borderGrad)" stroke-width="6" rx="8"/>
+    <rect x="108" y="150" width="864" height="460" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2" rx="8"/>
+  </g>
+
+  <!-- Photo Slot 2: HEAVEN 😇 -->
+  <g id="slot2">
+    <rect x="108" y="640" width="864" height="460" fill="none" stroke="url(#borderGrad)" stroke-width="6" rx="8"/>
+    <rect x="108" y="640" width="864" height="460" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2" rx="8"/>
+    
+    <!-- Player name (left, OUTSIDE photo area) -->
+    <text x="30" y="625" font-family="'Arial Black', sans-serif" font-size="32" font-weight="900" 
+          fill="white" letter-spacing="1" text-shadow="2px 2px 4px rgba(0,0,0,0.8)">HEAVEN</text>
+    
+    <!-- Emoji (right, OUTSIDE photo area) -->
+    <text x="1000" y="630" font-size="48" filter="drop-shadow(2px 2px 4px rgba(0,0,0,0.8))">😇</text>
+  </g>
+
+  <!-- Photo Slot 3: DIEL 🐶 -->
+  <g id="slot3">
+    <rect x="108" y="1120" width="864" height="460" fill="none" stroke="url(#borderGrad)" stroke-width="6" rx="8"/>
+    <rect x="108" y="1120" width="864" height="460" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2" rx="8"/>
+    
+    <!-- Player name (left, OUTSIDE photo area) -->
+    <text x="30" y="1105" font-family="'Arial Black', sans-serif" font-size="32" font-weight="900" 
+          fill="white" letter-spacing="1" text-shadow="2px 2px 4px rgba(0,0,0,0.8)">DIEL</text>
+    
+    <!-- Emoji (right, OUTSIDE photo area) -->
+    <text x="1000" y="1110" font-size="48" filter="drop-shadow(2px 2px 4px rgba(0,0,0,0.8))">🐶</text>
+  </g>
+
+  <!-- Photo Slot 4: REX 🦖 -->
+  <g id="slot4">
+    <rect x="108" y="1600" width="864" height="460" fill="none" stroke="url(#borderGrad)" stroke-width="6" rx="8"/>
+    <rect x="108" y="1600" width="864" height="460" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2" rx="8"/>
+    
+    <!-- Player name (left, OUTSIDE photo area) -->
+    <text x="30" y="1585" font-family="'Arial Black', sans-serif" font-size="32" font-weight="900" 
+          fill="white" letter-spacing="1" text-shadow="2px 2px 4px rgba(0,0,0,0.8)">REX</text>
+    
+    <!-- Emoji (right, OUTSIDE photo area) -->
+    <text x="1000" y="1590" font-size="48" filter="drop-shadow(2px 2px 4px rgba(0,0,0,0.8))">🦖</text>
+  </g>
+
+  <!-- Bottom Footer Section -->
+  <rect x="0" y="2060" width="1080" height="100" fill="url(#footerGrad)" opacity="0.95"/>
+  
+  <!-- PUBG Icons footer -->
+  <text x="200" y="2115" font-size="38">🎯</text>
+  <text x="880" y="2115" font-size="38">🪖</text>
+  
+  <!-- 2026 text -->
+  <text x="540" y="2120" font-family="'Impact', 'Arial Black', sans-serif" font-size="56" font-weight="900" 
+        fill="white" text-anchor="middle" letter-spacing="8">2026</text>
+
+  <!-- Corner decorations - targeting reticle style -->
+  <g opacity="0.4">
+    <!-- Top-left corners -->
+    <line x1="30" y1="120" x2="80" y2="120" stroke="#60A5FA" stroke-width="3"/>
+    <line x1="30" y1="120" x2="30" y2="170" stroke="#60A5FA" stroke-width="3"/>
+    
+    <!-- Top-right corners -->
+    <line x1="1000" y1="120" x2="1050" y2="120" stroke="#60A5FA" stroke-width="3"/>
+    <line x1="1050" y1="120" x2="1050" y2="170" stroke="#60A5FA" stroke-width="3"/>
+    
+    <!-- Bottom-left corners -->
+    <line x1="30" y1="2040" x2="80" y2="2040" stroke="#60A5FA" stroke-width="3"/>
+    <line x1="30" y1="1990" x2="30" y2="2040" stroke="#60A5FA" stroke-width="3"/>
+    
+    <!-- Bottom-right corners -->
+    <line x1="1000" y1="2040" x2="1050" y2="2040" stroke="#60A5FA" stroke-width="3"/>
+    <line x1="1050" y1="1990" x2="1050" y2="2040" stroke="#60A5FA" stroke-width="3"/>
+  </g>
+
+  <!-- Crosshair center decorations between slots -->
+  <g opacity="0.3">
+    <circle cx="540" cy="450" r="8" fill="none" stroke="white" stroke-width="2"/>
+    <line x1="520" y1="450" x2="560" y2="450" stroke="white" stroke-width="2"/>
+    <line x1="540" y1="430" x2="540" y2="470" stroke="white" stroke-width="2"/>
+  </g>
+</svg>

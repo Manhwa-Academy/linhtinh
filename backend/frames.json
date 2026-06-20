@@ -71,131 +71,217 @@
     ]
   },
   {
-    "id": "team-korea-pnc-2026-1781926346677",
-    "name": "Team Korea PNC 2026",
-    "description": "PUBG Nations Cup 2026 - Korean Team",
+    "id": "team-korea-v2-rise-again",
+    "name": "Team Korea - RISE AGAIN",
+    "description": "PUBG Nations Cup 2026 - RISE AGAIN 🍗",
     "emoji": "🇰🇷",
-    "color": "#F0F4FF",
-    "bgGradient": "linear-gradient(135deg, #FFFFFF 0%, #F0F4FF 25%, #FFFFFF 50%, #FFF0F0 75%, #FFFFFF 100%)",
-    "frameImage": "http://localhost:3001/uploads/frames/frame-1781926346660-901154065.png",
+    "color": "#0047A0",
+    "bgGradient": "linear-gradient(135deg, #0047A0 0%, #CD2E3A 50%, #0047A0 100%)",
+    "frameImage": "http://localhost:3001/uploads/frames/team-korea-v2.png",
     "photoSlots": [
       {
-        "x": 6.5,
-        "y": 5.8,
-        "width": 87,
-        "height": 23.4,
+        "x": 10,
+        "y": 7,
+        "width": 80,
+        "height": 21.3,
         "rotation": 0,
-        "label": "GYUMIN 🦝"
+        "label": "GYUMIN"
       },
       {
-        "x": 6.5,
-        "y": 29.9,
-        "width": 87,
-        "height": 23.4,
+        "x": 10,
+        "y": 29.8,
+        "width": 80,
+        "height": 21.3,
         "rotation": 0,
-        "label": "SEONGJANG 🔥"
+        "label": "SEONGJANG"
       },
       {
-        "x": 6.5,
-        "y": 53.9,
-        "width": 87,
-        "height": 23.4,
+        "x": 10,
+        "y": 51.9,
+        "width": 80,
+        "height": 21.3,
         "rotation": 0,
-        "label": "HEAVEN 😇"
+        "label": "HEAVEN"
       },
       {
-        "x": 6.5,
-        "y": 78,
-        "width": 87,
-        "height": 23.4,
+        "x": 10,
+        "y": 74.1,
+        "width": 80,
+        "height": 21.3,
         "rotation": 0,
-        "label": "HEATHER ⭐"
+        "label": "HEATHER"
       }
     ]
   },
   {
     "id": "dns-pubg-2026-1781926346767",
     "name": "DNS PUBG 2026",
-    "description": "PUBG 2026 - Erangel Theme",
+    "description": "PUBG 2026 - Erangel Theme - DNS Team",
     "emoji": "🎮",
-    "color": "#E3F2FD",
-    "bgGradient": "linear-gradient(135deg, #FFFFFF 0%, #E3F2FD 50%, #FFFFFF 100%)",
-    "frameImage": "http://localhost:3001/uploads/frames/frame-1781926346756-347829888.png",
+    "color": "#3B82F6",
+    "bgGradient": "linear-gradient(135deg, #1E3A8A 0%, #3B82F6 50%, #1E3A8A 100%)",
+    "frameImage": "http://localhost:3001/uploads/frames/dns-pubg-2026.png",
     "photoSlots": [
       {
         "x": 10,
-        "y": 6.5,
-        "width": 79.6,
-        "height": 22.7,
+        "y": 6.9,
+        "width": 80,
+        "height": 21.3,
         "rotation": 0,
         "label": "GYUMIN 🦝"
       },
       {
         "x": 10,
-        "y": 30,
-        "width": 79.6,
-        "height": 22.7,
+        "y": 29.6,
+        "width": 80,
+        "height": 21.3,
         "rotation": 0,
         "label": "HEAVEN 😇"
       },
       {
         "x": 10,
-        "y": 53.5,
-        "width": 79.6,
-        "height": 22.7,
+        "y": 51.9,
+        "width": 80,
+        "height": 21.3,
         "rotation": 0,
         "label": "DIEL 🐶"
       },
       {
         "x": 10,
-        "y": 77,
-        "width": 79.6,
-        "height": 22.7,
+        "y": 74.1,
+        "width": 80,
+        "height": 21.3,
         "rotation": 0,
         "label": "REX 🦖"
       }
     ]
   },
   {
-    "id": "geng-pubg-2026-1781926641297",
+    "id": "geng-pubg-2026-roar",
     "name": "GENG PUBG 2026",
-    "description": "PUBG 2026 - GENG Team: SEOUL 🪖, BEAN 📦, DIYY 🎯, SALUTE ⚡",
-    "emoji": "⚡",
-    "color": "#FFF9E6",
-    "bgGradient": "linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%)",
-    "frameImage": "http://localhost:3001/uploads/frames/frame-1781926641279-262247791.png",
+    "description": "PUBG 2026 - GENG Team: SEOUL, BEAN, DIYY, SALUTE - Tiger Theme 🐯",
+    "emoji": "🐯",
+    "color": "#FFD700",
+    "bgGradient": "linear-gradient(135deg, #000000 0%, #FFD700 50%, #000000 100%)",
+    "frameImage": "http://localhost:3001/uploads/frames/geng-pubg-2026.png",
     "photoSlots": [
       {
-        "x": 6.5,
-        "y": 6.9,
-        "width": 87,
-        "height": 23.4,
+        "x": 10,
+        "y": 7,
+        "width": 80,
+        "height": 21.3,
         "rotation": 0,
-        "label": "SEOUL 🪖"
+        "label": "SEOUL"
       },
       {
-        "x": 6.5,
-        "y": 30.2,
-        "width": 87,
-        "height": 23.4,
+        "x": 10,
+        "y": 29.8,
+        "width": 80,
+        "height": 21.3,
         "rotation": 0,
-        "label": "BEAN 📦"
+        "label": "BEAN"
       },
       {
-        "x": 6.5,
-        "y": 53.5,
-        "width": 87,
-        "height": 23.4,
+        "x": 10,
+        "y": 51.9,
+        "width": 80,
+        "height": 21.3,
         "rotation": 0,
-        "label": "DIYY 🎯"
+        "label": "DIYY"
       },
       {
-        "x": 6.5,
-        "y": 76.8,
-        "width": 87,
-        "height": 23.4,
+        "x": 10,
+        "y": 74.1,
+        "width": 80,
+        "height": 21.3,
         "rotation": 0,
-        "label": "SALUTE ⚡"
+        "label": "SALUTE"
+      }
+    ]
+  },
+  {
+    "id": "team-vietnam-pnc-2026",
+    "name": "Team Vietnam PNC 2026",
+    "description": "PUBG Nations Cup 2026 - RISE OF THE DRAGON 🐉",
+    "emoji": "🇻🇳",
+    "color": "#DA251D",
+    "bgGradient": "linear-gradient(135deg, #DA251D 0%, #FFD700 50%, #DA251D 100%)",
+    "frameImage": "http://localhost:3001/uploads/frames/team-vietnam-2026.png",
+    "photoSlots": [
+      {
+        "x": 10,
+        "y": 7,
+        "width": 80,
+        "height": 21.3,
+        "rotation": 0,
+        "label": "TANVUU"
+      },
+      {
+        "x": 10,
+        "y": 29.8,
+        "width": 80,
+        "height": 21.3,
+        "rotation": 0,
+        "label": "HIMASS"
+      },
+      {
+        "x": 10,
+        "y": 51.9,
+        "width": 80,
+        "height": 21.3,
+        "rotation": 0,
+        "label": "DELWYN"
+      },
+      {
+        "x": 10,
+        "y": 74.1,
+        "width": 80,
+        "height": 21.3,
+        "rotation": 0,
+        "label": "SOLOLZY"
+      }
+    ]
+  },
+  {
+    "id": "team-korea-pnc-new-2026",
+    "name": "Team Korea PNC 2026",
+    "description": "PUBG Nations Cup 2026 - RISE AGAIN 🇰🇷",
+    "emoji": "🇰🇷",
+    "color": "#0047A0",
+    "bgGradient": "linear-gradient(135deg, #0047A0 0%, #FFFFFF 50%, #CD2E3A 100%)",
+    "frameImage": "http://localhost:3001/uploads/frames/team-korea-pnc-2026.png",
+    "photoSlots": [
+      {
+        "x": 10,
+        "y": 7,
+        "width": 80,
+        "height": 21.3,
+        "rotation": 0,
+        "label": "GYUMIN"
+      },
+      {
+        "x": 10,
+        "y": 29.8,
+        "width": 80,
+        "height": 21.3,
+        "rotation": 0,
+        "label": "SEONGJANG"
+      },
+      {
+        "x": 10,
+        "y": 51.9,
+        "width": 80,
+        "height": 21.3,
+        "rotation": 0,
+        "label": "HEAVEN"
+      },
+      {
+        "x": 10,
+        "y": 74.1,
+        "width": 80,
+        "height": 21.3,
+        "rotation": 0,
+        "label": "HEATHER"
       }
     ]
   }

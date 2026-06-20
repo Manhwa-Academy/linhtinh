@@ -398,7 +398,7 @@
 }
 
 .photo-placeholder {
-  background: #F7FAFC;
+  background: transparent;
   padding: 10px 14px;
   border-radius: 8px;
   border: 2px dashed #CBD5E0;
@@ -764,7 +764,7 @@
 
 /* Photos Preview Area */
 .photos-preview-area {
-  background: #F7FAFC;
+  background: transparent;
   padding: 30px;
   border-radius: 20px;
   margin-bottom: 30px;
@@ -815,6 +815,7 @@
   background: transparent;
   display: inline-block;
   max-width: 100%;
+  /* Ensure transparency for frame visibility */
 }
 
 .photo-base {

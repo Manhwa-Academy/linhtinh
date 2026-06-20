@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1080" height="2160" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Korean flag colors gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#F0F4FF;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFFFFF;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#FFF0F0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFFFFF;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#0047A0;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#CD2E3A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0047A0;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="footerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#CD2E3A;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#003478;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#CD2E3A;stop-opacity:1" />
+    </linearGradient>
+
+    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0047A0;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#CD2E3A;stop-opacity:0.8" />
+    </linearGradient>
+
+    <!-- Mask to cut transparent holes for photos -->
+    <mask id="frameMask">
+      <rect width="1080" height="2160" fill="white"/>
+      <!-- Cut transparent holes for 4 photo slots -->
+      <rect x="108" y="152" width="864" height="460" fill="black" rx="8"/>
+      <rect x="108" y="644" width="864" height="460" fill="black" rx="8"/>
+      <rect x="108" y="1120" width="864" height="460" fill="black" rx="8"/>
+      <rect x="108" y="1600" width="864" height="460" fill="black" rx="8"/>
+    </mask>
+    
+    <!-- Pattern for black photo slot background -->
+    <pattern id="blackBg" width="1" height="1">
+      <rect width="1080" height="2160" fill="#000000"/>
+    </pattern>
+  </defs>
+
+  <!-- Background with mask -->
+  <rect width="1080" height="2160" fill="url(#bgGrad)" mask="url(#frameMask)"/>
+  
+  <!-- Black backgrounds for photo slots -->
+  <rect x="108" y="152" width="864" height="460" fill="#000000" rx="8"/>
+  <rect x="108" y="644" width="864" height="460" fill="#000000" rx="8"/>
+  <rect x="108" y="1120" width="864" height="460" fill="#000000" rx="8"/>
+  <rect x="108" y="1600" width="864" height="460" fill="#000000" rx="8"/>
+  
+  <!-- Blue border only -->
+  <rect x="10" y="10" width="1060" height="2140" 
+        fill="none" stroke="#0047A0" stroke-width="16"/>
+
+  <!-- Header Section - similar to DNS PUBG -->
+  <rect width="1080" height="100" fill="url(#headerGrad)" opacity="0.95"/>
+  
+  <!-- Main Title - Red -->
+  <text x="540" y="45" font-family="'Impact', 'Arial Black', sans-serif" 
+        font-size="48" font-weight="900" text-anchor="middle" 
+        fill="#DC143C" stroke="#FFFFFF" stroke-width="3" letter-spacing="4">⭐ TEAM KOREA ⭐</text>
+  
+  <!-- Subtitle PNC 2026 -->
+  <text x="540" y="80" font-family="'Arial', sans-serif" 
+        font-size="24" font-weight="bold" text-anchor="middle" 
+        fill="#0047A0" stroke="#FFFFFF" stroke-width="2" letter-spacing="2">PNC 2026</text>
+
+  <!-- Trophy Left -->
+  <text x="100" y="70" font-size="48">🏆</text>
+  
+  <!-- Trophy Right -->
+  <text x="980" y="70" font-size="48">🏆</text>
+
+  <!-- Photo Slot 1 -->
+  <g id="slot1">
+    <!-- Black background for photo area -->
+    <rect x="108" y="152" width="864" height="460" fill="#000000" rx="8"/>
+    
+    <rect x="108" y="152" width="864" height="460" 
+          fill="none" stroke="url(#borderGrad)" stroke-width="6" rx="8"/>
+    <rect x="108" y="152" width="864" height="460" 
+          fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2" rx="8"/>
+    
+    <!-- Player name (left side) -->
+    <text x="30" y="137" font-family="'Arial Black', sans-serif" 
+          font-size="32" font-weight="900" 
+          fill="#FFD700" stroke="#000000" stroke-width="3" letter-spacing="1">GYUMIN</text>
+  </g>
+
+  <!-- Photo Slot 2 -->
+  <g id="slot2">
+    <rect x="108" y="644" width="864" height="460" 
+          fill="none" stroke="url(#borderGrad)" stroke-width="6" rx="8"/>
+    <rect x="108" y="644" width="864" height="460" 
+          fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2" rx="8"/>
+    
+    <!-- Player name (left side) -->
+    <text x="30" y="629" font-family="'Arial Black', sans-serif" 
+          font-size="32" font-weight="900" 
+          fill="#FFD700" stroke="#000000" stroke-width="3" letter-spacing="1">SEONGJANG</text>
+  </g>
+
+  <!-- Photo Slot 3 -->
+  <g id="slot3">
+    <rect x="108" y="1120" width="864" height="460" 
+          fill="none" stroke="url(#borderGrad)" stroke-width="6" rx="8"/>
+    <rect x="108" y="1120" width="864" height="460" 
+          fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2" rx="8"/>
+    
+    <!-- Player name (left side) -->
+    <text x="30" y="1105" font-family="'Arial Black', sans-serif" 
+          font-size="32" font-weight="900" 
+          fill="#FFD700" stroke="#000000" stroke-width="3" letter-spacing="1">HEAVEN</text>
+  </g>
+
+  <!-- Photo Slot 4 -->
+  <g id="slot4">
+    <rect x="108" y="1600" width="864" height="460" 
+          fill="none" stroke="url(#borderGrad)" stroke-width="6" rx="8"/>
+    <rect x="108" y="1600" width="864" height="460" 
+          fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2" rx="8"/>
+    
+    <!-- Player name (left side) -->
+    <text x="30" y="1585" font-family="'Arial Black', sans-serif" 
+          font-size="32" font-weight="900" 
+          fill="#FFD700" stroke="#000000" stroke-width="3" letter-spacing="1">HEATHER</text>
+  </g>
+
+  <!-- Decorative Korean elements -->
+  <text x="50" y="880" font-size="48" opacity="0.5">🇰🇷</text>
+  <text x="980" y="880" font-size="48" opacity="0.5">🇰🇷</text>
+
+  <!-- Footer Section - similar to DNS PUBG -->
+  <rect y="2060" width="1080" height="100" fill="url(#footerGrad)" opacity="0.95"/>
+  
+  <!-- Trophy Left Footer -->
+  <text x="200" y="2115" font-size="48">🏆</text>
+  <text x="880" y="2115" font-size="38">🇰🇷</text>
+  
+  <!-- RISE AGAIN text -->
+  <text x="540" y="2120" font-family="'Impact', 'Arial Black', sans-serif" 
+        font-size="56" font-weight="900" text-anchor="middle" 
+        fill="#FFD700" letter-spacing="8">RISE AGAIN 🍗</text>
+
+  <!-- Corner decorations - targeting reticle style similar to DNS PUBG -->
+  <g opacity="0.4">
+    <!-- Top-left corners -->
+    <line x1="30" y1="120" x2="80" y2="120" stroke="#60A5FA" stroke-width="3"/>
+    <line x1="30" y1="120" x2="30" y2="170" stroke="#60A5FA" stroke-width="3"/>
+    
+    <!-- Top-right corners -->
+    <line x1="1000" y1="120" x2="1050" y2="120" stroke="#60A5FA" stroke-width="3"/>
+    <line x1="1050" y1="120" x2="1050" y2="170" stroke="#60A5FA" stroke-width="3"/>
+    
+    <!-- Bottom-left corners -->
+    <line x1="30" y1="2040" x2="80" y2="2040" stroke="#CD2E3A" stroke-width="3"/>
+    <line x1="30" y1="1990" x2="30" y2="2040" stroke="#CD2E3A" stroke-width="3"/>
+    
+    <!-- Bottom-right corners -->
+    <line x1="1000" y1="2040" x2="1050" y2="2040" stroke="#CD2E3A" stroke-width="3"/>
+    <line x1="1050" y1="1990" x2="1050" y2="2040" stroke="#CD2E3A" stroke-width="3"/>
+  </g>
+</svg>

@@ -139,7 +139,7 @@
   <!-- Title -->
   <text x="540" y="110" font-family="Arial Black, Arial" font-size="90" font-weight="bold" 
         text-anchor="middle" fill="#FFFFFF" 
-        stroke="#000000" stroke-width="8">TEAM KOREA 🇰🇷</text>
+        stroke="#000000" stroke-width="8">TEAM KOREA 2026</text>
   <!-- Slot 1: GYUMIN -->
   <!-- Slot background -->
   <rect x="90" y="250" width="900" height="450" 
@@ -302,12 +302,12 @@
   <text x="980" y="150" font-size="60" opacity="0.6">🏆</text>
   <text x="100" y="2060" font-size="60" opacity="0.6">🏆</text>
   <text x="980" y="2060" font-size="60" opacity="0.6">🏆</text>
-  <text x="60" y="1100" font-size="40">🇰🇷</text>
-  <text x="990" y="1100" font-size="40">🇰🇷</text>
-  <text x="60" y="1700" font-size="40">🇰🇷</text>
-  <text x="990" y="1700" font-size="40">🇰🇷</text>
-  <text x="60" y="1900" font-size="40">🇰🇷</text>
-  <text x="990" y="1900" font-size="40">🇰🇷</text>
+  <text x="60" y="1100" font-size="40">2026</text>
+  <text x="980" y="1100" font-size="40">2026</text>
+  <text x="60" y="1700" font-size="40">2026</text>
+  <text x="980" y="1700" font-size="40">2026</text>
+  <text x="60" y="1900" font-size="40">2026</text>
+  <text x="980" y="1900" font-size="40">2026</text>
   <!-- Footer -->
   <rect y="1960" width="1080" height="200" fill="url(#footerGrad)"/>
   

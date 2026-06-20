@@ -180,9 +180,10 @@
             <div class="control-group">
                 <label for="slotCount">Số ô ảnh:</label>
                 <select id="slotCount">
-                    <option value="2">2 ô (1080 × 1620)</option>
-                    <option value="4" selected>4 ô (1080 × 2160) ⭐</option>
-                    <option value="6">6 ô (1080 × 2700)</option>
+                    <option value="2">2 ô dọc (1080 × 1620)</option>
+                    <option value="3">3 ô ngang (2700 × 1080)</option>
+                    <option value="4" selected>4 ô dọc (1080 × 2160)</option>
+                    <option value="6">6 ô grid (3 trái + 3 phải) (2160 × 2160) ⭐</option>
                 </select>
             </div>
             
@@ -227,9 +228,10 @@
     
     <script>
         const FRAME_STANDARDS = {
-            2: { width: 1080, height: 1620, name: '2-slot' },
-            4: { width: 1080, height: 2160, name: '4-slot' },
-            6: { width: 1080, height: 2700, name: '6-slot' }
+            2: { width: 1080, height: 1620, name: '2-slot', layout: 'vertical' },
+            3: { width: 2700, height: 1080, name: '3-slot', layout: 'horizontal' },
+            4: { width: 1080, height: 2160, name: '4-slot', layout: 'vertical' },
+            6: { width: 2160, height: 2160, name: '6-slot', layout: 'grid' }
         };
         
         const canvas = document.getElementById('canvas');
@@ -255,7 +257,7 @@
             canvas.height = standard.height;
             
             // Scale for display (reduce by 50% for easier viewing)
-            const scale = 0.35;
+            const scale = standard.layout === 'horizontal' ? 0.3 : 0.35;
             canvas.style.width = (standard.width * scale) + 'px';
             canvas.style.height = (standard.height * scale) + 'px';
             
@@ -266,24 +268,73 @@
             ctx.fillStyle = bgColor;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Calculate slot dimensions
+            // Calculate slot dimensions based on layout
             const margin = 54; // 5% of 1080
-            const slotWidth = canvas.width - (margin * 2);
-            const slotHeight = Math.floor((canvas.height - (margin * 2) - ((slotCount - 1) * margin)) / slotCount);
             
-            // Draw photo slots (black rectangles)
-            ctx.fillStyle = slotColor;
-            for (let i = 0; i < slotCount; i++) {
-                const y = margin + (i * (slotHeight + margin));
-                ctx.fillRect(margin, y, slotWidth, slotHeight);
+            if (standard.layout === 'grid') {
+                // Grid layout (3 left + 3 right for 6 slots)
+                const cols = 2;
+                const rows = 3;
+                const slotWidth = Math.floor((canvas.width - (margin * 3)) / cols);
+                const slotHeight = Math.floor((canvas.height - (margin * 4)) / rows);
                 
-                // Draw slot number
-                ctx.fillStyle = 'white';
-                ctx.font = 'bold 80px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(`PHOTO ${i + 1}`, canvas.width / 2, y + slotHeight / 2);
+                // Draw photo slots (black rectangles)
                 ctx.fillStyle = slotColor;
+                let photoNum = 1;
+                for (let row = 0; row < rows; row++) {
+                    for (let col = 0; col < cols; col++) {
+                        const x = margin + (col * (slotWidth + margin));
+                        const y = margin + (row * (slotHeight + margin));
+                        ctx.fillRect(x, y, slotWidth, slotHeight);
+                        
+                        // Draw slot number
+                        ctx.fillStyle = 'white';
+                        ctx.font = 'bold 80px Arial';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText(`PHOTO ${photoNum}`, x + slotWidth / 2, y + slotHeight / 2);
+                        ctx.fillStyle = slotColor;
+                        photoNum++;
+                    }
+                }
+            } else if (standard.layout === 'horizontal') {
+                // Horizontal layout (3 slots side by side)
+                const slotHeight = canvas.height - (margin * 2);
+                const slotWidth = Math.floor((canvas.width - (margin * 2) - ((slotCount - 1) * margin)) / slotCount);
+                
+                // Draw photo slots (black rectangles)
+                ctx.fillStyle = slotColor;
+                for (let i = 0; i < slotCount; i++) {
+                    const x = margin + (i * (slotWidth + margin));
+                    ctx.fillRect(x, margin, slotWidth, slotHeight);
+                    
+                    // Draw slot number
+                    ctx.fillStyle = 'white';
+                    ctx.font = 'bold 80px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(`PHOTO ${i + 1}`, x + slotWidth / 2, canvas.height / 2);
+                    ctx.fillStyle = slotColor;
+                }
+            } else {
+                // Vertical layout (slots stacked)
+                const slotWidth = canvas.width - (margin * 2);
+                const slotHeight = Math.floor((canvas.height - (margin * 2) - ((slotCount - 1) * margin)) / slotCount);
+                
+                // Draw photo slots (black rectangles)
+                ctx.fillStyle = slotColor;
+                for (let i = 0; i < slotCount; i++) {
+                    const y = margin + (i * (slotHeight + margin));
+                    ctx.fillRect(margin, y, slotWidth, slotHeight);
+                    
+                    // Draw slot number
+                    ctx.fillStyle = 'white';
+                    ctx.font = 'bold 80px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(`PHOTO ${i + 1}`, canvas.width / 2, y + slotHeight / 2);
+                    ctx.fillStyle = slotColor;
+                }
             }
             
             // Draw safe zone guides if requested
@@ -297,8 +348,23 @@
                 // Safe zone labels
                 ctx.fillStyle = '#10b981';
                 ctx.font = 'bold 40px Arial';
-                ctx.fillText('5% SAFE ZONE', canvas.width / 2, 30);
-                ctx.fillText('5% SAFE ZONE', canvas.width / 2, canvas.height - 30);
+                if (standard.layout === 'horizontal') {
+                    // Rotate text for horizontal layout
+                    ctx.save();
+                    ctx.translate(30, canvas.height / 2);
+                    ctx.rotate(-Math.PI / 2);
+                    ctx.fillText('5% SAFE ZONE', 0, 0);
+                    ctx.restore();
+                    
+                    ctx.save();
+                    ctx.translate(canvas.width - 30, canvas.height / 2);
+                    ctx.rotate(Math.PI / 2);
+                    ctx.fillText('5% SAFE ZONE', 0, 0);
+                    ctx.restore();
+                } else {
+                    ctx.fillText('5% SAFE ZONE', canvas.width / 2, 30);
+                    ctx.fillText('5% SAFE ZONE', canvas.width / 2, canvas.height - 30);
+                }
             }
             
             // Draw frame text
@@ -306,7 +372,11 @@
                 ctx.fillStyle = '#333';
                 ctx.font = 'bold 60px Arial';
                 ctx.textAlign = 'center';
-                ctx.fillText(frameText.toUpperCase(), canvas.width / 2, canvas.height - 100);
+                if (standard.layout === 'horizontal') {
+                    ctx.fillText(frameText.toUpperCase(), canvas.width / 2, canvas.height - 100);
+                } else {
+                    ctx.fillText(frameText.toUpperCase(), canvas.width / 2, canvas.height - 100);
+                }
             }
             
             // Draw decorative elements (corners)
