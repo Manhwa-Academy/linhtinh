@@ -687,6 +687,13 @@ function AdminPage() {
           }}>
             <Palette size={20} /> 🎨 Thiết kế Frame
           </button>
+          
+          <button onClick={() => window.open('/upload-all-frames-to-production.html', '_blank')} className="add-frame-btn" style={{ 
+            background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+            marginLeft: '15px'
+          }}>
+            <Upload size={20} /> 🚀 Sync to Production
+          </button>
         </div>
 
         {/* Add/Edit Frame Form */}

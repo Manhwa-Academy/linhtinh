@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload All Frames to Production</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+        
+        .config-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .config-section h3 {
+            color: #4338ca;
+            margin-bottom: 15px;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .frames-list {
+            margin-bottom: 30px;
+        }
+        
+        .frame-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .frame-info {
+            flex: 1;
+        }
+        
+        .frame-name {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        
+        .frame-id {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .frame-status {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .status-uploading {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .status-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status-error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .status-skipped {
+            background: #e5e7eb;
+            color: #374151;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-secondary {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #059669;
+        }
+        
+        .progress-container {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e5e7eb;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #059669);
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .progress-text {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .log-container {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        
+        .log-entry {
+            margin-bottom: 5px;
+        }
+        
+        .log-info {
+            color: #4fc3f7;
+        }
+        
+        .log-success {
+            color: #81c784;
+        }
+        
+        .log-error {
+            color: #e57373;
+        }
+        
+        .log-warn {
+            color: #ffb74d;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-info {
+            background: #e0e7ff;
+            border-left: 4px solid #4338ca;
+            color: #312e81;
+        }
+        
+        .alert-warning {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            color: #92400e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Upload All Frames to Production</h1>
+        <p class="subtitle">Đồng bộ tất cả frames từ local lên Vercel deployment</p>
+        
+        <div class="config-section">
+            <h3>⚙️ Cấu hình</h3>
+            <div class="input-group">
+                <label for="localUrl">Local API URL:</label>
+                <input type="text" id="localUrl" value="http://localhost:3001" placeholder="http://localhost:3001">
+            </div>
+            <div class="input-group">
+                <label for="productionUrl">Production URL:</label>
+                <input type="text" id="productionUrl" value="https://meomiy.vercel.app" placeholder="https://meomiy.vercel.app">
+            </div>
+        </div>
+        
+        <div class="alert alert-info">
+            <strong>💡 Hướng dẫn:</strong>
+            <ol style="margin-left: 20px; margin-top: 10px;">
+                <li>Đảm bảo backend local đang chạy (npm start)</li>
+                <li>Kiểm tra URL local và production</li>
+                <li>Click "Tải danh sách frames" để xem frames cần upload</li>
+                <li>Click "Upload tất cả" để bắt đầu đồng bộ</li>
+            </ol>
+        </div>
+        
+        <div class="buttons">
+            <button class="btn-secondary" onclick="loadFrames()">📋 Tải danh sách frames</button>
+            <button class="btn-primary" id="uploadBtn" onclick="uploadAll()" disabled>🚀 Upload tất cả</button>
+        </div>
+        
+        <div class="progress-container" id="progressContainer" style="display: none;">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%;">0%</div>
+            </div>
+            <p class="progress-text" id="progressText">Đang chuẩn bị...</p>
+        </div>
+        
+        <div class="frames-list" id="framesList"></div>
+        
+        <div class="log-container" id="logContainer"></div>
+    </div>
+    
+    <script>
+        let localFrames = [];
+        let productionFrames = [];
+        let framesToUpload = [];
+        
+        function log(message, type = 'info') {
+            const logContainer = document.getElementById('logContainer');
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            const timestamp = new Date().toLocaleTimeString();
+            entry.textContent = `[${timestamp}] ${message}`;
+            logContainer.appendChild(entry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        
+        async function loadFrames() {
+            const localUrl = document.getElementById('localUrl').value;
+            const productionUrl = document.getElementById('productionUrl').value;
+            
+            log('🔄 Đang tải danh sách frames...', 'info');
+            
+            try {
+                // Load local frames
+                log(`📥 Đang tải từ local: ${localUrl}/api/frames`, 'info');
+                const localResponse = await fetch(`${localUrl}/api/frames`);
+                if (!localResponse.ok) {
+                    throw new Error(`Local API error: ${localResponse.status}`);
+                }
+                localFrames = await localResponse.json();
+                log(`✅ Tải được ${localFrames.length} frames từ local`, 'success');
+                
+                // Load production frames
+                log(`📥 Đang tải từ production: ${productionUrl}/api/frames`, 'info');
+                const prodResponse = await fetch(`${productionUrl}/api/frames`);
+                if (!prodResponse.ok) {
+                    throw new Error(`Production API error: ${prodResponse.status}`);
+                }
+                productionFrames = await prodResponse.json();
+                log(`✅ Tải được ${productionFrames.length} frames từ production`, 'success');
+                
+                // Find frames to upload
+                framesToUpload = localFrames.filter(localFrame => {
+                    // Skip default frames without images
+                    if (!localFrame.frameImage || localFrame.frameImage === 'UPLOAD_REQUIRED') {
+                        return false;
+                    }
+                    
+                    // Check if exists on production
+                    const existsOnProduction = productionFrames.some(pf => pf.id === localFrame.id);
+                    return !existsOnProduction;
+                });
+                
+                log(`📤 Cần upload ${framesToUpload.length} frames`, 'info');
+                
+                // Display frames list
+                displayFramesList();
+                
+                // Enable upload button
+                document.getElementById('uploadBtn').disabled = framesToUpload.length === 0;
+                
+            } catch (err) {
+                log(`❌ Lỗi: ${err.message}`, 'error');
+                alert('Lỗi khi tải frames. Kiểm tra console và URL.');
+            }
+        }
+        
+        function displayFramesList() {
+            const container = document.getElementById('framesList');
+            container.innerHTML = '<h3 style="margin-bottom: 15px;">📋 Danh sách frames</h3>';
+            
+            if (framesToUpload.length === 0) {
+                container.innerHTML += '<p style="color: #059669; font-weight: 600;">✅ Tất cả frames đã được đồng bộ!</p>';
+                return;
+            }
+            
+            framesToUpload.forEach(frame => {
+                const frameItem = document.createElement('div');
+                frameItem.className = 'frame-item';
+                frameItem.id = `frame-${frame.id}`;
+                frameItem.innerHTML = `
+                    <div class="frame-info">
+                        <div class="frame-name">${frame.emoji || '🎨'} ${frame.name}</div>
+                        <div class="frame-id">ID: ${frame.id}</div>
+                    </div>
+                    <div class="frame-status status-pending" id="status-${frame.id}">⏳ Chờ upload</div>
+                `;
+                container.appendChild(frameItem);
+            });
+        }
+        
+        function updateFrameStatus(frameId, status, text) {
+            const statusEl = document.getElementById(`status-${frameId}`);
+            if (statusEl) {
+                statusEl.className = `frame-status status-${status}`;
+                statusEl.textContent = text;
+            }
+        }
+        
+        function updateProgress(current, total) {
+            const percent = Math.round((current / total) * 100);
+            document.getElementById('progressFill').style.width = `${percent}%`;
+            document.getElementById('progressFill').textContent = `${percent}%`;
+            document.getElementById('progressText').textContent = `Đã upload ${current}/${total} frames`;
+        }
+        
+        async function uploadFrame(frame, localUrl, productionUrl) {
+            const frameId = frame.id;
+            
+            try {
+                updateFrameStatus(frameId, 'uploading', '⏳ Đang upload...');
+                log(`📤 Đang upload: ${frame.name}`, 'info');
+                
+                // Get frame image from local
+                const imageName = frame.frameImage.split('/').pop();
+                const imageUrl = `${localUrl}/uploads/frames/${imageName}`;
+                
+                log(`📥 Đang tải ảnh: ${imageUrl}`, 'info');
+                const imageResponse = await fetch(imageUrl);
+                if (!imageResponse.ok) {
+                    throw new Error(`Không tìm thấy ảnh: ${imageUrl}`);
+                }
+                
+                const imageBlob = await imageResponse.blob();
+                const imageSize = (imageBlob.size / 1024).toFixed(2);
+                log(`📊 Kích thước ảnh: ${imageSize} KB`, 'info');
+                
+                // Create FormData
+                const formData = new FormData();
+                formData.append('file', imageBlob, imageName);
+                formData.append('frameData', JSON.stringify({
+                    id: frame.id,
+                    name: frame.name,
+                    description: frame.description,
+                    emoji: frame.emoji,
+                    color: frame.color,
+                    bgGradient: frame.bgGradient,
+                    photoSlots: frame.photoSlots
+                }));
+                
+                // Upload to production
+                log(`🚀 Đang upload lên production...`, 'info');
+                const uploadResponse = await fetch(`${productionUrl}/api/upload-frame`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!uploadResponse.ok) {
+                    const errorText = await uploadResponse.text();
+                    throw new Error(`Upload failed: ${errorText}`);
+                }
+                
+                const result = await uploadResponse.json();
+                log(`✅ Upload thành công: ${frame.name}`, 'success');
+                updateFrameStatus(frameId, 'success', '✅ Thành công');
+                
+                return true;
+                
+            } catch (err) {
+                log(`❌ Lỗi upload ${frame.name}: ${err.message}`, 'error');
+                updateFrameStatus(frameId, 'error', `❌ Lỗi: ${err.message}`);
+                return false;
+            }
+        }
+        
+        async function uploadAll() {
+            const localUrl = document.getElementById('localUrl').value;
+            const productionUrl = document.getElementById('productionUrl').value;
+            const uploadBtn = document.getElementById('uploadBtn');
+            const progressContainer = document.getElementById('progressContainer');
+            
+            // Disable button
+            uploadBtn.disabled = true;
+            progressContainer.style.display = 'block';
+            
+            log('🚀 Bắt đầu upload tất cả frames...', 'info');
+            
+            let successCount = 0;
+            let errorCount = 0;
+            
+            for (let i = 0; i < framesToUpload.length; i++) {
+                const frame = framesToUpload[i];
+                updateProgress(i, framesToUpload.length);
+                
+                const success = await uploadFrame(frame, localUrl, productionUrl);
+                if (success) {
+                    successCount++;
+                } else {
+                    errorCount++;
+                }
+                
+                // Wait 1 second between uploads
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+            
+            updateProgress(framesToUpload.length, framesToUpload.length);
+            
+            log(`\n🎉 Hoàn thành!`, 'success');
+            log(`✅ Thành công: ${successCount} frames`, 'success');
+            if (errorCount > 0) {
+                log(`❌ Lỗi: ${errorCount} frames`, 'error');
+            }
+            
+            // Re-enable button
+            uploadBtn.disabled = false;
+        }
+        
+        // Initial log
+        log('🎨 Frame Upload Tool khởi động', 'info');
+        log('📝 Nhấn "Tải danh sách frames" để bắt đầu', 'info');
+    </script>
+</body>
+</html>
