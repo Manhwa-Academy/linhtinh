@@ -754,14 +754,15 @@ function BoothPage() {
                             style={{
                               filter: selectedFilter?.value,
                               position: 'absolute',
-                              top: '0', // Align from top
+                              top: '0',
                               left: '50%',
-                              width: `${100 * t.scale}%`,
-                              height: `${100 * t.scale}%`,
-                              objectFit: 'contain', // Changed to contain - fits without cropping
-                              objectPosition: 'top center', // Position from top
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover', // Cover to fill the slot
+                              objectPosition: 'top center', // Align from top - shows face/head first
                               display: 'block',
-                              transform: `translate(calc(-50% + ${t.x}px), ${t.y}px)`, // No vertical centering
+                              transform: `translate(-50%, 0) scale(${t.scale})`,
+                              transformOrigin: 'top center',
                               userSelect: 'none'
                             }}
                           />
@@ -1107,14 +1108,15 @@ function BoothPage() {
                             style={{
                               filter: selectedFilter.value,
                               position: 'absolute',
-                              top: '0', // Align from top
+                              top: '0',
                               left: '50%',
-                              width: `${100 * t.scale}%`,
-                              height: `${100 * t.scale}%`,
-                              objectFit: 'contain',
-                              objectPosition: 'top center', // Position from top
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover', // Cover to fill the slot
+                              objectPosition: 'top center', // Align from top - shows face/head first
                               display: 'block',
-                              transform: `translate(calc(-50% + ${t.x}px), ${t.y}px)` // No vertical centering
+                              transform: `translate(-50%, 0) scale(${t.scale})`,
+                              transformOrigin: 'top center'
                             }}
                           />
                         </div>
