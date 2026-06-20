@@ -87,6 +87,22 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            transition: all 0.3s ease;
+        }
+        
+        .frame-item.uploading {
+            background: #e0f2fe;
+            border-left: 4px solid #0ea5e9;
+        }
+        
+        .frame-item.success {
+            background: #d1fae5;
+            border-left: 4px solid #10b981;
+        }
+        
+        .frame-item.error {
+            background: #fee2e2;
+            border-left: 4px solid #ef4444;
         }
         
         .frame-info {
@@ -129,11 +145,6 @@
         .status-error {
             background: #fee2e2;
             color: #991b1b;
-        }
-        
-        .status-skipped {
-            background: #e5e7eb;
-            color: #374151;
         }
         
         .buttons {
@@ -240,10 +251,6 @@
             color: #e57373;
         }
         
-        .log-warn {
-            color: #ffb74d;
-        }
-        
         .alert {
             padding: 15px;
             border-radius: 10px;
@@ -255,15 +262,11 @@
             border-left: 4px solid #4338ca;
             color: #312e81;
         }
-        
-        .alert-warning {
-            background: #fef3c7;
-            border-left: 4px solid #f59e0b;
-            color: #92400e;
-        }
     </style>
 </head>
 <body>
+    <a href="/admin" class="back-button">← Quay lại Admin</a>
+    
     <div class="container">
         <h1>🚀 Upload All Frames to Production</h1>
         <p class="subtitle">Đồng bộ tất cả frames từ local lên Vercel deployment</p>
@@ -335,17 +338,30 @@
                 if (!localResponse.ok) {
                     throw new Error(`Local API error: ${localResponse.status}`);
                 }
-                localFrames = await localResponse.json();
+                const localData = await localResponse.json();
+                // Backend returns { success: true, frames: [...] }
+                localFrames = localData.frames || (Array.isArray(localData) ? localData : []);
                 log(`✅ Tải được ${localFrames.length} frames từ local`, 'success');
                 
-                // Load production frames
-                log(`📥 Đang tải từ production: ${productionUrl}/api/frames`, 'info');
-                const prodResponse = await fetch(`${productionUrl}/api/frames`);
-                if (!prodResponse.ok) {
-                    throw new Error(`Production API error: ${prodResponse.status}`);
+                // Load production frames (with error handling for CORS)
+                try {
+                    log(`📥 Đang tải từ production: ${productionUrl}/api/frames`, 'info');
+                    const prodResponse = await fetch(`${productionUrl}/api/frames`, {
+                        mode: 'cors',
+                        credentials: 'omit'
+                    });
+                    if (!prodResponse.ok) {
+                        throw new Error(`Production API error: ${prodResponse.status}`);
+                    }
+                    const prodData = await prodResponse.json();
+                    // Backend returns { success: true, frames: [...] }
+                    productionFrames = prodData.frames || (Array.isArray(prodData) ? prodData : []);
+                    log(`✅ Tải được ${productionFrames.length} frames từ production`, 'success');
+                } catch (prodError) {
+                    log(`⚠️  Không thể kết nối production (có thể do CORS): ${prodError.message}`, 'warn');
+                    log(`💡 Sẽ upload tất cả frames có trong local`, 'info');
+                    productionFrames = [];
                 }
-                productionFrames = await prodResponse.json();
-                log(`✅ Tải được ${productionFrames.length} frames từ production`, 'success');
                 
                 // Find frames to upload
                 framesToUpload = localFrames.filter(localFrame => {
@@ -356,10 +372,13 @@
                     
                     // Check if exists on production
                     const existsOnProduction = productionFrames.some(pf => pf.id === localFrame.id);
+                    if (existsOnProduction) {
+                        log(`ℹ️  Frame "${localFrame.name}" đã tồn tại trên production`, 'info');
+                    }
                     return !existsOnProduction;
                 });
                 
-                log(`📤 Cần upload ${framesToUpload.length} frames`, 'info');
+                log(`📤 Cần upload ${framesToUpload.length} frames`, framesToUpload.length > 0 ? 'success' : 'info');
                 
                 // Display frames list
                 displayFramesList();
@@ -369,7 +388,14 @@
                 
             } catch (err) {
                 log(`❌ Lỗi: ${err.message}`, 'error');
-                alert('Lỗi khi tải frames. Kiểm tra console và URL.');
+                console.error('Error details:', err);
+                
+                // Show helpful message
+                if (err.message.includes('Failed to fetch')) {
+                    log(`💡 Kiểm tra: Backend có đang chạy không? (npm start)`, 'warn');
+                }
+                
+                alert('Lỗi khi tải frames.\n\n' + err.message + '\n\nKiểm tra:\n- Backend local có chạy không?\n- URL có đúng không?');
             }
         }
         
@@ -381,6 +407,9 @@
                 container.innerHTML += '<p style="color: #059669; font-weight: 600;">✅ Tất cả frames đã được đồng bộ!</p>';
                 return;
             }
+            
+            // Show count
+            container.innerHTML += `<p style="margin-bottom: 15px; color: #666;">Cần upload <strong>${framesToUpload.length}</strong> frames mới</p>`;
             
             framesToUpload.forEach(frame => {
                 const frameItem = document.createElement('div');
@@ -397,11 +426,35 @@
             });
         }
         
+        function hideFrame(frameId) {
+            const frameEl = document.getElementById(`frame-${frameId}`);
+            if (frameEl) {
+                frameEl.style.transition = 'opacity 0.3s, height 0.3s';
+                frameEl.style.opacity = '0';
+                frameEl.style.height = '0';
+                frameEl.style.overflow = 'hidden';
+                frameEl.style.marginBottom = '0';
+                frameEl.style.padding = '0';
+                setTimeout(() => frameEl.remove(), 300);
+            }
+        }
+        
         function updateFrameStatus(frameId, status, text) {
             const statusEl = document.getElementById(`status-${frameId}`);
+            const frameEl = document.getElementById(`frame-${frameId}`);
+            
             if (statusEl) {
                 statusEl.className = `frame-status status-${status}`;
                 statusEl.textContent = text;
+            }
+            
+            if (frameEl) {
+                // Remove all status classes
+                frameEl.classList.remove('uploading', 'success', 'error');
+                // Add current status class
+                if (status !== 'pending') {
+                    frameEl.classList.add(status);
+                }
             }
         }
         
@@ -433,24 +486,34 @@
                 const imageSize = (imageBlob.size / 1024).toFixed(2);
                 log(`📊 Kích thước ảnh: ${imageSize} KB`, 'info');
                 
-                // Create FormData
-                const formData = new FormData();
-                formData.append('file', imageBlob, imageName);
-                formData.append('frameData', JSON.stringify({
-                    id: frame.id,
-                    name: frame.name,
-                    description: frame.description,
-                    emoji: frame.emoji,
-                    color: frame.color,
-                    bgGradient: frame.bgGradient,
-                    photoSlots: frame.photoSlots
-                }));
+                // Convert blob to base64
+                const base64 = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(imageBlob);
+                });
                 
-                // Upload to production
-                log(`🚀 Đang upload lên production...`, 'info');
+                // Upload via UploadThing through backend API
+                log(`🚀 Đang upload qua UploadThing...`, 'info');
                 const uploadResponse = await fetch(`${productionUrl}/api/upload-frame`, {
                     method: 'POST',
-                    body: formData
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        file: base64,
+                        fileName: imageName,
+                        frameData: {
+                            id: frame.id,
+                            name: frame.name,
+                            description: frame.description,
+                            emoji: frame.emoji,
+                            color: frame.color,
+                            bgGradient: frame.bgGradient,
+                            photoSlots: frame.photoSlots
+                        }
+                    })
                 });
                 
                 if (!uploadResponse.ok) {
@@ -460,13 +523,17 @@
                 
                 const result = await uploadResponse.json();
                 log(`✅ Upload thành công: ${frame.name}`, 'success');
+                log(`📎 URL: ${result.url}`, 'info');
                 updateFrameStatus(frameId, 'success', '✅ Thành công');
+                
+                // Hide uploaded frame after 1 second
+                setTimeout(() => hideFrame(frameId), 1000);
                 
                 return true;
                 
             } catch (err) {
                 log(`❌ Lỗi upload ${frame.name}: ${err.message}`, 'error');
-                updateFrameStatus(frameId, 'error', `❌ Lỗi: ${err.message}`);
+                updateFrameStatus(frameId, 'error', `❌ Lỗi`);
                 return false;
             }
         }
@@ -482,6 +549,7 @@
             progressContainer.style.display = 'block';
             
             log('🚀 Bắt đầu upload tất cả frames...', 'info');
+            log(`📡 Sử dụng UploadThing cho storage`, 'info');
             
             let successCount = 0;
             let errorCount = 0;
@@ -497,8 +565,8 @@
                     errorCount++;
                 }
                 
-                // Wait 1 second between uploads
-                await new Promise(resolve => setTimeout(resolve, 1000));
+                // Wait 2 seconds between uploads to avoid rate limit
+                await new Promise(resolve => setTimeout(resolve, 2000));
             }
             
             updateProgress(framesToUpload.length, framesToUpload.length);
@@ -508,6 +576,11 @@
             if (errorCount > 0) {
                 log(`❌ Lỗi: ${errorCount} frames`, 'error');
             }
+            
+            // Show summary
+            setTimeout(() => {
+                alert(`✅ Đã upload ${successCount} frames thành công!\n${errorCount > 0 ? `❌ ${errorCount} frames lỗi` : '🎉 Tất cả frames đã được đồng bộ!'}`);
+            }, 500);
             
             // Re-enable button
             uploadBtn.disabled = false;

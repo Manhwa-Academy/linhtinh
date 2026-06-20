@@ -265,6 +265,8 @@
     </style>
 </head>
 <body>
+    <a href="/admin" class="back-button">← Quay lại Admin</a>
+    
     <div class="container">
         <h1>🚀 Upload All Frames to Production</h1>
         <p class="subtitle">Đồng bộ tất cả frames từ local lên Vercel deployment</p>
@@ -336,17 +338,30 @@
                 if (!localResponse.ok) {
                     throw new Error(`Local API error: ${localResponse.status}`);
                 }
-                localFrames = await localResponse.json();
+                const localData = await localResponse.json();
+                // Backend returns { success: true, frames: [...] }
+                localFrames = localData.frames || (Array.isArray(localData) ? localData : []);
                 log(`✅ Tải được ${localFrames.length} frames từ local`, 'success');
                 
-                // Load production frames
-                log(`📥 Đang tải từ production: ${productionUrl}/api/frames`, 'info');
-                const prodResponse = await fetch(`${productionUrl}/api/frames`);
-                if (!prodResponse.ok) {
-                    throw new Error(`Production API error: ${prodResponse.status}`);
+                // Load production frames (with error handling for CORS)
+                try {
+                    log(`📥 Đang tải từ production: ${productionUrl}/api/frames`, 'info');
+                    const prodResponse = await fetch(`${productionUrl}/api/frames`, {
+                        mode: 'cors',
+                        credentials: 'omit'
+                    });
+                    if (!prodResponse.ok) {
+                        throw new Error(`Production API error: ${prodResponse.status}`);
+                    }
+                    const prodData = await prodResponse.json();
+                    // Backend returns { success: true, frames: [...] }
+                    productionFrames = prodData.frames || (Array.isArray(prodData) ? prodData : []);
+                    log(`✅ Tải được ${productionFrames.length} frames từ production`, 'success');
+                } catch (prodError) {
+                    log(`⚠️  Không thể kết nối production (có thể do CORS): ${prodError.message}`, 'warn');
+                    log(`💡 Sẽ upload tất cả frames có trong local`, 'info');
+                    productionFrames = [];
                 }
-                productionFrames = await prodResponse.json();
-                log(`✅ Tải được ${productionFrames.length} frames từ production`, 'success');
                 
                 // Find frames to upload
                 framesToUpload = localFrames.filter(localFrame => {
@@ -357,10 +372,13 @@
                     
                     // Check if exists on production
                     const existsOnProduction = productionFrames.some(pf => pf.id === localFrame.id);
+                    if (existsOnProduction) {
+                        log(`ℹ️  Frame "${localFrame.name}" đã tồn tại trên production`, 'info');
+                    }
                     return !existsOnProduction;
                 });
                 
-                log(`📤 Cần upload ${framesToUpload.length} frames`, 'info');
+                log(`📤 Cần upload ${framesToUpload.length} frames`, framesToUpload.length > 0 ? 'success' : 'info');
                 
                 // Display frames list
                 displayFramesList();
@@ -370,7 +388,14 @@
                 
             } catch (err) {
                 log(`❌ Lỗi: ${err.message}`, 'error');
-                alert('Lỗi khi tải frames. Kiểm tra console và URL.');
+                console.error('Error details:', err);
+                
+                // Show helpful message
+                if (err.message.includes('Failed to fetch')) {
+                    log(`💡 Kiểm tra: Backend có đang chạy không? (npm start)`, 'warn');
+                }
+                
+                alert('Lỗi khi tải frames.\n\n' + err.message + '\n\nKiểm tra:\n- Backend local có chạy không?\n- URL có đúng không?');
             }
         }
         
