@@ -222,18 +222,27 @@ export default function UploadPUBGFrames({ onClose }) {
         const response = await fetch(`${API_URL}/api/frames`)
         if (response.ok) {
           const frames = await response.json()
-          const frameIds = frames.map(f => f.id)
+          console.log('📦 All frames:', frames)
+          
+          // Check by name instead of ID (more reliable)
+          const frameNames = frames.map(f => f.name?.toLowerCase() || '')
+          
+          const koreaExists = frameNames.some(name => name.includes('team korea') || name.includes('korea pnc'))
+          const dnsExists = frameNames.some(name => name.includes('dns pubg') || name.includes('dns - pubg'))
+          const gengExists = frameNames.some(name => name.includes('geng pubg') || name.includes('geng -'))
+          
+          console.log('✅ Existing frames check:', { koreaExists, dnsExists, gengExists })
           
           setExistingFrames({
-            korea: frameIds.includes('frame_team_korea_pnc_2026'),
-            dns: frameIds.includes('frame_dns_pubg_2026'),
-            geng: frameIds.includes('frame_geng_pubg_2026')
+            korea: koreaExists,
+            dns: dnsExists,
+            geng: gengExists
           })
           
           setProgress({
-            korea: frameIds.includes('frame_team_korea_pnc_2026') ? 'exists' : 'waiting',
-            dns: frameIds.includes('frame_dns_pubg_2026') ? 'exists' : 'waiting',
-            geng: frameIds.includes('frame_geng_pubg_2026') ? 'exists' : 'waiting'
+            korea: koreaExists ? 'exists' : 'waiting',
+            dns: dnsExists ? 'exists' : 'waiting',
+            geng: gengExists ? 'exists' : 'waiting'
           })
         }
       } catch (error) {
