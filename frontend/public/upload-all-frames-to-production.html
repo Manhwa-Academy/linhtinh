@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Upload All Frames to Production</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .status {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .frames {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+        canvas {
+            border: 3px solid #FFD700;
+            border-radius: 10px;
+            width: 100%;
+            height: auto;
+        }
+        .frame-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        button {
+            background: #FFD700;
+            color: black;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #FFA500;
+        }
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="text-align: center;">🚀 Upload All Frames to Production</h1>
+        <div class="status" id="status">
+            <p>Ready to upload 3 frames to production:</p>
+            <ul style="list-style: none; padding: 0;">
+                <li>🇰🇷 Team Korea PNC 2026</li>
+                <li>🎮 DNS PUBG 2026</li>
+                <li>⚡ GENG PUBG 2026</li>
+            </ul>
+            <button id="uploadBtn" onclick="startUpload()">Start Upload</button>
+        </div>
+
+        <div class="frames">
+            <div class="frame-card">
+                <h3>🇰🇷 Team Korea</h3>
+                <canvas id="canvas1" width="1080" height="2160"></canvas>
+                <div id="status1" style="margin-top: 10px; text-align: center;">Waiting...</div>
+            </div>
+            <div class="frame-card">
+                <h3>🎮 DNS PUBG</h3>
+                <canvas id="canvas2" width="1080" height="2160"></canvas>
+                <div id="status2" style="margin-top: 10px; text-align: center;">Waiting...</div>
+            </div>
+            <div class="frame-card">
+                <h3>⚡ GENG PUBG</h3>
+                <canvas id="canvas3" width="1080" height="2160"></canvas>
+                <div id="status3" style="margin-top: 10px; text-align: center;">Waiting...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://meomiry-backend.vercel.app';
+        
+        const COLORS = {
+            korea: { blue: '#0047A0', red: '#CD2E3A', gold: '#FFD700', white: '#FFFFFF', black: '#000000' },
+            dns: { blue: '#00a8ff', darkBlue: '#0066cc', lightBlue: '#4fc3f7', white: '#FFFFFF', black: '#000000' },
+            geng: { gold: '#FFD700', darkGold: '#FFA500', black: '#000000', white: '#FFFFFF', yellow: '#FFED4E' }
+        };
+
+        function createGradient(ctx, x0, y0, x1, y1, colors) {
+            const gradient = ctx.createLinearGradient(x0, y0, x1, y1);
+            colors.forEach((color, i) => {
+                gradient.addColorStop(i / (colors.length - 1), color);
+            });
+            return gradient;
+        }
+
+        // Draw Team Korea Frame
+        function drawTeamKorea() {
+            const canvas = document.getElementById('canvas1');
+            const ctx = canvas.getContext('2d');
+            const C = COLORS.korea;
+
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Vertical text
+            ctx.save();
+            ctx.translate(50, canvas.height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.font = 'bold 55px Arial';
+            ctx.strokeStyle = C.black;
+            ctx.lineWidth = 5;
+            ctx.strokeText('RISE AGAIN', 0, 0);
+            ctx.fillStyle = C.gold;
+            ctx.fillText('RISE AGAIN', 0, 0);
+            ctx.restore();
+            
+            ctx.save();
+            ctx.translate(canvas.width - 50, canvas.height / 2);
+            ctx.rotate(Math.PI / 2);
+            ctx.font = 'bold 55px Arial';
+            ctx.strokeStyle = C.black;
+            ctx.lineWidth = 5;
+            ctx.strokeText('PNC 2026', 0, 0);
+            ctx.fillStyle = C.blue;
+            ctx.fillText('PNC 2026', 0, 0);
+            ctx.restore();
+
+            // Blue border only
+            ctx.strokeStyle = C.blue;
+            ctx.lineWidth = 18;
+            ctx.strokeRect(9, 9, canvas.width - 18, canvas.height - 18);
+
+            // Header
+            const headerGrad = createGradient(ctx, 0, 0, canvas.width, 110, [C.blue, C.red, C.blue]);
+            ctx.fillStyle = headerGrad;
+            ctx.fillRect(0, 0, canvas.width, 110);
+
+            ctx.font = 'bold 75px Arial';
+            ctx.textAlign = 'center';
+            ctx.strokeStyle = C.black;
+            ctx.lineWidth = 7;
+            ctx.strokeText('TEAM KOREA 🇰🇷', canvas.width / 2, 60);
+            ctx.fillStyle = C.white;
+            ctx.fillText('TEAM KOREA 🇰🇷', canvas.width / 2, 60);
+
+            // Photo slots
+            const slots = [
+                { y: 125, color: C.blue },
+                { y: 645, color: C.red },
+                { y: 1165, color: C.blue },
+                { y: 1685, color: C.red }
+            ];
+
+            const slotWidth = 940;
+            const slotHeight = 505;
+            const startX = (canvas.width - slotWidth) / 2;
+
+            slots.forEach((slot) => {
+                ctx.strokeStyle = slot.color;
+                ctx.lineWidth = 5;
+                ctx.strokeRect(startX, slot.y, slotWidth, slotHeight);
+
+                const cs = 20;
+                ctx.fillStyle = C.gold;
+                ctx.fillRect(startX - 2, slot.y - 2, cs, 2);
+                ctx.fillRect(startX - 2, slot.y - 2, 2, cs);
+                ctx.fillRect(startX + slotWidth - cs + 2, slot.y - 2, cs, 2);
+                ctx.fillRect(startX + slotWidth, slot.y - 2, 2, cs);
+                ctx.fillRect(startX - 2, slot.y + slotHeight, cs, 2);
+                ctx.fillRect(startX - 2, slot.y + slotHeight - cs + 2, 2, cs);
+                ctx.fillRect(startX + slotWidth - cs + 2, slot.y + slotHeight, cs, 2);
+                ctx.fillRect(startX + slotWidth, slot.y + slotHeight - cs + 2, 2, cs);
+            });
+
+            ctx.font = '50px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('🏆', 80, 60);
+            ctx.fillText('🏆', canvas.width - 80, 60);
+        }
+
+        // Draw DNS Frame
+        function drawDNS() {
+            const canvas = document.getElementById('canvas2');
+            const ctx = canvas.getContext('2d');
+            const C = COLORS.dns;
+
+            const bgGrad = createGradient(ctx, 0, 0, 0, canvas.height,
+                [C.white, C.lightBlue, C.white, C.lightBlue, C.white]);
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.strokeStyle = C.blue;
+            ctx.lineWidth = 18;
+            ctx.strokeRect(9, 9, canvas.width - 18, canvas.height - 18);
+
+            const headerGrad = createGradient(ctx, 0, 0, canvas.width, 120,
+                [C.darkBlue, C.blue, C.darkBlue]);
+            ctx.fillStyle = headerGrad;
+            ctx.fillRect(0, 0, canvas.width, 120);
+
+            ctx.font = 'bold 70px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.strokeStyle = C.black;
+            ctx.lineWidth = 9;
+            ctx.strokeText('DNS PUBG 2026', canvas.width / 2, 65);
+            ctx.fillStyle = C.white;
+            ctx.fillText('DNS PUBG 2026', canvas.width / 2, 65);
+
+            ctx.font = '50px Arial';
+            ctx.fillText('🎮', 70, 65);
+            ctx.fillText('🔫', canvas.width - 70, 65);
+
+            const slotWidth = 860;
+            const slotHeight = 490;
+            const startX = (canvas.width - slotWidth) / 2;
+            const startY = 140;
+            const gap = 15;
+
+            const players = [
+                { name: 'GYUMIN', emoji: '🦝' },
+                { name: 'HEAVEN', emoji: '😇' },
+                { name: 'DIEL', emoji: '🐶' },
+                { name: 'REX', emoji: '🦖' }
+            ];
+
+            players.forEach((player, index) => {
+                const y = startY + index * (slotHeight + gap);
+                
+                ctx.strokeStyle = index % 2 === 0 ? C.blue : C.darkBlue;
+                ctx.lineWidth = 6;
+                ctx.strokeRect(startX, y, slotWidth, slotHeight);
+            });
+        }
+
+        // Draw GENG Frame
+        function drawGENG() {
+            const canvas = document.getElementById('canvas3');
+            const ctx = canvas.getContext('2d');
+            const C = COLORS.geng;
+
+            ctx.fillStyle = C.black;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const edgeGrad = ctx.createRadialGradient(0, 0, 100, 0, 0, 800);
+            edgeGrad.addColorStop(0, 'rgba(255, 215, 0, 0.15)');
+            edgeGrad.addColorStop(1, 'rgba(255, 215, 0, 0)');
+            ctx.fillStyle = edgeGrad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.strokeStyle = C.gold;
+            ctx.lineWidth = 18;
+            ctx.strokeRect(9, 9, canvas.width - 18, canvas.height - 18);
+
+            ctx.strokeStyle = C.black;
+            ctx.lineWidth = 8;
+            ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
+
+            const headerGrad = createGradient(ctx, 0, 0, canvas.width, 130,
+                [C.darkGold, C.gold, C.darkGold]);
+            ctx.fillStyle = headerGrad;
+            ctx.fillRect(0, 0, canvas.width, 130);
+
+            ctx.font = 'bold 80px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.strokeStyle = C.black;
+            ctx.lineWidth = 10;
+            ctx.strokeText('GENG PUBG 2026', canvas.width / 2, 70);
+            ctx.fillStyle = C.black;
+            ctx.fillText('GENG PUBG 2026', canvas.width / 2, 70);
+
+            ctx.font = '55px Arial';
+            ctx.fillText('🏆', 80, 70);
+            ctx.fillText('⭐', canvas.width - 80, 70);
+
+            const slotWidth = 940;
+            const slotHeight = 505;
+            const startX = (canvas.width - slotWidth) / 2;
+            const startY = 150;
+            const gap = 10;
+
+            const players = [
+                { name: 'SEOUL', icon: '🪖' },
+                { name: 'BEAN', icon: '📦' },
+                { name: 'DIYY', icon: '🎯' },
+                { name: 'SALUTE', icon: '⚡' }
+            ];
+
+            players.forEach((player, index) => {
+                const y = startY + index * (slotHeight + gap);
+                
+                ctx.strokeStyle = index % 2 === 0 ? C.gold : C.darkGold;
+                ctx.lineWidth = 6;
+                ctx.strokeRect(startX, y, slotWidth, slotHeight);
+            });
+
+            ctx.font = '55px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = C.gold;
+            ctx.fillText('🐯', 55, 250);
+            ctx.fillText('⚡', canvas.width - 55, 350);
+            ctx.fillText('🐯', 55, 1050);
+            ctx.fillText('⚡', canvas.width - 55, 1150);
+            ctx.fillText('🐯', 55, 1850);
+            ctx.fillText('⚡', canvas.width - 55, 1950);
+        }
+
+        async function uploadFrame(canvasId, frameData, statusId) {
+            const canvas = document.getElementById(canvasId);
+            const statusEl = document.getElementById(statusId);
+            
+            try {
+                statusEl.textContent = '🎨 Drawing...';
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                statusEl.textContent = '📤 Uploading...';
+                const dataUrl = canvas.toDataURL('image/png');
+                const base64 = dataUrl.split(',')[1];
+
+                const uploadRes = await fetch(`${API_URL}/api/upload-frame`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        fileData: base64,
+                        fileName: frameData.fileName,
+                        mimeType: 'image/png',
+                        photoSlots: frameData.photoSlots
+                    })
+                });
+
+                if (!uploadRes.ok) throw new Error('Upload failed');
+                const uploadData = await uploadRes.json();
+                const fileUrl = uploadData?.file?.url || uploadData?.file?.path;
+
+                statusEl.textContent = '📝 Saving...';
+                
+                const createRes = await fetch(`${API_URL}/api/frames`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ...frameData.metadata,
+                        frameImage: fileUrl.startsWith('http') ? fileUrl : `${API_URL}${fileUrl}`,
+                        photoSlots: frameData.photoSlots.map((slot, i) => ({
+                            ...slot,
+                            label: frameData.labels[i]
+                        }))
+                    })
+                });
+
+                if (!createRes.ok) throw new Error('Create failed');
+                
+                statusEl.textContent = '✅ Success!';
+                statusEl.style.color = '#4ade80';
+                return true;
+            } catch (error) {
+                statusEl.textContent = '❌ ' + error.message;
+                statusEl.style.color = '#ef4444';
+                return false;
+            }
+        }
+
+        async function startUpload() {
+            document.getElementById('uploadBtn').disabled = true;
+            document.getElementById('status').innerHTML = '<p>🚀 Uploading frames to production...</p>';
+
+            // Draw all frames first
+            drawTeamKorea();
+            drawDNS();
+            drawGENG();
+
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            // Upload Team Korea
+            await uploadFrame('canvas1', {
+                fileName: 'team-korea-pnc-2026.png',
+                photoSlots: [
+                    { x: 6.5, y: 5.8, width: 87, height: 23.4, rotation: 0 },
+                    { x: 6.5, y: 29.9, width: 87, height: 23.4, rotation: 0 },
+                    { x: 6.5, y: 53.9, width: 87, height: 23.4, rotation: 0 },
+                    { x: 6.5, y: 78, width: 87, height: 23.4, rotation: 0 }
+                ],
+                labels: ["GYUMIN 🦝", "SEONGJANG 🔥", "HEAVEN 😇", "HEATHER ⭐"],
+                metadata: {
+                    id: 'frame_team_korea_pnc_2026',
+                    name: 'Team Korea PNC 2026',
+                    emoji: '🇰🇷',
+                    description: 'PUBG Nations Cup 2026 - Korean Team',
+                    color: '#F0F4FF',
+                    bgGradient: 'linear-gradient(135deg, #FFFFFF 0%, #F0F4FF 25%, #FFFFFF 50%, #FFF0F0 75%, #FFFFFF 100%)'
+                }
+            }, 'status1');
+
+            // Upload DNS
+            await uploadFrame('canvas2', {
+                fileName: 'dns-pubg-2026.png',
+                photoSlots: [
+                    { x: 10, y: 6.5, width: 79.6, height: 22.7, rotation: 0 },
+                    { x: 10, y: 30, width: 79.6, height: 22.7, rotation: 0 },
+                    { x: 10, y: 53.5, width: 79.6, height: 22.7, rotation: 0 },
+                    { x: 10, y: 77, width: 79.6, height: 22.7, rotation: 0 }
+                ],
+                labels: ["GYUMIN 🦝", "HEAVEN 😇", "DIEL 🐶", "REX 🦖"],
+                metadata: {
+                    id: 'frame_dns_pubg_2026',
+                    name: 'DNS PUBG 2026',
+                    emoji: '🎮',
+                    description: 'PUBG 2026 - Erangel Theme',
+                    color: '#E3F2FD',
+                    bgGradient: 'linear-gradient(135deg, #FFFFFF 0%, #E3F2FD 50%, #FFFFFF 100%)'
+                }
+            }, 'status2');
+
+            // Upload GENG
+            await uploadFrame('canvas3', {
+                fileName: 'geng-pubg-2026.png',
+                photoSlots: [
+                    { x: 6.5, y: 6.9, width: 87, height: 23.4, rotation: 0 },
+                    { x: 6.5, y: 30.2, width: 87, height: 23.4, rotation: 0 },
+                    { x: 6.5, y: 53.5, width: 87, height: 23.4, rotation: 0 },
+                    { x: 6.5, y: 76.8, width: 87, height: 23.4, rotation: 0 }
+                ],
+                labels: ["SEOUL 🪖", "BEAN 📦", "DIYY 🎯", "SALUTE ⚡"],
+                metadata: {
+                    id: 'frame_geng_pubg_2026',
+                    name: 'GENG PUBG 2026',
+                    emoji: '⚡',
+                    description: 'PUBG 2026 - GENG Team',
+                    color: '#FFF9E6',
+                    bgGradient: 'linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%)'
+                }
+            }, 'status3');
+
+            document.getElementById('status').innerHTML = '<h2>🎉 All Done!</h2><p>Go to <a href="https://meomiry.vercel.app/admin" target="_blank" style="color: #4ade80;">Production Admin</a> and refresh!</p>';
+        }
+
+        window.onload = () => {
+            drawTeamKorea();
+            drawDNS();
+            drawGENG();
+        };
+    </script>
+</body>
+</html>
