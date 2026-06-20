@@ -71,13 +71,13 @@
     ]
   },
   {
-    "id": "frame_1781880861870",
+    "id": "team-korea-pnc-2026-1781926346677",
     "name": "Team Korea PNC 2026",
+    "description": "PUBG Nations Cup 2026 - Korean Team",
     "emoji": "🇰🇷",
-    "description": "PUBG Nations Cup 2026 - Korean Team: GYUMIN 🦝, SEONGJANG 🔥, HEAVEN 😇, HEATHER ⭐",
     "color": "#F0F4FF",
     "bgGradient": "linear-gradient(135deg, #FFFFFF 0%, #F0F4FF 25%, #FFFFFF 50%, #FFF0F0 75%, #FFFFFF 100%)",
-    "frameImage": "http://localhost:3001/uploads/frames/frame-1781883436914-949613224.png",
+    "frameImage": "http://localhost:3001/uploads/frames/frame-1781926346660-901154065.png",
     "photoSlots": [
       {
         "x": 6.5,
@@ -111,46 +111,45 @@
         "rotation": 0,
         "label": "HEATHER ⭐"
       }
-    ],
-    "createdAt": "2026-06-19T14:54:21.870Z"
+    ]
   },
   {
-    "id": "dns-pubg-2026-1781913013364",
+    "id": "dns-pubg-2026-1781926346767",
     "name": "DNS PUBG 2026",
-    "description": "PUBG 2026 - Erangel Theme: GYUMIN 🦝, HEAVEN 😇, DIEL 🐶, REX 🦖",
+    "description": "PUBG 2026 - Erangel Theme",
     "emoji": "🎮",
     "color": "#E3F2FD",
     "bgGradient": "linear-gradient(135deg, #FFFFFF 0%, #E3F2FD 50%, #FFFFFF 100%)",
-    "frameImage": "http://localhost:3001/uploads/frames/frame-1781913013343-547269228.png",
+    "frameImage": "http://localhost:3001/uploads/frames/frame-1781926346756-347829888.png",
     "photoSlots": [
       {
-        "x": 8.3,
+        "x": 10,
         "y": 6.5,
-        "width": 83.4,
+        "width": 79.6,
         "height": 22.7,
         "rotation": 0,
         "label": "GYUMIN 🦝"
       },
       {
-        "x": 8.3,
+        "x": 10,
         "y": 30,
-        "width": 83.4,
+        "width": 79.6,
         "height": 22.7,
         "rotation": 0,
         "label": "HEAVEN 😇"
       },
       {
-        "x": 8.3,
+        "x": 10,
         "y": 53.5,
-        "width": 83.4,
+        "width": 79.6,
         "height": 22.7,
         "rotation": 0,
         "label": "DIEL 🐶"
       },
       {
-        "x": 8.3,
+        "x": 10,
         "y": 77,
-        "width": 83.4,
+        "width": 79.6,
         "height": 22.7,
         "rotation": 0,
         "label": "REX 🦖"
@@ -158,142 +157,13 @@
     ]
   },
   {
-    "id": "dns-pubg-2026-1781913286574",
-    "name": "DNS PUBG 2026",
-    "description": "PUBG 2026 - Erangel Theme: GYUMIN 🦝, HEAVEN 😇, DIEL 🐶, REX 🦖",
-    "emoji": "🎮",
-    "color": "#E3F2FD",
-    "bgGradient": "linear-gradient(135deg, #FFFFFF 0%, #E3F2FD 50%, #FFFFFF 100%)",
-    "frameImage": "http://localhost:3001/uploads/frames/frame-1781913286557-525119903.png",
-    "photoSlots": [
-      {
-        "x": 8.3,
-        "y": 6.5,
-        "width": 83.4,
-        "height": 22.7,
-        "rotation": 0,
-        "label": "GYUMIN 🦝"
-      },
-      {
-        "x": 8.3,
-        "y": 30,
-        "width": 83.4,
-        "height": 22.7,
-        "rotation": 0,
-        "label": "HEAVEN 😇"
-      },
-      {
-        "x": 8.3,
-        "y": 53.5,
-        "width": 83.4,
-        "height": 22.7,
-        "rotation": 0,
-        "label": "DIEL 🐶"
-      },
-      {
-        "x": 8.3,
-        "y": 77,
-        "width": 83.4,
-        "height": 22.7,
-        "rotation": 0,
-        "label": "REX 🦖"
-      }
-    ]
-  },
-  {
-    "id": "dns-pubg-2026-1781913409924",
-    "name": "DNS PUBG 2026",
-    "description": "PUBG 2026 - Erangel Theme: GYUMIN 🦝, HEAVEN 😇, DIEL 🐶, REX 🦖",
-    "emoji": "🎮",
-    "color": "#E3F2FD",
-    "bgGradient": "linear-gradient(135deg, #FFFFFF 0%, #E3F2FD 50%, #FFFFFF 100%)",
-    "frameImage": "http://localhost:3001/uploads/frames/frame-1781913409885-81754341.png",
-    "photoSlots": [
-      {
-        "x": 8.3,
-        "y": 6.5,
-        "width": 83.4,
-        "height": 22.7,
-        "rotation": 0,
-        "label": "GYUMIN 🦝"
-      },
-      {
-        "x": 8.3,
-        "y": 30,
-        "width": 83.4,
-        "height": 22.7,
-        "rotation": 0,
-        "label": "HEAVEN 😇"
-      },
-      {
-        "x": 8.3,
-        "y": 53.5,
-        "width": 83.4,
-        "height": 22.7,
-        "rotation": 0,
-        "label": "DIEL 🐶"
-      },
-      {
-        "x": 8.3,
-        "y": 77,
-        "width": 83.4,
-        "height": 22.7,
-        "rotation": 0,
-        "label": "REX 🦖"
-      }
-    ]
-  },
-  {
-    "id": "dns-pubg-2026-1781913514699",
-    "name": "DNS PUBG 2026",
-    "description": "PUBG 2026 - Erangel Theme: GYUMIN 🦝, HEAVEN 😇, DIEL 🐶, REX 🦖",
-    "emoji": "🎮",
-    "color": "#E3F2FD",
-    "bgGradient": "linear-gradient(135deg, #FFFFFF 0%, #E3F2FD 50%, #FFFFFF 100%)",
-    "frameImage": "http://localhost:3001/uploads/frames/frame-1781913514679-875531965.png",
-    "photoSlots": [
-      {
-        "x": 8.3,
-        "y": 6.5,
-        "width": 83.4,
-        "height": 22.7,
-        "rotation": 0,
-        "label": "GYUMIN 🦝"
-      },
-      {
-        "x": 8.3,
-        "y": 30,
-        "width": 83.4,
-        "height": 22.7,
-        "rotation": 0,
-        "label": "HEAVEN 😇"
-      },
-      {
-        "x": 8.3,
-        "y": 53.5,
-        "width": 83.4,
-        "height": 22.7,
-        "rotation": 0,
-        "label": "DIEL 🐶"
-      },
-      {
-        "x": 8.3,
-        "y": 77,
-        "width": 83.4,
-        "height": 22.7,
-        "rotation": 0,
-        "label": "REX 🦖"
-      }
-    ]
-  },
-  {
-    "id": "geng-pubg-2026-1781914773652",
+    "id": "geng-pubg-2026-1781926641297",
     "name": "GENG PUBG 2026",
     "description": "PUBG 2026 - GENG Team: SEOUL 🪖, BEAN 📦, DIYY 🎯, SALUTE ⚡",
     "emoji": "⚡",
     "color": "#FFF9E6",
     "bgGradient": "linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%)",
-    "frameImage": "http://localhost:3001/uploads/frames/frame-1781914773632-789653390.png",
+    "frameImage": "http://localhost:3001/uploads/frames/frame-1781926641279-262247791.png",
     "photoSlots": [
       {
         "x": 6.5,
