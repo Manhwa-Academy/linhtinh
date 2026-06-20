@@ -452,9 +452,9 @@ function BoothPage() {
           const drawW = photoImg.naturalWidth * finalScale
           const drawH = photoImg.naturalHeight * finalScale
           
-          // Center the photo and apply user's x,y offset
-          const offsetX = sX + (sW - drawW) / 2 + t.x
-          const offsetY = sY + (sH - drawH) / 2 + t.y
+          // Align from TOP instead of center, and apply user's x,y offset
+          const offsetX = sX + (sW - drawW) / 2 + t.x // Keep horizontal centering
+          const offsetY = sY + t.y // Align from top, no vertical centering
 
           ctx.save()
           
@@ -754,14 +754,14 @@ function BoothPage() {
                             style={{
                               filter: selectedFilter?.value,
                               position: 'absolute',
-                              top: '50%',
+                              top: '0', // Align from top
                               left: '50%',
                               width: `${100 * t.scale}%`,
                               height: `${100 * t.scale}%`,
                               objectFit: 'contain', // Changed to contain - fits without cropping
-                              objectPosition: 'center',
+                              objectPosition: 'top center', // Position from top
                               display: 'block',
-                              transform: `translate(calc(-50% + ${t.x}px), calc(-50% + ${t.y}px))`,
+                              transform: `translate(calc(-50% + ${t.x}px), ${t.y}px)`, // No vertical centering
                               userSelect: 'none'
                             }}
                           />
@@ -1107,14 +1107,14 @@ function BoothPage() {
                             style={{
                               filter: selectedFilter.value,
                               position: 'absolute',
-                              top: '50%',
+                              top: '0', // Align from top
                               left: '50%',
                               width: `${100 * t.scale}%`,
                               height: `${100 * t.scale}%`,
                               objectFit: 'contain',
-                              objectPosition: 'center',
+                              objectPosition: 'top center', // Position from top
                               display: 'block',
-                              transform: `translate(calc(-50% + ${t.x}px), calc(-50% + ${t.y}px))`
+                              transform: `translate(calc(-50% + ${t.x}px), ${t.y}px)` // No vertical centering
                             }}
                           />
                         </div>
