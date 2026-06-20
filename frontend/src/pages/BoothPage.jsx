@@ -25,15 +25,21 @@ const stripTypes = [
 // Frames will be loaded from API dynamically
 
 const filters = [
-  { id: 'y2k', name: 'Y2K', description: 'Glittery & futuristic', value: 'contrast(1.2) saturate(1.5) hue-rotate(330deg)', color: '#B2F5EA', icon: Sparkles },
-  { id: 'vintage', name: 'Vintage', description: 'Warm & nostalgic', value: 'sepia(40%) contrast(1.1)', color: '#FEF08A', icon: Sparkles },
-  { id: 'hellokitty', name: 'Hello Kitty', description: 'Sweet & dreamy', value: 'saturate(1.3) brightness(1.1) hue-rotate(320deg)', color: '#FBC2EB', icon: Sparkles },
-  { id: 'bw', name: 'B&W', description: 'Timeless classic', value: 'grayscale(100%) contrast(1.2)', color: '#E2E8F0', icon: Sparkles },
+  { id: 'original', name: 'Original', description: 'No filter - natural look', value: 'none', color: '#FFFFFF', icon: Sparkles },
+  { id: 'koreanglow', name: 'Korean Glow', description: 'Bright & dewy K-beauty', value: 'brightness(1.15) contrast(0.95) saturate(1.1)', color: '#FBCFE8', icon: Sparkles },
+  { id: 'glassskin', name: 'Glass Skin', description: 'Ultra smooth & luminous', value: 'brightness(1.18) contrast(0.92) saturate(1.05) blur(0.2px)', color: '#F0F9FF', icon: Sparkles },
+  { id: 'studiohd', name: 'Studio HD', description: 'Professional clarity', value: 'contrast(1.15) saturate(1.08) brightness(1.05) sharpen(1.2)', color: '#E0E7FF', icon: Sparkles },
+  { id: 'milkwhite', name: 'Milk White', description: 'Soft milky complexion', value: 'brightness(1.2) contrast(0.88) saturate(0.95)', color: '#FAF5FF', icon: Sparkles },
+  { id: 'peachglow', name: 'Peach Glow', description: 'Warm peachy radiance', value: 'saturate(1.15) brightness(1.1) hue-rotate(350deg) contrast(1.05)', color: '#FFEDD5', icon: Sparkles },
+  { id: 'softpink', name: 'Soft Pink', description: 'Delicate & sweet', value: 'saturate(1.2) brightness(1.08) hue-rotate(340deg)', color: '#FCE7F3', icon: Sparkles },
+  { id: 'blossomdreamy', name: 'Blossom Dreamy', description: 'Ethereal flower tones', value: 'contrast(0.9) brightness(1.12) saturate(1.18) hue-rotate(335deg) blur(0.25px)', color: '#FFF1F2', icon: Sparkles },
+  { id: 'moonlight', name: 'Moonlight', description: 'Cool silver glow', value: 'brightness(1.08) contrast(1.05) saturate(0.85) hue-rotate(200deg)', color: '#E0F2FE', icon: Sparkles },
   { id: 'warm', name: 'Warm', description: 'Cozy & golden', value: 'sepia(20%) saturate(1.2) brightness(1.05)', color: '#FED7AA', icon: Sparkles },
   { id: 'cool', name: 'Cool', description: 'Fresh & crisp', value: 'saturate(0.9) brightness(1.05) hue-rotate(180deg) contrast(1.1)', color: '#BAE6FD', icon: Sparkles },
-  { id: 'koreanglow', name: 'Korean Glow', description: 'Bright & dewy', value: 'brightness(1.15) contrast(0.95) saturate(1.1)', color: '#FBCFE8', icon: Sparkles },
-  { id: 'softpink', name: 'Soft Pink', description: 'Delicate & sweet', value: 'saturate(1.2) brightness(1.08) hue-rotate(340deg)', color: '#FCE7F3', icon: Sparkles },
-  { id: 'dreamy', name: 'Dreamy', description: 'Soft & ethereal', value: 'contrast(0.9) brightness(1.1) saturate(1.15) blur(0.3px)', color: '#E9D5FF', icon: Sparkles }
+  { id: 'vintage', name: 'Vintage', description: 'Warm & nostalgic', value: 'sepia(40%) contrast(1.1)', color: '#FEF08A', icon: Sparkles },
+  { id: 'bw', name: 'B&W', description: 'Timeless classic', value: 'grayscale(100%) contrast(1.2)', color: '#E2E8F0', icon: Sparkles },
+  { id: 'y2k', name: 'Y2K', description: 'Glittery & futuristic', value: 'contrast(1.2) saturate(1.5) hue-rotate(330deg)', color: '#B2F5EA', icon: Sparkles },
+  { id: 'hellokitty', name: 'Hello Kitty', description: 'Sweet & dreamy', value: 'saturate(1.3) brightness(1.1) hue-rotate(320deg)', color: '#FBC2EB', icon: Sparkles }
 ]
 
 const stickerIconsMap = {
