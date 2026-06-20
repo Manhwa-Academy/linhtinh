@@ -444,7 +444,8 @@ function BoothPage() {
           // Apply transform: scale and translate
           const baseScaleX = sW / photoImg.naturalWidth
           const baseScaleY = sH / photoImg.naturalHeight
-          const baseScale = Math.max(baseScaleX, baseScaleY)
+          // Use Math.min for 'contain' behavior - photo fits inside slot without cropping
+          const baseScale = Math.min(baseScaleX, baseScaleY)
           
           // Apply user's scale on top of base scale
           const finalScale = baseScale * t.scale
