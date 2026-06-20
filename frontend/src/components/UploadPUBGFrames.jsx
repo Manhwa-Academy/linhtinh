@@ -221,15 +221,20 @@ export default function UploadPUBGFrames({ onClose }) {
       try {
         const response = await fetch(`${API_URL}/api/frames`)
         if (response.ok) {
-          const frames = await response.json()
-          console.log('📦 All frames:', frames)
+          const data = await response.json()
+          console.log('📦 API response:', data)
           
-          // Check by name instead of ID (more reliable)
+          // Handle both array and object with frames property
+          const frames = Array.isArray(data) ? data : (data.frames || [])
+          console.log('📦 Frames array:', frames)
+          
+          // Check by name
           const frameNames = frames.map(f => f.name?.toLowerCase() || '')
+          console.log('📝 Frame names:', frameNames)
           
           const koreaExists = frameNames.some(name => name.includes('team korea') || name.includes('korea pnc'))
-          const dnsExists = frameNames.some(name => name.includes('dns pubg') || name.includes('dns - pubg'))
-          const gengExists = frameNames.some(name => name.includes('geng pubg') || name.includes('geng -'))
+          const dnsExists = frameNames.some(name => name.includes('dns pubg'))
+          const gengExists = frameNames.some(name => name.includes('geng pubg'))
           
           console.log('✅ Existing frames check:', { koreaExists, dnsExists, gengExists })
           
