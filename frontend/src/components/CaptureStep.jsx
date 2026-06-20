@@ -16,7 +16,6 @@ function CaptureStep({
   const webcamRef = useRef(null)
   const fileInputRef = useRef(null)
   const [showCamera, setShowCamera] = useState(false)
-  const [countdown, setCountdown] = useState(null)
   const [isCapturing, setIsCapturing] = useState(false)
 
   const currentPhotoIndex = capturedPhotos.length
@@ -27,42 +26,32 @@ function CaptureStep({
     if (webcamRef.current) {
       const imageSrc = webcamRef.current.getScreenshot()
       if (imageSrc) {
+        setIsCapturing(true)
         onPhotosChange(prev => {
           const newPhotos = [...prev, imageSrc]
-          // Auto continue countdown if more photos needed
-          if (newPhotos.length < totalPhotos) {
-            setTimeout(() => startCountdown(), 1500)
-          }
+          // Auto continue to next photo if more photos needed
+          // No countdown - instant capture on next photo
           return newPhotos
         })
+        
+        // Brief flash effect then ready for next photo
+        setTimeout(() => {
+          setIsCapturing(false)
+        }, 300)
       }
     }
   }, [totalPhotos, onPhotosChange])
 
-  const startCountdown = useCallback(() => {
-    setIsCapturing(true)
-    let count = 5
-    setCountdown(count)
-    
-    const interval = setInterval(() => {
-      count--
-      if (count > 0) {
-        setCountdown(count)
-      } else {
-        setCountdown(null)
-        clearInterval(interval)
-        capture()
-        setIsCapturing(false)
-      }
-    }, 1000)
-  }, [capture])
-
   const handleCaptureClick = () => {
     if (!showCamera) {
       setShowCamera(true)
-      setTimeout(() => startCountdown(), 500)
+      // Small delay to let camera initialize
+      setTimeout(() => {
+        setIsCapturing(false)
+      }, 500)
     } else if (!isCapturing) {
-      startCountdown()
+      // Instant capture - no countdown
+      capture()
     }
   }
 
@@ -124,9 +113,9 @@ function CaptureStep({
           </h2>
 
           <div className="camera-container">
-            {countdown && (
+            {isCapturing && (
               <div className="countdown-overlay">
-                <div className="countdown-number">{countdown}</div>
+                <div className="capture-flash">📸</div>
               </div>
             )}
 

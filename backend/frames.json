@@ -284,5 +284,48 @@
         "label": "HEATHER"
       }
     ]
+  },
+  {
+    "id": "dns-pubg-wwcd-2026",
+    "name": "DNS PUBG WWCD 2026",
+    "description": "PUBG 2026 - WWCD Theme with DNS Team - Winner Winner Chicken Dinner",
+    "emoji": "🏆",
+    "color": "#0EA5E9",
+    "bgGradient": "linear-gradient(135deg, #0EA5E9 0%, #38BDF8 50%, #7DD3FC 100%)",
+    "frameImage": "http://localhost:3001/uploads/frames/dns-pubg-wwcd-2026.png",
+    "photoSlots": [
+      {
+        "x": 10,
+        "y": 6.9,
+        "width": 80,
+        "height": 21.3,
+        "rotation": 0,
+        "label": "GYUMIN"
+      },
+      {
+        "x": 10,
+        "y": 29.6,
+        "width": 80,
+        "height": 21.3,
+        "rotation": 0,
+        "label": "HEAVEN"
+      },
+      {
+        "x": 10,
+        "y": 51.9,
+        "width": 80,
+        "height": 21.3,
+        "rotation": 0,
+        "label": "DIEL"
+      },
+      {
+        "x": 10,
+        "y": 74.1,
+        "width": 80,
+        "height": 21.3,
+        "rotation": 0,
+        "label": "REX"
+      }
+    ]
   }
 ]

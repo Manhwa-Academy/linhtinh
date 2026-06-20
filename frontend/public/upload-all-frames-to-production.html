@@ -274,23 +274,29 @@
         <div class="config-section">
             <h3>⚙️ Cấu hình</h3>
             <div class="input-group">
-                <label for="localUrl">Local API URL:</label>
-                <input type="text" id="localUrl" value="http://localhost:3001" placeholder="http://localhost:3001">
+                <label for="localUrl">Backend API URL:</label>
+                <input type="text" id="localUrl" value="https://meomiy-backend.vercel.app" placeholder="https://meomiy-backend.vercel.app">
             </div>
             <div class="input-group">
-                <label for="productionUrl">Production URL:</label>
-                <input type="text" id="productionUrl" value="https://meomiy.vercel.app" placeholder="https://meomiy.vercel.app">
+                <label for="productionUrl">Frontend URL (để upload):</label>
+                <input type="text" id="productionUrl" value="https://meomiy-backend.vercel.app" placeholder="https://meomiy-backend.vercel.app">
             </div>
         </div>
         
         <div class="alert alert-info">
             <strong>💡 Hướng dẫn:</strong>
             <ol style="margin-left: 20px; margin-top: 10px;">
-                <li>Đảm bảo backend local đang chạy (npm start)</li>
-                <li>Kiểm tra URL local và production</li>
+                <li><strong style="color: #dc2626;">⚠️ Tool này phải chạy từ Production!</strong></li>
+                <li>Deploy frontend lên Vercel (đã có tool này)</li>
+                <li>Truy cập: <code>https://meomiy.vercel.app/upload-all-frames-to-production.html</code></li>
+                <li>Kiểm tra URL backend và frontend (cùng domain)</li>
                 <li>Click "Tải danh sách frames" để xem frames cần upload</li>
                 <li>Click "Upload tất cả" để bắt đầu đồng bộ</li>
             </ol>
+            <div style="margin-top: 15px; padding: 10px; background: #fef3c7; border-radius: 5px; border-left: 4px solid #f59e0b;">
+                <strong>⚠️ Lưu ý CORS:</strong> Không thể chạy từ localhost vì production API từ chối CORS cross-origin. 
+                Phải chạy từ cùng domain (production → production).
+            </div>
         </div>
         
         <div class="buttons">

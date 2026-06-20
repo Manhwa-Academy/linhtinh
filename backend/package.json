@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "node --watch server.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "upload-frames": "node upload-frames-cli.js"
   },
   "dependencies": {
     "@vercel/blob": "^2.4.0",
