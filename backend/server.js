@@ -454,7 +454,33 @@ app.post('/api/upload-frame', async (req, res) => {
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
   
   try {
-    const { fileData, fileName, mimeType, fileSize, photoSlots } = req.body
+    let fileData, fileName, mimeType, photoSlots, frameData;
+    
+    // Check if request has JSON body with base64 (from sync tool)
+    if (req.body.file && req.body.file.startsWith('data:')) {
+      console.log('[Upload Frame] Received base64 data from sync tool')
+      
+      // Extract base64 and metadata
+      const matches = req.body.file.match(/^data:(.+);base64,(.+)$/)
+      if (!matches) {
+        return res.status(400).json({ error: 'Invalid base64 format' })
+      }
+      
+      mimeType = matches[1]
+      fileData = matches[2]
+      fileName = req.body.fileName
+      frameData = req.body.frameData
+      photoSlots = frameData?.photoSlots || []
+      
+    } else if (req.body.fileData) {
+      // Original format
+      fileData = req.body.fileData
+      fileName = req.body.fileName
+      mimeType = req.body.mimeType
+      photoSlots = req.body.photoSlots
+    } else {
+      return res.status(400).json({ error: 'Thiếu dữ liệu file' })
+    }
 
     if (!fileData || !fileName) {
       return res.status(400).json({ error: 'Thiếu dữ liệu file (fileData, fileName)' })
@@ -548,6 +574,44 @@ app.post('/api/upload-frame', async (req, res) => {
     }
 
     console.log('[Upload Frame] UploadThing URL:', fileUrl)
+    
+    // If frameData is provided, save to database
+    if (frameData) {
+      console.log('[Upload Frame] Saving frame metadata:', frameData.name)
+      const frames = await readFrames()
+      
+      // Check if frame already exists
+      const existingIndex = frames.findIndex(f => f.id === frameData.id)
+      
+      const newFrame = {
+        ...frameData,
+        frameImage: fileUrl
+      }
+      
+      if (existingIndex >= 0) {
+        frames[existingIndex] = newFrame
+        console.log('[Upload Frame] Updated existing frame')
+      } else {
+        frames.push(newFrame)
+        console.log('[Upload Frame] Added new frame')
+      }
+      
+      await writeFrames(frames)
+    }
+
+    return res.json({
+      success: true,
+      message: 'Frame uploaded to UploadThing successfully',
+      url: fileUrl,
+      file: {
+        filename: fileName,
+        url: fileUrl,
+        size: buffer.length,
+        dimensions: validationResult.metadata.dimensions,
+        frameType: validationResult.metadata.frameType
+      },
+      warnings: validationResult.warnings.length > 0 ? validationResult.warnings : undefined
+    })
 
     res.json({
       success: true,
