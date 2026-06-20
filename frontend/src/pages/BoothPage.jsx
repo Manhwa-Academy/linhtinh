@@ -504,7 +504,7 @@ function BoothPage() {
 
   return (
     <div className="booth-page">
-      <FallingParticles count={15} />
+      <FallingParticles count={25} />
 
       <header className="booth-header">
         {currentStep === 1 ? (

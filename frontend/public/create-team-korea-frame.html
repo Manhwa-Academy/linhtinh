@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Korea Frame Generator - PNC 2026</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Arial Black', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(220, 38, 38, 0.8);
+            margin-bottom: 30px;
+        }
+        
+        .controls {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+        
+        button {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px;
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220, 38, 38, 0.6);
+        }
+        
+        .canvas-container {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        canvas {
+            border: 3px solid #dc2626;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .info {
+            background: rgba(34, 197, 94, 0.1);
+            border: 2px solid #22c55e;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🇰🇷 TEAM KOREA FRAME - PNC 2026 🏆</h1>
+        
+        <div class="controls">
+            <button onclick="drawFrame()">🎨 Tạo Frame</button>
+            <button onclick="downloadFrame()">💾 Download PNG</button>
+            <button onclick="addMoreEffects()">✨ Thêm Hiệu Ứng</button>
+        </div>
+        
+        <div class="canvas-container">
+            <canvas id="frameCanvas" width="1080" height="2160"></canvas>
+        </div>
+        
+        <div class="info">
+            ✅ Frame size: 1080×2160px (4-slot standard)<br>
+            🎮 Theme: Team Korea - PUBG Nations Cup 2026<br>
+            🎨 Colors: Korean Flag inspired (Blue, Red, White)<br>
+            👥 Players: GYUMIN 🦝 | SEONGJANG 🔥 | HEAVEN 😇 | HEATHER ⭐
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('frameCanvas');
+        const ctx = canvas.getContext('2d');
+        let effectsLevel = 0;
+
+        // Korean flag colors
+        const COLORS = {
+            blue: '#0047A0',
+            red: '#CD2E3A',
+            white: '#FFFFFF',
+            black: '#000000',
+            gold: '#FFD700',
+            darkBlue: '#003478'
+        };
+
+        // Players
+        const PLAYERS = [
+            { name: 'GYUMIN', emoji: '🦝', color: '#0047A0' },
+            { name: 'SEONGJANG', emoji: '🔥', color: '#CD2E3A' },
+            { name: 'HEAVEN', emoji: '😇', color: '#FFFFFF' },
+            { name: 'HEATHER', emoji: '⭐', color: '#FFD700' }
+        ];
+
+        function drawKoreanPattern(x, y, size, rotation) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(rotation * Math.PI / 180);
+            
+            // Trigram-inspired pattern
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+            ctx.lineWidth = 3;
+            
+            for (let i = 0; i < 3; i++) {
+                ctx.beginPath();
+                ctx.moveTo(-size/2, -size/2 + i * size/3);
+                ctx.lineTo(size/2, -size/2 + i * size/3);
+                ctx.stroke();
+            }
+            
+            ctx.restore();
+        }
+
+        function drawGunIcon(x, y, size) {
+            ctx.save();
+            ctx.translate(x, y);
+            
+            // Simple gun shape
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+            ctx.fillRect(-size, -size/4, size * 2, size/2);
+            ctx.fillRect(size/2, -size/2, size, size);
+            
+            ctx.restore();
+        }
+
+        function drawMedkitIcon(x, y, size) {
+            ctx.save();
+            ctx.translate(x, y);
+            
+            // Medkit cross
+            ctx.fillStyle = 'rgba(220, 46, 58, 0.6)';
+            ctx.fillRect(-size/3, -size, size * 2/3, size * 2);
+            ctx.fillRect(-size, -size/3, size * 2, size * 2/3);
+            
+            ctx.restore();
+        }
+
+        function drawStars(count) {
+            ctx.save();
+            for (let i = 0; i < count; i++) {
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * canvas.height;
+                const size = 10 + Math.random() * 20;
+                
+                ctx.font = `${size}px Arial`;
+                ctx.fillStyle = `rgba(255, 215, 0, ${0.3 + Math.random() * 0.4})`;
+                const stars = ['⭐', '✨', '💫'];
+                ctx.fillText(stars[Math.floor(Math.random() * stars.length)], x, y);
+            }
+            ctx.restore();
+        }
+
+        function drawTrophies() {
+            const positions = [
+                {x: 100, y: 150},
+                {x: canvas.width - 100, y: 150},
+                {x: 100, y: canvas.height - 150},
+                {x: canvas.width - 100, y: canvas.height - 150}
+            ];
+            
+            positions.forEach(pos => {
+                ctx.font = '60px Arial';
+                ctx.fillStyle = 'rgba(255, 215, 0, 0.6)';
+                ctx.fillText('🏆', pos.x, pos.y);
+            });
+        }
+
+        function drawFrame() {
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Background gradient - Korean flag inspired
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gradient.addColorStop(0, '#FFFFFF');
+            gradient.addColorStop(0.3, '#F0F4FF');
+            gradient.addColorStop(0.5, '#FFFFFF');
+            gradient.addColorStop(0.7, '#FFF0F0');
+            gradient.addColorStop(1, '#FFFFFF');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw Korean patterns
+            for (let i = 0; i < 15; i++) {
+                drawKoreanPattern(
+                    Math.random() * canvas.width,
+                    Math.random() * canvas.height,
+                    40 + Math.random() * 60,
+                    Math.random() * 360
+                );
+            }
+            
+            // Blue & Red accent borders
+            ctx.strokeStyle = COLORS.blue;
+            ctx.lineWidth = 20;
+            ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
+            
+            ctx.strokeStyle = COLORS.red;
+            ctx.lineWidth = 10;
+            ctx.strokeRect(30, 30, canvas.width - 60, canvas.height - 60);
+            
+            // === PHOTO SLOTS ===
+            const slotHeight = 450;
+            const slotWidth = 900;
+            const startX = (canvas.width - slotWidth) / 2;
+            const startY = 250;
+            const spacing = 30;
+            
+            PLAYERS.forEach((player, index) => {
+                const y = startY + index * (slotHeight + spacing);
+                
+                // Slot background with player color
+                const slotGradient = ctx.createLinearGradient(startX, y, startX + slotWidth, y + slotHeight);
+                slotGradient.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+                slotGradient.addColorStop(1, 'rgba(200, 200, 200, 0.9)');
+                ctx.fillStyle = slotGradient;
+                ctx.fillRect(startX, y, slotWidth, slotHeight);
+                
+                // Slot border with player color
+                ctx.strokeStyle = player.color;
+                ctx.lineWidth = 8;
+                ctx.strokeRect(startX, y, slotWidth, slotHeight);
+                
+                // Inner glow
+                ctx.strokeStyle = `${player.color}44`;
+                ctx.lineWidth = 16;
+                ctx.strokeRect(startX - 8, y - 8, slotWidth + 16, slotHeight + 16);
+                
+                // Player name label - Top
+                ctx.fillStyle = player.color;
+                ctx.fillRect(startX, y - 60, slotWidth, 60);
+                
+                // Player name text
+                ctx.font = 'bold 40px Arial Black';
+                ctx.fillStyle = '#FFFFFF';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(`${player.emoji} ${player.name}`, startX + slotWidth/2, y - 30);
+                
+                // Decorative corners
+                const cornerSize = 30;
+                ctx.fillStyle = COLORS.gold;
+                // Top-left
+                ctx.fillRect(startX - 5, y - 5, cornerSize, 5);
+                ctx.fillRect(startX - 5, y - 5, 5, cornerSize);
+                // Top-right
+                ctx.fillRect(startX + slotWidth - cornerSize + 5, y - 5, cornerSize, 5);
+                ctx.fillRect(startX + slotWidth, y - 5, 5, cornerSize);
+                // Bottom-left
+                ctx.fillRect(startX - 5, y + slotHeight, cornerSize, 5);
+                ctx.fillRect(startX - 5, y + slotHeight - cornerSize + 5, 5, cornerSize);
+                // Bottom-right
+                ctx.fillRect(startX + slotWidth - cornerSize + 5, y + slotHeight, cornerSize, 5);
+                ctx.fillRect(startX + slotWidth, y + slotHeight - cornerSize + 5, 5, cornerSize);
+            });
+            
+            // === TOP HEADER ===
+            // Background for header
+            const headerGradient = ctx.createLinearGradient(0, 0, canvas.width, 150);
+            headerGradient.addColorStop(0, COLORS.blue);
+            headerGradient.addColorStop(0.5, COLORS.red);
+            headerGradient.addColorStop(1, COLORS.blue);
+            ctx.fillStyle = headerGradient;
+            ctx.fillRect(0, 0, canvas.width, 180);
+            
+            // Main title
+            ctx.font = 'bold 90px Arial Black';
+            ctx.fillStyle = '#FFFFFF';
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 8;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.strokeText('TEAM KOREA 🇰🇷', canvas.width/2, 90);
+            ctx.fillText('TEAM KOREA 🇰🇷', canvas.width/2, 90);
+            
+            // === BOTTOM FOOTER ===
+            // Background
+            const footerGradient = ctx.createLinearGradient(0, canvas.height - 200, canvas.width, canvas.height);
+            footerGradient.addColorStop(0, COLORS.red);
+            footerGradient.addColorStop(0.5, COLORS.darkBlue);
+            footerGradient.addColorStop(1, COLORS.red);
+            ctx.fillStyle = footerGradient;
+            ctx.fillRect(0, canvas.height - 200, canvas.width, 200);
+            
+            // Slogan
+            ctx.font = 'bold 70px Arial Black';
+            ctx.fillStyle = COLORS.gold;
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 6;
+            ctx.strokeText('RISE AGAIN', canvas.width/2, canvas.height - 130);
+            ctx.fillText('RISE AGAIN', canvas.width/2, canvas.height - 130);
+            
+            // Event name
+            ctx.font = 'bold 50px Arial';
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillText('PNC 2026', canvas.width/2, canvas.height - 60);
+            
+            // === DECORATIONS ===
+            // Stars
+            drawStars(20);
+            
+            // Trophies in corners
+            drawTrophies();
+            
+            // PUBG elements
+            drawGunIcon(120, 200, 25);
+            drawGunIcon(canvas.width - 120, 200, 25);
+            drawMedkitIcon(120, canvas.height - 250, 20);
+            drawMedkitIcon(canvas.width - 120, canvas.height - 250, 20);
+            
+            // Korean flag emoji decorations
+            ctx.font = '50px Arial';
+            [100, 300, 500, 700, 900, 1100, 1300, 1500, 1700, 1900].forEach(y => {
+                if (Math.random() > 0.5) {
+                    ctx.fillText('🇰🇷', 50, y);
+                    ctx.fillText('🇰🇷', canvas.width - 80, y);
+                }
+            });
+            
+            console.log('✅ Frame created successfully!');
+        }
+
+        function addMoreEffects() {
+            effectsLevel++;
+            
+            // Add more stars
+            drawStars(30);
+            
+            // Add sparkles around photo slots
+            const slotHeight = 450;
+            const slotWidth = 900;
+            const startX = (canvas.width - slotWidth) / 2;
+            const startY = 250;
+            const spacing = 30;
+            
+            PLAYERS.forEach((player, index) => {
+                const y = startY + index * (slotHeight + spacing);
+                
+                // Sparkles around slot
+                for (let i = 0; i < 8; i++) {
+                    const angle = (i / 8) * Math.PI * 2;
+                    const radius = 500;
+                    const x = startX + slotWidth/2 + Math.cos(angle) * radius;
+                    const sparkleY = y + slotHeight/2 + Math.sin(angle) * radius;
+                    
+                    ctx.font = '40px Arial';
+                    ctx.fillStyle = player.color + '80';
+                    ctx.fillText('✨', x, sparkleY);
+                }
+            });
+            
+            // Add more trophies
+            ctx.font = '40px Arial';
+            for (let i = 0; i < 5; i++) {
+                ctx.fillText('🏆', Math.random() * canvas.width, Math.random() * 200);
+            }
+            
+            console.log(`✨ Added effect level ${effectsLevel}`);
+        }
+
+        function downloadFrame() {
+            const link = document.createElement('a');
+            link.download = 'Team-Korea-PNC2026-Frame.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            console.log('💾 Frame downloaded!');
+        }
+
+        // Auto-draw on load
+        window.onload = () => {
+            drawFrame();
+        };
+    </script>
+</body>
+</html>

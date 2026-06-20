@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
 
-const ParticleIcon = ({ type, color }) => {
+const ParticleIcon = ({ type, color, size = 48 }) => {
   switch (type) {
     case 'sparkle':
       return (
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
           <path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z" 
                 fill={color} stroke="white" strokeWidth="1" 
                 style={{ filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.8))' }} />
@@ -12,29 +12,33 @@ const ParticleIcon = ({ type, color }) => {
       )
     case 'star':
       return (
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
           <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" 
                 fill={color} stroke="white" strokeWidth="1"
                 style={{ filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.8))' }} />
         </svg>
       )
     case 'flower':
-      return <span style={{ fontSize: '48px', filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.6))' }}>🌸</span>
+      return <span style={{ fontSize: `${size}px`, filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.6))' }}>🌸</span>
     case 'trophy':
       return (
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
           <path d="M7 4V8C7 10.2 8.8 12 11 12H13C15.2 12 17 10.2 17 8V4H7Z" 
-                fill={color} stroke="white" strokeWidth="1" />
-          <path d="M12 12V16M10 16H14M9 20H15" stroke="white" strokeWidth="2" strokeLinecap="round" />
-          <rect x="9" y="19" width="6" height="2" rx="1" fill={color} />
+                fill={color} stroke="white" strokeWidth="1.5" 
+                style={{ filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.6))' }} />
+          <path d="M12 12V16M10 16H14M9 20H15" stroke={color} strokeWidth="2" strokeLinecap="round" />
+          <rect x="9" y="19" width="6" height="2" rx="1" fill={color} 
+                style={{ filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.6))' }} />
+          <path d="M7 4H5C4 4 3 5 3 6V7C3 8.5 4 9.5 5.5 9.5H7" stroke={color} strokeWidth="1.5" />
+          <path d="M17 4H19C20 4 21 5 21 6V7C21 8.5 20 9.5 18.5 9.5H17" stroke={color} strokeWidth="1.5" />
         </svg>
       )
     case 'heart':
       return (
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
           <path d="M12 21C12 21 3 15 3 9C3 6 5 4 7.5 4C9.5 4 11 5 12 6.5C13 5 14.5 4 16.5 4C19 4 21 6 21 9C21 15 12 21 12 21Z" 
-                fill={color} stroke="white" strokeWidth="1"
-                style={{ filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.6))' }} />
+                fill={color} stroke="white" strokeWidth="1.5"
+                style={{ filter: 'drop-shadow(0 0 6px rgba(255,107,157,0.6))' }} />
         </svg>
       )
     default:
@@ -42,21 +46,22 @@ const ParticleIcon = ({ type, color }) => {
   }
 }
 
-function FallingParticles({ count = 15 }) {
+function FallingParticles({ count = 20 }) {
   const [particles, setParticles] = useState([])
 
   useEffect(() => {
     const generateParticles = () => {
+      // Tăng tỷ lệ cup, star, heart so với sparkle
       const icons = [
-        { type: 'sparkle', color: '#FCD34D' },
-        { type: 'star', color: '#FBBF24' },
-        { type: 'flower', color: '#FF6B9D' },
-        { type: 'trophy', color: '#F59E0B' },
-        { type: 'heart', color: '#FF6B9D' },
-        { type: 'sparkle', color: '#FCD34D' },
-        { type: 'star', color: '#FBBF24' },
-        { type: 'flower', color: '#FFC0CB' },
-        { type: 'trophy', color: '#FFD700' }
+        { type: 'flower', color: '#FF6B9D', size: 48 },
+        { type: 'flower', color: '#FFC0CB', size: 48 },
+        { type: 'trophy', color: '#FFD700', size: 48 },  // Cup màu vàng
+        { type: 'trophy', color: '#F59E0B', size: 48 },  // Cup màu cam
+        { type: 'star', color: '#FBBF24', size: 48 },    // Ngôi sao vàng
+        { type: 'star', color: '#FCD34D', size: 48 },    // Ngôi sao vàng nhạt
+        { type: 'heart', color: '#FF6B9D', size: 48 },   // Trái tim hồng
+        { type: 'heart', color: '#FF1493', size: 48 },   // Trái tim đậm
+        { type: 'sparkle', color: '#FCD34D', size: 40 }  // Sparkle nhỏ hơn
       ]
       const newParticles = []
       
@@ -66,9 +71,11 @@ function FallingParticles({ count = 15 }) {
           id: i,
           type: icon.type,
           color: icon.color,
+          size: icon.size,
           left: Math.random() * 100,
-          animationDuration: 8 + Math.random() * 4,
-          animationDelay: Math.random() * 10
+          animationDuration: 10 + Math.random() * 5,  // 10-15s để chậm hơn, dễ nhìn
+          animationDelay: Math.random() * 15,         // Random delay để liên tục
+          rotate: Math.random() * 360                  // Random rotation
         })
       }
       
@@ -76,6 +83,13 @@ function FallingParticles({ count = 15 }) {
     }
 
     generateParticles()
+    
+    // Regenerate particles để tạo hiệu ứng liên tục
+    const interval = setInterval(() => {
+      generateParticles()
+    }, 15000) // Mỗi 15s regenerate để luôn có particles mới
+    
+    return () => clearInterval(interval)
   }, [count])
 
   return (
@@ -87,10 +101,11 @@ function FallingParticles({ count = 15 }) {
           style={{
             left: `${particle.left}%`,
             animationDuration: `${particle.animationDuration}s`,
-            animationDelay: `${particle.animationDelay}s`
+            animationDelay: `${particle.animationDelay}s`,
+            transform: `rotate(${particle.rotate}deg)`
           }}
         >
-          <ParticleIcon type={particle.type} color={particle.color} />
+          <ParticleIcon type={particle.type} color={particle.color} size={particle.size} />
         </div>
       ))}
     </div>

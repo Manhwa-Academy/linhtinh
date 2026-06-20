@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>GENG PUBG 2026 V2</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .status {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        canvas {
+            border: 3px solid #FFD700;
+            border-radius: 10px;
+            max-width: 400px;
+            height: auto;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>⚡ GENG PUBG 2026 V2</h1>
+    <div class="status" id="status">Creating frame...</div>
+    <canvas id="canvas" width="1080" height="2160"></canvas>
+
+    <script>
+        const API_URL = 'http://localhost:3001';
+        const FRAME_ID = 'frame_geng_pubg_2026_v2';
+        
+        const COLORS = {
+            gold: '#FFD700',
+            darkGold: '#FFA500',
+            black: '#000000',
+            darkGray: '#1a1a1a',
+            white: '#FFFFFF',
+            yellow: '#FFED4E'
+        };
+
+        const PLAYERS = [
+            { name: 'SEOUL', icon: '🪖' },
+            { name: 'BEAN', icon: '📦' },
+            { name: 'DIYY', icon: '🎯' },
+            { name: 'SALUTE', icon: '⚡' }
+        ];
+
+        function createGradient(ctx, x0, y0, x1, y1, colors) {
+            const gradient = ctx.createLinearGradient(x0, y0, x1, y1);
+            colors.forEach((color, i) => {
+                gradient.addColorStop(i / (colors.length - 1), color);
+            });
+            return gradient;
+        }
+
+        function drawLightningPattern(ctx, width, height) {
+            ctx.save();
+            ctx.globalAlpha = 0.05;
+            ctx.strokeStyle = COLORS.gold;
+            ctx.lineWidth = 3;
+            
+            for (let i = 0; i < 15; i++) {
+                ctx.beginPath();
+                let x = Math.random() * width;
+                let y = 0;
+                ctx.moveTo(x, y);
+                for (let j = 0; j < 8; j++) {
+                    x += (Math.random() - 0.5) * 150;
+                    y += height / 8;
+                    ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+
+        function drawGENGFrame() {
+            document.getElementById('status').textContent = 'Drawing GENG V2 frame...';
+            
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Black background
+            ctx.fillStyle = COLORS.black;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Gold gradient from edges
+            const edgeGrad1 = ctx.createRadialGradient(0, 0, 100, 0, 0, 800);
+            edgeGrad1.addColorStop(0, 'rgba(255, 215, 0, 0.15)');
+            edgeGrad1.addColorStop(1, 'rgba(255, 215, 0, 0)');
+            ctx.fillStyle = edgeGrad1;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Lightning pattern
+            drawLightningPattern(ctx, canvas.width, canvas.height);
+
+            // Gold border
+            ctx.strokeStyle = COLORS.gold;
+            ctx.lineWidth = 18;
+            ctx.strokeRect(9, 9, canvas.width - 18, canvas.height - 18);
+
+            // Inner black border
+            ctx.strokeStyle = COLORS.black;
+            ctx.lineWidth = 8;
+            ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
+
+            // === HEADER ===
+            const headerGrad = createGradient(ctx, 0, 0, canvas.width, 130,
+                [COLORS.darkGold, COLORS.gold, COLORS.darkGold]);
+            ctx.fillStyle = headerGrad;
+            ctx.fillRect(0, 0, canvas.width, 130);
+
+            // Title "GENG PUBG 2026"
+            ctx.font = 'bold 80px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.strokeStyle = COLORS.black;
+            ctx.lineWidth = 10;
+            ctx.strokeText('GENG PUBG 2026', canvas.width / 2, 70);
+            ctx.fillStyle = COLORS.black;
+            ctx.fillText('GENG PUBG 2026', canvas.width / 2, 70);
+
+            // Icons in header corners
+            ctx.font = '55px Arial';
+            ctx.fillText('🏆', 80, 70);
+            ctx.fillText('⭐', canvas.width - 80, 70);
+
+            // === PHOTO SLOTS WITH LABELS OUTSIDE - LARGE SLOTS ===
+            const slotWidth = 940;  // Much larger - 87% of canvas
+            const slotHeight = 505; // Taller slots
+            const startX = (canvas.width - slotWidth) / 2;
+            const startY = 150;
+            const gap = 10; // Smaller gap
+
+            PLAYERS.forEach((player, index) => {
+                const y = startY + index * (slotHeight + gap);
+                
+                // Slot border ONLY - alternating gold colors
+                ctx.strokeStyle = index % 2 === 0 ? COLORS.gold : COLORS.darkGold;
+                ctx.lineWidth = 6;
+                ctx.strokeRect(startX, y, slotWidth, slotHeight);
+
+                // Icon on LEFT (OUTSIDE slot)
+                const iconX = startX - 60;
+                const iconY = y + slotHeight / 2;
+                
+                ctx.save();
+                ctx.translate(iconX, iconY);
+                ctx.rotate(-Math.PI / 2);
+                
+                // Gold background for icon
+                ctx.fillStyle = COLORS.gold;
+                ctx.fillRect(-55, -55, 110, 110);
+                
+                ctx.font = '75px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(player.icon, 0, 0);
+                ctx.restore();
+
+                // Player name on RIGHT (OUTSIDE slot) - WHITE TEXT
+                const labelX = startX + slotWidth + 60;
+                const labelY = y + slotHeight / 2;
+                
+                ctx.save();
+                ctx.translate(labelX, labelY);
+                ctx.rotate(Math.PI / 2);
+                
+                // BLACK background for WHITE text
+                ctx.fillStyle = COLORS.black;
+                ctx.fillRect(-130, -45, 260, 90);
+                
+                // Gold border around text box
+                ctx.strokeStyle = COLORS.gold;
+                ctx.lineWidth = 5;
+                ctx.strokeRect(-130, -45, 260, 90);
+                
+                ctx.font = 'bold 68px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                // WHITE text
+                ctx.fillStyle = COLORS.white;
+                ctx.fillText(player.name, 0, 0);
+                
+                ctx.restore();
+
+                // Corner decorations
+                ctx.font = '55px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                // Top-left
+                ctx.fillText('🐯', startX - 12, y - 12);
+                // Top-right
+                ctx.fillText('🐯', startX + slotWidth + 12, y - 12);
+                // Bottom-left
+                ctx.fillText('🐯', startX - 12, y + slotHeight + 12);
+                // Bottom-right
+                ctx.fillText('🐯', startX + slotWidth + 12, y + slotHeight + 12);
+            });
+
+            // Decorative icons scattered
+            ctx.font = '55px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = COLORS.gold;
+            ctx.fillText('🐯', 55, 250);
+            ctx.fillText('⚡', canvas.width - 55, 350);
+            ctx.fillText('🐯', 55, 1050);
+            ctx.fillText('⚡', canvas.width - 55, 1150);
+            ctx.fillText('🐯', 55, 1850);
+            ctx.fillText('⚡', canvas.width - 55, 1950);
+
+            document.getElementById('status').textContent = '✅ Frame ready! Uploading...';
+            setTimeout(uploadFrame, 1000);
+        }
+
+        async function uploadFrame() {
+            try {
+                const canvas = document.getElementById('canvas');
+                const dataUrl = canvas.toDataURL('image/png');
+                const base64 = dataUrl.split(',')[1];
+
+                document.getElementById('status').textContent = '📤 Uploading...';
+
+                const response = await fetch(`${API_URL}/api/upload-frame`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        fileData: base64,
+                        fileName: 'geng-pubg-v2.png',
+                        mimeType: 'image/png',
+                        photoSlots: [
+                            { x: 6.5, y: 6.9, width: 87, height: 23.4, rotation: 0 },
+                            { x: 6.5, y: 30.2, width: 87, height: 23.4, rotation: 0 },
+                            { x: 6.5, y: 53.5, width: 87, height: 23.4, rotation: 0 },
+                            { x: 6.5, y: 76.8, width: 87, height: 23.4, rotation: 0 }
+                        ]
+                    })
+                });
+
+                if (!response.ok) throw new Error('Upload failed');
+                const data = await response.json();
+                const fileUrl = data?.file?.url || data?.file?.path;
+
+                document.getElementById('status').textContent = '📝 Adding to database...';
+
+                const createResponse = await fetch(`${API_URL}/api/frames`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id: FRAME_ID,
+                        name: 'GENG PUBG 2026',
+                        emoji: '⚡',
+                        description: 'PUBG 2026 - GENG Team: SEOUL 🪖, BEAN 📦, DIYY 🎯, SALUTE ⚡',
+                        color: '#FFF9E6',
+                        bgGradient: 'linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%)',
+                        frameImage: fileUrl.startsWith('http') ? fileUrl : `${API_URL}${fileUrl}`,
+                        photoSlots: [
+                            { x: 6.5, y: 6.9, width: 87, height: 23.4, rotation: 0, label: "SEOUL 🪖" },
+                            { x: 6.5, y: 30.2, width: 87, height: 23.4, rotation: 0, label: "BEAN 📦" },
+                            { x: 6.5, y: 53.5, width: 87, height: 23.4, rotation: 0, label: "DIYY 🎯" },
+                            { x: 6.5, y: 76.8, width: 87, height: 23.4, rotation: 0, label: "SALUTE ⚡" }
+                        ]
+                    })
+                });
+
+                if (!createResponse.ok) throw new Error('Create failed');
+
+                document.getElementById('status').innerHTML = '🎉 <strong>SUCCESS!</strong><br>GENG PUBG 2026 V2 created!<br>Refresh BoothPage (Ctrl+Shift+R)!';
+                
+                setTimeout(() => {
+                    window.location.href = '/admin';
+                }, 3000);
+
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('status').innerHTML = `❌ Error: ${error.message}<br><button onclick="location.reload()">Retry</button>`;
+            }
+        }
+
+        window.onload = () => {
+            setTimeout(drawGENGFrame, 500);
+        };
+    </script>
+</body>
+</html>

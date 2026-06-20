@@ -1,0 +1,53 @@
+═══════════════════════════════════════════════════
+📋 QUY ĐỊNH KHUNG STRIP - ĐỌC KỸ TRƯỚC KHI UPLOAD
+═══════════════════════════════════════════════════
+
+1. KÍCH THƯỚC CHUẨN (BẮT BUỘC)
+   ┌─────────────────────────────────────────┐
+   │ 4 ô: 1080 × 2160 px (khuyên dùng) ⭐   │
+   │ 2 ô: 1080 × 1620 px                     │
+   │ 6 ô: 1080 × 2700 px                     │
+   │ Sai số cho phép: ±10%                   │
+   └─────────────────────────────────────────┘
+
+2. ĐỊNH DẠNG FILE
+   ✅ PNG (nền trong suốt) - KHUYÊN DÙNG
+   ✅ WebP (nền trong suốt)
+   ⚠️ JPEG/JPG (không trong suốt)
+
+3. DUNG LƯỢNG
+   📦 Tối đa: 5MB
+   💡 Nén tại: tinypng.com
+
+4. VÙNG AN TOÀN
+   🎯 Photo slots phải cách mép ≥ 5%
+   ❌ Không đặt ô ảnh sát mép khung
+
+5. SỐ Ô ẢNH
+   ✅ Chỉ hỗ trợ: 2 ô, 4 ô, hoặc 6 ô
+   ❌ Không hỗ trợ số ô khác
+
+═══════════════════════════════════════════════════
+⚠️ LƯU Ý QUAN TRỌNG
+═══════════════════════════════════════════════════
+
+• Hệ thống sẽ TỰ ĐỘNG KIỂM TRA khi upload
+• Nếu sai quy định → KHÔNG THỂ UPLOAD
+• Xem lỗi chi tiết trên màn hình và sửa lại
+• File docs/frame-standards.md có hướng dẫn đầy đủ
+
+═══════════════════════════════════════════════════
+🔧 CÁCH FIX FRAME BỊ LỖI (như ảnh ví dụ)
+═══════════════════════════════════════════════════
+
+Vấn đề: Ảnh bị méo, không khớp ô đen
+Nguyên nhân: Frame không đúng kích thước 1080×2160
+
+Giải pháp:
+1. Mở frame trong Photoshop/Canva
+2. Resize về: 1080 × 2160 px
+3. Export PNG với nền trong suốt
+4. Upload lại và định nghĩa photo slots
+5. Dùng Editor để điều chỉnh slots khớp ô đen
+
+═══════════════════════════════════════════════════

@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1080" height="2160" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#F0F4FF;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFFFFF;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#FFF0F0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFFFFF;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#0047A0;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#CD2E3A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0047A0;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="footerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#CD2E3A;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#003478;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#CD2E3A;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1080" height="2160" fill="url(#bgGrad)"/>
+  
+  <!-- Blue border -->
+  <rect x="10" y="10" width="1060" height="2140" 
+        fill="none" stroke="#0047A0" stroke-width="20"/>
+  
+  <!-- Red border -->
+  <rect x="30" y="30" width="1020" height="2100" 
+        fill="none" stroke="#CD2E3A" stroke-width="10"/>
+  <g opacity="0.15">
+    <line x1="873.2480820073428" y1="441.5966620441232" x2="917.2076644711816" y2="441.5966620441232" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="873.2480820073428" y1="456.2498561987362" x2="917.2076644711816" y2="456.2498561987362" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="873.2480820073428" y1="470.9030503533492" x2="917.2076644711816" y2="470.9030503533492" stroke="#FFFFFF" stroke-width="2"/>
+  </g>
+  <g opacity="0.15">
+    <line x1="568.4607508871244" y1="1021.7103130053342" x2="604.138550191272" y2="1021.7103130053342" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="568.4607508871244" y1="1033.6029127733834" x2="604.138550191272" y2="1033.6029127733834" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="568.4607508871244" y1="1045.4955125414326" x2="604.138550191272" y2="1045.4955125414326" stroke="#FFFFFF" stroke-width="2"/>
+  </g>
+  <g opacity="0.15">
+    <line x1="142.06751887329438" y1="1011.4439799251678" x2="179.72523444214926" y2="1011.4439799251678" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="142.06751887329438" y1="1023.9965517814528" x2="179.72523444214926" y2="1023.9965517814528" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="142.06751887329438" y1="1036.5491236377377" x2="179.72523444214926" y2="1036.5491236377377" stroke="#FFFFFF" stroke-width="2"/>
+  </g>
+  <g opacity="0.15">
+    <line x1="747.2567339842682" y1="1848.9966785726165" x2="813.5682824430622" y2="1848.9966785726165" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="747.2567339842682" y1="1871.100528058881" x2="813.5682824430622" y2="1871.100528058881" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="747.2567339842682" y1="1893.2043775451457" x2="813.5682824430622" y2="1893.2043775451457" stroke="#FFFFFF" stroke-width="2"/>
+  </g>
+  <g opacity="0.15">
+    <line x1="300.6187951390315" y1="1344.457318442351" x2="352.9612406856578" y2="1344.457318442351" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="300.6187951390315" y1="1361.9048002912264" x2="352.9612406856578" y2="1361.9048002912264" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="300.6187951390315" y1="1379.3522821401018" x2="352.9612406856578" y2="1379.3522821401018" stroke="#FFFFFF" stroke-width="2"/>
+  </g>
+  <g opacity="0.15">
+    <line x1="953.9070804858617" y1="269.8497769826356" x2="996.7455189302706" y2="269.8497769826356" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="953.9070804858617" y1="284.12925646410525" x2="996.7455189302706" y2="284.12925646410525" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="953.9070804858617" y1="298.4087359455749" x2="996.7455189302706" y2="298.4087359455749" stroke="#FFFFFF" stroke-width="2"/>
+  </g>
+  <g opacity="0.15">
+    <line x1="383.96359415305074" y1="1772.9854335514722" x2="421.47288075590643" y2="1772.9854335514722" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="383.96359415305074" y1="1785.4885290857574" x2="421.47288075590643" y2="1785.4885290857574" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="383.96359415305074" y1="1797.9916246200426" x2="421.47288075590643" y2="1797.9916246200426" stroke="#FFFFFF" stroke-width="2"/>
+  </g>
+  <g opacity="0.15">
+    <line x1="363.6558991604191" y1="1486.3447197549785" x2="419.5554298315238" y2="1486.3447197549785" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="363.6558991604191" y1="1504.9778966453468" x2="419.5554298315238" y2="1504.9778966453468" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="363.6558991604191" y1="1523.6110735357151" x2="419.5554298315238" y2="1523.6110735357151" stroke="#FFFFFF" stroke-width="2"/>
+  </g>
+  <g opacity="0.15">
+    <line x1="871.6896610262718" y1="1621.2130008684762" x2="929.871660871906" y2="1621.2130008684762" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="871.6896610262718" y1="1640.607000817021" x2="929.871660871906" y2="1640.607000817021" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="871.6896610262718" y1="1660.0010007655655" x2="929.871660871906" y2="1660.0010007655655" stroke="#FFFFFF" stroke-width="2"/>
+  </g>
+  <g opacity="0.15">
+    <line x1="484.68459354842173" y1="1436.9842003609738" x2="518.951059914006" y2="1436.9842003609738" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="484.68459354842173" y1="1448.4063558161686" x2="518.951059914006" y2="1448.4063558161686" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="484.68459354842173" y1="1459.8285112713634" x2="518.951059914006" y2="1459.8285112713634" stroke="#FFFFFF" stroke-width="2"/>
+  </g>
+  <g opacity="0.15">
+    <line x1="999.2924652933846" y1="1161.8249485891847" x2="1052.9055601185785" y2="1161.8249485891847" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="999.2924652933846" y1="1179.6959801975827" x2="1052.9055601185785" y2="1179.6959801975827" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="999.2924652933846" y1="1197.5670118059807" x2="1052.9055601185785" y2="1197.5670118059807" stroke="#FFFFFF" stroke-width="2"/>
+  </g>
+  <g opacity="0.15">
+    <line x1="939.3682674167037" y1="282.27668456186325" x2="970.0696323913776" y2="282.27668456186325" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="939.3682674167037" y1="292.5104728867546" x2="970.0696323913776" y2="292.5104728867546" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="939.3682674167037" y1="302.74426121164595" x2="970.0696323913776" y2="302.74426121164595" stroke="#FFFFFF" stroke-width="2"/>
+  </g>
+  <g opacity="0.15">
+    <line x1="906.9282535047397" y1="556.2809545564533" x2="954.972337284261" y2="556.2809545564533" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="906.9282535047397" y1="572.295649149627" x2="954.972337284261" y2="572.295649149627" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="906.9282535047397" y1="588.3103437428008" x2="954.972337284261" y2="588.3103437428008" stroke="#FFFFFF" stroke-width="2"/>
+  </g>
+  <g opacity="0.15">
+    <line x1="969.8560508524163" y1="558.5120387417237" x2="1011.0752448673074" y2="558.5120387417237" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="969.8560508524163" y1="572.2517700800207" x2="1011.0752448673074" y2="572.2517700800207" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="969.8560508524163" y1="585.9915014183177" x2="1011.0752448673074" y2="585.9915014183177" stroke="#FFFFFF" stroke-width="2"/>
+  </g>
+  <g opacity="0.15">
+    <line x1="701.0232537043319" y1="1692.1266799555406" x2="770.8111258750762" y2="1692.1266799555406" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="701.0232537043319" y1="1715.3893040124553" x2="770.8111258750762" y2="1715.3893040124553" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="701.0232537043319" y1="1738.6519280693701" x2="770.8111258750762" y2="1738.6519280693701" stroke="#FFFFFF" stroke-width="2"/>
+  </g>
+  <g opacity="0.15">
+    <line x1="661.2544002183336" y1="1423.4577690516942" x2="697.41471759345" y2="1423.4577690516942" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="661.2544002183336" y1="1435.511208176733" x2="697.41471759345" y2="1435.511208176733" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="661.2544002183336" y1="1447.5646473017716" x2="697.41471759345" y2="1447.5646473017716" stroke="#FFFFFF" stroke-width="2"/>
+  </g>
+  <g opacity="0.15">
+    <line x1="390.0726960835045" y1="1824.0913936862605" x2="426.0850003231394" y2="1824.0913936862605" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="390.0726960835045" y1="1836.0954950994721" x2="426.0850003231394" y2="1836.0954950994721" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="390.0726960835045" y1="1848.0995965126838" x2="426.0850003231394" y2="1848.0995965126838" stroke="#FFFFFF" stroke-width="2"/>
+  </g>
+  <g opacity="0.15">
+    <line x1="718.7130630577902" y1="372.3672226103076" x2="749.4393894005956" y2="372.3672226103076" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="718.7130630577902" y1="382.60933139124273" x2="749.4393894005956" y2="382.60933139124273" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="718.7130630577902" y1="392.8514401721779" x2="749.4393894005956" y2="392.8514401721779" stroke="#FFFFFF" stroke-width="2"/>
+  </g>
+  <g opacity="0.15">
+    <line x1="608.2637684692456" y1="298.9002790083105" x2="661.280646155531" y2="298.9002790083105" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="608.2637684692456" y1="316.57257157040567" x2="661.280646155531" y2="316.57257157040567" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="608.2637684692456" y1="334.2448641325008" x2="661.280646155531" y2="334.2448641325008" stroke="#FFFFFF" stroke-width="2"/>
+  </g>
+  <g opacity="0.15">
+    <line x1="251.13298552561324" y1="607.3761387406239" x2="306.14423721138337" y2="607.3761387406239" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="251.13298552561324" y1="625.7132226358806" x2="306.14423721138337" y2="625.7132226358806" stroke="#FFFFFF" stroke-width="2"/>
+    <line x1="251.13298552561324" y1="644.0503065311373" x2="306.14423721138337" y2="644.0503065311373" stroke="#FFFFFF" stroke-width="2"/>
+  </g>
+  <!-- Header -->
+  <rect width="1080" height="180" fill="url(#headerGrad)"/>
+  
+  <!-- Title -->
+  <text x="540" y="110" font-family="Arial Black, Arial" font-size="90" font-weight="bold" 
+        text-anchor="middle" fill="#FFFFFF" 
+        stroke="#000000" stroke-width="8">TEAM KOREA 🇰🇷</text>
+  <!-- Slot 1: GYUMIN -->
+  <!-- Slot background -->
+  <rect x="90" y="250" width="900" height="450" 
+        fill="#FFFFFF" fill-opacity="0.9"/>
+  
+  <!-- Slot border -->
+  <rect x="90" y="250" width="900" height="450" 
+        fill="none" stroke="#0047A0" stroke-width="8"/>
+  
+  <!-- Inner glow -->
+  <rect x="82" y="242" width="916" height="466" 
+        fill="none" stroke="#0047A0" stroke-width="16" opacity="0.3"/>
+  
+  <!-- Player name bar -->
+  <rect x="90" y="190" width="900" height="60" fill="#0047A0"/>
+  
+  <!-- Player name text -->
+  <text x="540" y="230" font-family="Arial" font-size="40" font-weight="bold" 
+        text-anchor="middle" fill="#FFFFFF">🦝 GYUMIN</text>
+  
+  <!-- Corner decorations -->
+  <rect x="85" y="245" width="30" height="5" fill="#FFD700"/>
+  <rect x="85" y="245" width="5" height="30" fill="#FFD700"/>
+  <rect x="965" y="245" width="30" height="5" fill="#FFD700"/>
+  <rect x="990" y="245" width="5" height="30" fill="#FFD700"/>
+  <rect x="85" y="700" width="30" height="5" fill="#FFD700"/>
+  <rect x="85" y="675" width="5" height="30" fill="#FFD700"/>
+  <rect x="965" y="700" width="30" height="5" fill="#FFD700"/>
+  <rect x="990" y="675" width="5" height="30" fill="#FFD700"/>
+  
+  <!-- Slot number watermark -->
+  <text x="540" y="515" font-family="Arial" font-size="100" font-weight="bold" 
+        text-anchor="middle" fill="#000000" opacity="0.1">1</text>
+  <!-- Slot 2: SEONGJANG -->
+  <!-- Slot background -->
+  <rect x="90" y="730" width="900" height="450" 
+        fill="#FFFFFF" fill-opacity="0.9"/>
+  
+  <!-- Slot border -->
+  <rect x="90" y="730" width="900" height="450" 
+        fill="none" stroke="#CD2E3A" stroke-width="8"/>
+  
+  <!-- Inner glow -->
+  <rect x="82" y="722" width="916" height="466" 
+        fill="none" stroke="#CD2E3A" stroke-width="16" opacity="0.3"/>
+  
+  <!-- Player name bar -->
+  <rect x="90" y="670" width="900" height="60" fill="#CD2E3A"/>
+  
+  <!-- Player name text -->
+  <text x="540" y="710" font-family="Arial" font-size="40" font-weight="bold" 
+        text-anchor="middle" fill="#FFFFFF">🔥 SEONGJANG</text>
+  
+  <!-- Corner decorations -->
+  <rect x="85" y="725" width="30" height="5" fill="#FFD700"/>
+  <rect x="85" y="725" width="5" height="30" fill="#FFD700"/>
+  <rect x="965" y="725" width="30" height="5" fill="#FFD700"/>
+  <rect x="990" y="725" width="5" height="30" fill="#FFD700"/>
+  <rect x="85" y="1180" width="30" height="5" fill="#FFD700"/>
+  <rect x="85" y="1155" width="5" height="30" fill="#FFD700"/>
+  <rect x="965" y="1180" width="30" height="5" fill="#FFD700"/>
+  <rect x="990" y="1155" width="5" height="30" fill="#FFD700"/>
+  
+  <!-- Slot number watermark -->
+  <text x="540" y="995" font-family="Arial" font-size="100" font-weight="bold" 
+        text-anchor="middle" fill="#000000" opacity="0.1">2</text>
+  <!-- Slot 3: HEAVEN -->
+  <!-- Slot background -->
+  <rect x="90" y="1210" width="900" height="450" 
+        fill="#FFFFFF" fill-opacity="0.9"/>
+  
+  <!-- Slot border -->
+  <rect x="90" y="1210" width="900" height="450" 
+        fill="none" stroke="#FFFFFF" stroke-width="8"/>
+  
+  <!-- Inner glow -->
+  <rect x="82" y="1202" width="916" height="466" 
+        fill="none" stroke="#FFFFFF" stroke-width="16" opacity="0.3"/>
+  
+  <!-- Player name bar -->
+  <rect x="90" y="1150" width="900" height="60" fill="#FFFFFF"/>
+  
+  <!-- Player name text -->
+  <text x="540" y="1190" font-family="Arial" font-size="40" font-weight="bold" 
+        text-anchor="middle" fill="#FFFFFF">😇 HEAVEN</text>
+  
+  <!-- Corner decorations -->
+  <rect x="85" y="1205" width="30" height="5" fill="#FFD700"/>
+  <rect x="85" y="1205" width="5" height="30" fill="#FFD700"/>
+  <rect x="965" y="1205" width="30" height="5" fill="#FFD700"/>
+  <rect x="990" y="1205" width="5" height="30" fill="#FFD700"/>
+  <rect x="85" y="1660" width="30" height="5" fill="#FFD700"/>
+  <rect x="85" y="1635" width="5" height="30" fill="#FFD700"/>
+  <rect x="965" y="1660" width="30" height="5" fill="#FFD700"/>
+  <rect x="990" y="1635" width="5" height="30" fill="#FFD700"/>
+  
+  <!-- Slot number watermark -->
+  <text x="540" y="1475" font-family="Arial" font-size="100" font-weight="bold" 
+        text-anchor="middle" fill="#000000" opacity="0.1">3</text>
+  <!-- Slot 4: HEATHER -->
+  <!-- Slot background -->
+  <rect x="90" y="1690" width="900" height="450" 
+        fill="#FFFFFF" fill-opacity="0.9"/>
+  
+  <!-- Slot border -->
+  <rect x="90" y="1690" width="900" height="450" 
+        fill="none" stroke="#FFD700" stroke-width="8"/>
+  
+  <!-- Inner glow -->
+  <rect x="82" y="1682" width="916" height="466" 
+        fill="none" stroke="#FFD700" stroke-width="16" opacity="0.3"/>
+  
+  <!-- Player name bar -->
+  <rect x="90" y="1630" width="900" height="60" fill="#FFD700"/>
+  
+  <!-- Player name text -->
+  <text x="540" y="1670" font-family="Arial" font-size="40" font-weight="bold" 
+        text-anchor="middle" fill="#FFFFFF">⭐ HEATHER</text>
+  
+  <!-- Corner decorations -->
+  <rect x="85" y="1685" width="30" height="5" fill="#FFD700"/>
+  <rect x="85" y="1685" width="5" height="30" fill="#FFD700"/>
+  <rect x="965" y="1685" width="30" height="5" fill="#FFD700"/>
+  <rect x="990" y="1685" width="5" height="30" fill="#FFD700"/>
+  <rect x="85" y="2140" width="30" height="5" fill="#FFD700"/>
+  <rect x="85" y="2115" width="5" height="30" fill="#FFD700"/>
+  <rect x="965" y="2140" width="30" height="5" fill="#FFD700"/>
+  <rect x="990" y="2115" width="5" height="30" fill="#FFD700"/>
+  
+  <!-- Slot number watermark -->
+  <text x="540" y="1955" font-family="Arial" font-size="100" font-weight="bold" 
+        text-anchor="middle" fill="#000000" opacity="0.1">4</text>
+  <text x="124.52826118157411" y="802.8639203686195" font-size="34.97394805901026" opacity="0.6700274802220985">💫</text>
+  <text x="584.1385294748496" y="553.5187460095437" font-size="25.025445233877825" opacity="0.6456445663772674">⭐</text>
+  <text x="612.3966184666905" y="760.7829164738656" font-size="36.8754234219644" opacity="0.6133588183358749">💫</text>
+  <text x="278.98123395602653" y="1272.6960519144823" font-size="35.403057769905416" opacity="0.6478118333562952">💫</text>
+  <text x="572.8040204992176" y="374.9544221635793" font-size="38.49490641406071" opacity="0.4178394308432506">✨</text>
+  <text x="404.6368748837932" y="945.23558363144" font-size="33.032407768488966" opacity="0.44418669659810134">💫</text>
+  <text x="625.5854717701301" y="1811.8348391317518" font-size="28.59876162368225" opacity="0.6800071373465406">✨</text>
+  <text x="275.98640074428283" y="1723.1446455724229" font-size="39.408208362778275" opacity="0.42719381712006643">⭐</text>
+  <text x="947.0403993306253" y="1949.7983340534647" font-size="31.90367510305319" opacity="0.39096013137704844">✨</text>
+  <text x="938.5271812829334" y="573.0501344961726" font-size="29.883030212077713" opacity="0.5627963047424044">⭐</text>
+  <text x="1007.5630222777999" y="1871.3208617888736" font-size="28.031923996478742" opacity="0.5474969699123056">⭐</text>
+  <text x="908.6871311989753" y="432.90350020958397" font-size="35.87018199737784" opacity="0.6727547973142163">💫</text>
+  <text x="145.37650189512982" y="1043.569824691645" font-size="31.23717571570024" opacity="0.47686478845267277">✨</text>
+  <text x="284.86108334795455" y="1631.3689166728234" font-size="25.07827667929833" opacity="0.3036101673797958">💫</text>
+  <text x="1011.2469858041179" y="1583.4253188585915" font-size="30.39471798431137" opacity="0.5991517782630466">✨</text>
+  <text x="963.9603506403408" y="902.6781984690874" font-size="32.82267501605643" opacity="0.5865479536163514">⭐</text>
+  <text x="354.24230422441724" y="254.32252798210388" font-size="34.80084019627773" opacity="0.602791684698585">💫</text>
+  <text x="489.02264576313985" y="1541.4639061426033" font-size="38.671556911829185" opacity="0.616293277976907">💫</text>
+  <text x="953.8005984126276" y="411.9194894965056" font-size="33.92757166428103" opacity="0.6796676211902357">✨</text>
+  <text x="829.5844636555282" y="1803.7044947976067" font-size="37.839466587235314" opacity="0.4895921089259388">⭐</text>
+  <text x="736.92181659953" y="1236.6077406537772" font-size="26.78050111233149" opacity="0.5432890134284172">💫</text>
+  <text x="624.7391596339476" y="339.9757593748777" font-size="33.67134857675121" opacity="0.5077667733502187">⭐</text>
+  <text x="781.2412080101864" y="1427.1186753362394" font-size="27.529840399515514" opacity="0.6796315692121748">💫</text>
+  <text x="213.61884408059964" y="1171.929488261664" font-size="28.414117067811002" opacity="0.5255594125668177">⭐</text>
+  <text x="355.8564256032526" y="699.4126024205381" font-size="36.100021620307935" opacity="0.6680226627512915">💫</text>
+  <!-- Trophies -->
+  <text x="100" y="150" font-size="60" opacity="0.6">🏆</text>
+  <text x="980" y="150" font-size="60" opacity="0.6">🏆</text>
+  <text x="100" y="2060" font-size="60" opacity="0.6">🏆</text>
+  <text x="980" y="2060" font-size="60" opacity="0.6">🏆</text>
+  <text x="60" y="1100" font-size="40">🇰🇷</text>
+  <text x="990" y="1100" font-size="40">🇰🇷</text>
+  <text x="60" y="1700" font-size="40">🇰🇷</text>
+  <text x="990" y="1700" font-size="40">🇰🇷</text>
+  <text x="60" y="1900" font-size="40">🇰🇷</text>
+  <text x="990" y="1900" font-size="40">🇰🇷</text>
+  <!-- Footer -->
+  <rect y="1960" width="1080" height="200" fill="url(#footerGrad)"/>
+  
+  <!-- Slogan -->
+  <text x="540" y="2040" font-family="Arial Black" font-size="70" font-weight="bold" 
+        text-anchor="middle" fill="#FFD700" 
+        stroke="#000000" stroke-width="6">RISE AGAIN</text>
+  
+  <!-- Event name -->
+  <text x="540" y="2110" font-family="Arial" font-size="50" font-weight="bold" 
+        text-anchor="middle" fill="#FFFFFF">PNC 2026</text>
+
+</svg>

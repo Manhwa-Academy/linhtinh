@@ -6,7 +6,7 @@ import '../styles/HomePage.css'
 function HomePage() {
   return (
     <div className="home-page">
-      <FallingParticles count={15} />
+      <FallingParticles count={25} />
 
       <div className="home-content">
         <div className="logo-badge">Photo Booth ✨</div>

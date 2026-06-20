@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1080" height="2160" viewBox="0 0 1080 2160" xmlns="http://www.w3.org/2000/svg">
+  <title>Frame Strip Template - 4 Slot (1080x2160)</title>
+  
+  <!-- Background -->
+  <rect width="1080" height="2160" fill="#FFE4E9"/>
+  
+  <!-- Safe Zone Guide (5% margin = 54px) -->
+  <rect x="54" y="54" width="972" height="2052" fill="none" stroke="#10b981" stroke-width="3" stroke-dasharray="20,10" opacity="0.5"/>
+  
+  <!-- Safe Zone Labels -->
+  <text x="540" y="30" font-family="Arial" font-size="36" font-weight="bold" fill="#10b981" text-anchor="middle">5% SAFE ZONE</text>
+  <text x="540" y="2145" font-family="Arial" font-size="36" font-weight="bold" fill="#10b981" text-anchor="middle">5% SAFE ZONE</text>
+  
+  <!-- Photo Slot 1 -->
+  <g id="photo-slot-1">
+    <rect x="54" y="54" width="972" height="486" fill="#000000"/>
+    <text x="540" y="297" font-family="Arial" font-size="72" font-weight="bold" fill="white" text-anchor="middle">PHOTO SLOT 1</text>
+    <text x="540" y="350" font-family="Arial" font-size="36" fill="white" text-anchor="middle" opacity="0.7">x:5%, y:2.5%, w:90%, h:22.5%</text>
+  </g>
+  
+  <!-- Photo Slot 2 -->
+  <g id="photo-slot-2">
+    <rect x="54" y="594" width="972" height="486" fill="#000000"/>
+    <text x="540" y="837" font-family="Arial" font-size="72" font-weight="bold" fill="white" text-anchor="middle">PHOTO SLOT 2</text>
+    <text x="540" y="890" font-family="Arial" font-size="36" fill="white" text-anchor="middle" opacity="0.7">x:5%, y:27.5%, w:90%, h:22.5%</text>
+  </g>
+  
+  <!-- Photo Slot 3 -->
+  <g id="photo-slot-3">
+    <rect x="54" y="1134" width="972" height="486" fill="#000000"/>
+    <text x="540" y="1377" font-family="Arial" font-size="72" font-weight="bold" fill="white" text-anchor="middle">PHOTO SLOT 3</text>
+    <text x="540" y="1430" font-family="Arial" font-size="36" fill="white" text-anchor="middle" opacity="0.7">x:5%, y:52.5%, w:90%, h:22.5%</text>
+  </g>
+  
+  <!-- Photo Slot 4 -->
+  <g id="photo-slot-4">
+    <rect x="54" y="1674" width="972" height="486" fill="#000000"/>
+    <text x="540" y="1917" font-family="Arial" font-size="72" font-weight="bold" fill="white" text-anchor="middle">PHOTO SLOT 4</text>
+    <text x="540" y="1970" font-family="Arial" font-size="36" fill="white" text-anchor="middle" opacity="0.7">x:5%, y:77.5%, w:90%, h:22.5%</text>
+  </g>
+  
+  <!-- Instructions -->
+  <g id="instructions" opacity="0.8">
+    <rect x="100" y="2040" width="880" height="80" fill="white" rx="10"/>
+    <text x="540" y="2070" font-family="Arial" font-size="24" font-weight="bold" fill="#333" text-anchor="middle">📋 Hướng dẫn sử dụng template này:</text>
+    <text x="540" y="2105" font-family="Arial" font-size="20" fill="#666" text-anchor="middle">1. Xóa các ô đen   2. Thêm decoration   3. Export PNG transparent   4. Upload!</text>
+  </g>
+  
+  <!-- Corner decorations (optional, can be deleted) -->
+  <circle cx="0" cy="0" r="80" fill="white" opacity="0.3"/>
+  <circle cx="1080" cy="0" r="80" fill="white" opacity="0.3"/>
+  <circle cx="0" cy="2160" r="80" fill="white" opacity="0.3"/>
+  <circle cx="1080" cy="2160" r="80" fill="white" opacity="0.3"/>
+  
+  <!-- Dimension markers -->
+  <g id="dimension-markers" opacity="0.6">
+    <line x1="0" y1="2180" x2="1080" y2="2180" stroke="#333" stroke-width="2"/>
+    <text x="540" y="2200" font-family="Arial" font-size="28" font-weight="bold" fill="#333" text-anchor="middle">1080 pixels</text>
+    
+    <line x1="1100" y1="0" x2="1100" y2="2160" stroke="#333" stroke-width="2"/>
+    <text x="1150" y="1080" font-family="Arial" font-size="28" font-weight="bold" fill="#333" transform="rotate(90, 1150, 1080)">2160 pixels</text>
+  </g>
+</svg>

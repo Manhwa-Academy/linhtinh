@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, Plus, Edit2, Trash2, Save, X, LogOut, Upload, Image } from 'lucide-react'
+import { ArrowLeft, Plus, Edit2, Trash2, Save, X, LogOut, Upload, Image, Palette } from 'lucide-react'
 import { API_URL, frameImageUrl } from '../config/api'
 import FallingParticles from '../components/FallingParticles'
 import FileValidationPreview from '../components/FileValidationPreview'
 import SafeZoneOverlay from '../components/SafeZoneOverlay'
+import FrameDesigner from '../components/FrameDesigner'
 import '../styles/AdminPage.css'
 
 function AdminPage() {
@@ -175,6 +176,7 @@ function AdminPage() {
   const [deleteConfirmId, setDeleteConfirmId] = useState(null)
   const [editingSlotsFrameId, setEditingSlotsFrameId] = useState(null)
   const [showSlotsEditor, setShowSlotsEditor] = useState(false)
+  const [showFrameDesigner, setShowFrameDesigner] = useState(false)
 
   const showToast = (message, type = 'success') => {
     setToast({ show: true, message, type })
@@ -445,7 +447,7 @@ function AdminPage() {
     return (
       <div className="admin-page">
         {/* Falling particles */}
-        <FallingParticles count={15} />
+        <FallingParticles count={25} />
 
         <div className="admin-login-container">
           <div className="admin-login-card">
@@ -556,9 +558,106 @@ function AdminPage() {
         </div>
       )}
 
+      {/* Frame Designer Modal */}
+      {showFrameDesigner && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0,0,0,0.7)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 9999,
+          padding: '20px',
+          overflow: 'auto'
+        }}>
+          <div style={{
+            background: 'white',
+            borderRadius: '20px',
+            maxWidth: '1400px',
+            width: '100%',
+            maxHeight: '95vh',
+            overflow: 'auto',
+            position: 'relative'
+          }}>
+            <button
+              onClick={() => setShowFrameDesigner(false)}
+              style={{
+                position: 'absolute',
+                top: '20px',
+                right: '20px',
+                background: '#ef4444',
+                color: 'white',
+                border: 'none',
+                borderRadius: '50%',
+                width: '40px',
+                height: '40px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '20px',
+                fontWeight: 'bold',
+                zIndex: 10
+              }}
+            >
+              ×
+            </button>
+            
+            <FrameDesigner
+              onSave={async (designData) => {
+                try {
+                  // Convert data URL to blob
+                  const response = await fetch(designData.imageDataUrl)
+                  const blob = await response.blob()
+                  
+                  // Create File object
+                  const file = new File([blob], `${designData.name}.png`, { type: 'image/png' })
+                  
+                  // Upload frame
+                  setIsProcessing(true)
+                  const frameImageUrl = await uploadFrameImageWithTimeout(file, designData.photoSlots)
+                  
+                  // Create frame
+                  const frameData = {
+                    name: designData.name,
+                    description: 'Designed in Frame Designer',
+                    emoji: '🎨',
+                    color: designData.config.bgColor,
+                    bgGradient: designData.config.bgGradient || `linear-gradient(135deg, ${designData.config.bgColor} 0%, ${designData.config.bgColor} 100%)`,
+                    frameImage: frameImageUrl,
+                    photoSlots: designData.photoSlots
+                  }
+                  
+                  const saveResponse = await fetch(`${API_URL}/api/frames`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(frameData)
+                  })
+                  
+                  if (saveResponse.ok) {
+                    const data = await saveResponse.json()
+                    setFrames([...frames, data.frame])
+                    showToast('Frame đã được lưu thành công!', 'success')
+                    setShowFrameDesigner(false)
+                  } else {
+                    throw new Error('Failed to save frame')
+                  }
+                } catch (error) {
+                  console.error('Save error:', error)
+                  showToast('Lỗi khi lưu frame: ' + error.message, 'error')
+                } finally {
+                  setIsProcessing(false)
+                }
+              }}
+            />
+          </div>
+        </div>
+      )}
+
       <div className="admin-page">
         {/* Falling particles */}
-        <FallingParticles count={15} />
+        <FallingParticles count={25} />
         
         <header className="admin-header">
         <button onClick={() => navigate('/')} className="back-button">
@@ -580,6 +679,13 @@ function AdminPage() {
             setIsAddingNew(true)
           }} className="add-frame-btn">
             <Plus size={20} /> Thêm Frame Mới
+          </button>
+          
+          <button onClick={() => setShowFrameDesigner(true)} className="add-frame-btn" style={{ 
+            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+            marginLeft: '15px'
+          }}>
+            <Palette size={20} /> 🎨 Thiết kế Frame
           </button>
         </div>
 
@@ -676,6 +782,9 @@ function AdminPage() {
               )}
               <small className="form-hint">
                 💡 Upload ảnh frame overlay (PNG/JPG/WebP). Nếu dùng PNG với nền trong suốt sẽ đẹp hơn!
+                <br/>
+                🎨 <strong>Cần template?</strong> <a href="/frame-template-generator.html" target="_blank" style={{ color: '#667eea', textDecoration: 'underline' }}>Tạo frame chuẩn ngay!</a> | 
+                <a href="/HUONG_DAN_UPLOAD_FRAME.md" target="_blank" style={{ color: '#667eea', marginLeft: '10px' }}>📋 Xem hướng dẫn</a>
               </small>
             </div>
             
@@ -946,6 +1055,130 @@ function AdminPage() {
 
         {/* Frames Grid */}
         <div className="frames-list">
+          {/* Info Banner - Frame Standards */}
+          <div style={{
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            padding: '25px',
+            borderRadius: '15px',
+            marginBottom: '20px',
+            color: 'white',
+            boxShadow: '0 10px 30px rgba(102, 126, 234, 0.3)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px' }}>
+              <div style={{ fontSize: '3rem' }}>📋</div>
+              <div style={{ flex: 1 }}>
+                <h3 style={{ margin: '0 0 15px 0', fontSize: '1.5rem' }}>
+                  Quy định Frame Strip - Đọc trước khi upload
+                </h3>
+                <div style={{ 
+                  display: 'grid', 
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+                  gap: '15px',
+                  marginBottom: '15px'
+                }}>
+                  <div style={{ background: 'rgba(255,255,255,0.2)', padding: '12px', borderRadius: '8px' }}>
+                    <strong>📐 Kích thước chuẩn:</strong>
+                    <div style={{ fontSize: '0.9rem', marginTop: '5px' }}>
+                      2-slot: 1080×1620<br/>
+                      4-slot: 1080×2160 ⭐<br/>
+                      6-slot: 1080×2700
+                    </div>
+                  </div>
+                  <div style={{ background: 'rgba(255,255,255,0.2)', padding: '12px', borderRadius: '8px' }}>
+                    <strong>📁 Format:</strong>
+                    <div style={{ fontSize: '0.9rem', marginTop: '5px' }}>
+                      ✅ PNG (trong suốt)<br/>
+                      ⚠️ JPEG (không trong suốt)<br/>
+                      💾 Max: 5MB
+                    </div>
+                  </div>
+                  <div style={{ background: 'rgba(255,255,255,0.2)', padding: '12px', borderRadius: '8px' }}>
+                    <strong>🎯 Safe Zone:</strong>
+                    <div style={{ fontSize: '0.9rem', marginTop: '5px' }}>
+                      Photo slots phải<br/>
+                      cách mép ≥ 5%<br/>
+                      để tránh bị cắt
+                    </div>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                  <a 
+                    href="/frame-template-generator.html" 
+                    target="_blank"
+                    style={{
+                      display: 'inline-block',
+                      padding: '10px 20px',
+                      background: 'white',
+                      color: '#667eea',
+                      borderRadius: '8px',
+                      textDecoration: 'none',
+                      fontWeight: '600',
+                      fontSize: '0.95rem'
+                    }}
+                  >
+                    🎨 Tạo Frame Template
+                  </a>
+                  <a 
+                    href="/frame-resources.html" 
+                    target="_blank"
+                    style={{
+                      display: 'inline-block',
+                      padding: '10px 20px',
+                      background: 'rgba(255,255,255,0.2)',
+                      color: 'white',
+                      borderRadius: '8px',
+                      textDecoration: 'none',
+                      fontWeight: '600',
+                      fontSize: '0.95rem',
+                      border: '2px solid white'
+                    }}
+                  >
+                    📚 Xem tất cả tài liệu
+                  </a>
+                  <a 
+                    href="/HUONG_DAN_UPLOAD_FRAME.md" 
+                    target="_blank"
+                    style={{
+                      display: 'inline-block',
+                      padding: '10px 20px',
+                      background: 'rgba(255,255,255,0.2)',
+                      color: 'white',
+                      borderRadius: '8px',
+                      textDecoration: 'none',
+                      fontWeight: '600',
+                      fontSize: '0.95rem',
+                      border: '2px solid white'
+                    }}
+                  >
+                    📖 Hướng dẫn chi tiết
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Tips */}
+          <div style={{
+            background: '#fef3c7',
+            border: '2px solid #f59e0b',
+            padding: '15px',
+            borderRadius: '10px',
+            marginBottom: '30px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '15px' }}>
+              <div style={{ fontSize: '2rem' }}>💡</div>
+              <div style={{ flex: 1 }}>
+                <strong style={{ color: '#78350f', fontSize: '1.1rem' }}>Tips nhanh:</strong>
+                <ul style={{ margin: '10px 0 0 20px', color: '#78350f', lineHeight: '1.8', fontSize: '0.9rem' }}>
+                  <li>Dùng <strong>Template Generator</strong> để tạo frame đúng chuẩn ngay</li>
+                  <li>Luôn export PNG với <strong>nền trong suốt</strong></li>
+                  <li>Frame có ảnh phải có <strong>photo slots</strong>, nếu không ảnh sẽ không hiển thị</li>
+                  <li>Hệ thống sẽ <strong>tự động kiểm tra</strong> khi upload và báo lỗi nếu sai quy định</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
           <h2>Danh sách Frames ({frames.length})</h2>
           <div className="frames-grid-admin">
             {frames.map((frame) => (
@@ -1004,12 +1237,55 @@ function AdminPage() {
                               className="admin-frame-img"
                             />
                           </div>
-                          <div className="frame-has-overlay">
-                            <Image size={20} /> Has frame overlay
+                          <div className="frame-has-overlay" style={{ 
+                            background: '#d1fae5', 
+                            color: '#065f46', 
+                            padding: '8px', 
+                            borderRadius: '6px',
+                            fontSize: '0.85rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '5px'
+                          }}>
+                            <Image size={16} /> Has frame overlay
                           </div>
                           {(!frame.photoSlots || frame.photoSlots.length === 0) && (
-                            <div className="frame-warning">
-                              ⚠️ Chưa có photoSlots
+                            <div style={{ 
+                              background: '#fef3c7', 
+                              border: '2px solid #f59e0b',
+                              color: '#78350f', 
+                              padding: '12px', 
+                              borderRadius: '8px',
+                              fontSize: '0.85rem',
+                              marginTop: '8px'
+                            }}>
+                              <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                                ⚠️ Chưa có Photo Slots
+                              </div>
+                              <div style={{ fontSize: '0.8rem', marginBottom: '8px' }}>
+                                Frame có ảnh nhưng chưa định nghĩa vị trí ô ảnh. 
+                                Ảnh sẽ không hiển thị đúng!
+                              </div>
+                              <button 
+                                onClick={() => handleFixSlots(frame.id)} 
+                                className="fix-slots-btn" 
+                                disabled={isProcessing}
+                                style={{ fontSize: '0.85rem', padding: '6px 12px' }}
+                              >
+                                🔧 Tự động thêm slots
+                              </button>
+                            </div>
+                          )}
+                          {frame.photoSlots && frame.photoSlots.length > 0 && (
+                            <div style={{
+                              background: '#e0f2fe',
+                              color: '#075985',
+                              padding: '8px',
+                              borderRadius: '6px',
+                              fontSize: '0.8rem',
+                              marginTop: '8px'
+                            }}>
+                              ✅ {frame.photoSlots.length} photo slots đã định nghĩa
                             </div>
                           )}
                         </>
