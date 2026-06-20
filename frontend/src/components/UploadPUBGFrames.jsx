@@ -207,6 +207,8 @@ function drawGENG(canvas) {
 export default function UploadPUBGFrames({ onClose }) {
   const [status, setStatus] = useState('ready')
   const [progress, setProgress] = useState({ korea: 'waiting', dns: 'waiting', geng: 'waiting' })
+  const [existingFrames, setExistingFrames] = useState({ korea: false, dns: false, geng: false })
+  const [loading, setLoading] = useState(true)
   const canvasRefs = {
     korea: useRef(null),
     dns: useRef(null),
@@ -214,7 +216,36 @@ export default function UploadPUBGFrames({ onClose }) {
   }
 
   useEffect(() => {
-    // Draw previews on mount
+    // Check which frames already exist
+    const checkExistingFrames = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/frames`)
+        if (response.ok) {
+          const frames = await response.json()
+          const frameIds = frames.map(f => f.id)
+          
+          setExistingFrames({
+            korea: frameIds.includes('frame_team_korea_pnc_2026'),
+            dns: frameIds.includes('frame_dns_pubg_2026'),
+            geng: frameIds.includes('frame_geng_pubg_2026')
+          })
+          
+          setProgress({
+            korea: frameIds.includes('frame_team_korea_pnc_2026') ? 'exists' : 'waiting',
+            dns: frameIds.includes('frame_dns_pubg_2026') ? 'exists' : 'waiting',
+            geng: frameIds.includes('frame_geng_pubg_2026') ? 'exists' : 'waiting'
+          })
+        }
+      } catch (error) {
+        console.error('Error checking existing frames:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    
+    checkExistingFrames()
+    
+    // Draw previews
     if (canvasRefs.korea.current) drawTeamKorea(canvasRefs.korea.current)
     if (canvasRefs.dns.current) drawDNS(canvasRefs.dns.current)
     if (canvasRefs.geng.current) drawGENG(canvasRefs.geng.current)
@@ -272,8 +303,9 @@ export default function UploadPUBGFrames({ onClose }) {
   const handleUpload = async () => {
     setStatus('uploading')
 
-    // Team Korea
-    await uploadFrame(canvasRefs.korea.current, {
+    // Upload only frames that don't exist
+    if (!existingFrames.korea) {
+      await uploadFrame(canvasRefs.korea.current, {
       fileName: 'team-korea-pnc-2026.png',
       photoSlots: [
         { x: 6.5, y: 5.8, width: 87, height: 23.4, rotation: 0 },
@@ -291,9 +323,11 @@ export default function UploadPUBGFrames({ onClose }) {
         bgGradient: 'linear-gradient(135deg, #FFFFFF 0%, #F0F4FF 25%, #FFFFFF 50%, #FFF0F0 75%, #FFFFFF 100%)'
       }
     }, 'korea')
+    }
 
     // DNS
-    await uploadFrame(canvasRefs.dns.current, {
+    if (!existingFrames.dns) {
+      await uploadFrame(canvasRefs.dns.current, {
       fileName: 'dns-pubg-2026.png',
       photoSlots: [
         { x: 10, y: 6.5, width: 79.6, height: 22.7, rotation: 0 },
@@ -311,9 +345,11 @@ export default function UploadPUBGFrames({ onClose }) {
         bgGradient: 'linear-gradient(135deg, #FFFFFF 0%, #E3F2FD 50%, #FFFFFF 100%)'
       }
     }, 'dns')
+    }
 
     // GENG
-    await uploadFrame(canvasRefs.geng.current, {
+    if (!existingFrames.geng) {
+      await uploadFrame(canvasRefs.geng.current, {
       fileName: 'geng-pubg-2026.png',
       photoSlots: [
         { x: 6.5, y: 6.9, width: 87, height: 23.4, rotation: 0 },
@@ -331,15 +367,18 @@ export default function UploadPUBGFrames({ onClose }) {
         bgGradient: 'linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%)'
       }
     }, 'geng')
+    }
 
     setStatus('complete')
   }
 
   const getStatusIcon = (status) => {
-    if (status === 'waiting') return '⏳'
-    if (status === 'uploading') return '📤'
-    if (status === 'success') return '✅'
-    return '❌'
+    if (status === 'exists') return '✅ Already exists'
+    if (status === 'waiting') return '⏳ Waiting'
+    if (status === 'uploading') return '📤 Uploading...'
+    if (status === 'success') return '✅ Success'
+    if (status.startsWith('error')) return '❌ ' + status
+    return status
   }
 
   return (
@@ -372,29 +411,40 @@ export default function UploadPUBGFrames({ onClose }) {
 
         {status === 'ready' && (
           <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-            <p>Ready to upload 3 PUBG frames:</p>
-            <ul style={{ listStyle: 'none', padding: 0 }}>
-              <li>🇰🇷 Team Korea PNC 2026</li>
-              <li>🎮 DNS PUBG 2026</li>
-              <li>⚡ GENG PUBG 2026</li>
-            </ul>
-            <button
-              onClick={handleUpload}
-              style={{
-                background: '#4ade80',
-                color: 'black',
-                border: 'none',
-                padding: '15px 40px',
-                fontSize: '18px',
-                borderRadius: '12px',
-                cursor: 'pointer',
-                fontWeight: 'bold',
-                marginTop: '20px'
-              }}
-            >
-              <Upload size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
-              Start Upload
-            </button>
+            {loading ? (
+              <p>🔍 Checking existing frames...</p>
+            ) : (
+              <>
+                <p>Ready to upload PUBG frames:</p>
+                <ul style={{ listStyle: 'none', padding: 0 }}>
+                  {!existingFrames.korea && <li>🇰🇷 Team Korea PNC 2026</li>}
+                  {!existingFrames.dns && <li>🎮 DNS PUBG 2026</li>}
+                  {!existingFrames.geng && <li>⚡ GENG PUBG 2026</li>}
+                  {existingFrames.korea && existingFrames.dns && existingFrames.geng && (
+                    <li style={{ color: '#4ade80' }}>✅ All frames already exist!</li>
+                  )}
+                </ul>
+                {(!existingFrames.korea || !existingFrames.dns || !existingFrames.geng) && (
+                  <button
+                    onClick={handleUpload}
+                    style={{
+                      background: '#4ade80',
+                      color: 'black',
+                      border: 'none',
+                      padding: '15px 40px',
+                      fontSize: '18px',
+                      borderRadius: '12px',
+                      cursor: 'pointer',
+                      fontWeight: 'bold',
+                      marginTop: '20px'
+                    }}
+                  >
+                    <Upload size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+                    Upload Missing Frames
+                  </button>
+                )}
+              </>
+            )}
           </div>
         )}
 
@@ -422,27 +472,33 @@ export default function UploadPUBGFrames({ onClose }) {
         )}
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginBottom: '20px' }}>
-          <div style={{ background: 'rgba(255,255,255,0.1)', padding: '15px', borderRadius: '12px' }}>
-            <h4>🇰🇷 Team Korea</h4>
-            <canvas ref={canvasRefs.korea} width="1080" height="2160" style={{ width: '100%', borderRadius: '8px' }} />
-            <p style={{ textAlign: 'center', marginTop: '10px' }}>
-              {getStatusIcon(progress.korea)} {progress.korea}
-            </p>
-          </div>
-          <div style={{ background: 'rgba(255,255,255,0.1)', padding: '15px', borderRadius: '12px' }}>
-            <h4>🎮 DNS PUBG</h4>
-            <canvas ref={canvasRefs.dns} width="1080" height="2160" style={{ width: '100%', borderRadius: '8px' }} />
-            <p style={{ textAlign: 'center', marginTop: '10px' }}>
-              {getStatusIcon(progress.dns)} {progress.dns}
-            </p>
-          </div>
-          <div style={{ background: 'rgba(255,255,255,0.1)', padding: '15px', borderRadius: '12px' }}>
-            <h4>⚡ GENG PUBG</h4>
-            <canvas ref={canvasRefs.geng} width="1080" height="2160" style={{ width: '100%', borderRadius: '8px' }} />
-            <p style={{ textAlign: 'center', marginTop: '10px' }}>
-              {getStatusIcon(progress.geng)} {progress.geng}
-            </p>
-          </div>
+          {!existingFrames.korea && (
+            <div style={{ background: 'rgba(255,255,255,0.1)', padding: '15px', borderRadius: '12px' }}>
+              <h4>🇰🇷 Team Korea</h4>
+              <canvas ref={canvasRefs.korea} width="1080" height="2160" style={{ width: '100%', borderRadius: '8px' }} />
+              <p style={{ textAlign: 'center', marginTop: '10px' }}>
+                {getStatusIcon(progress.korea)}
+              </p>
+            </div>
+          )}
+          {!existingFrames.dns && (
+            <div style={{ background: 'rgba(255,255,255,0.1)', padding: '15px', borderRadius: '12px' }}>
+              <h4>🎮 DNS PUBG</h4>
+              <canvas ref={canvasRefs.dns} width="1080" height="2160" style={{ width: '100%', borderRadius: '8px' }} />
+              <p style={{ textAlign: 'center', marginTop: '10px' }}>
+                {getStatusIcon(progress.dns)}
+              </p>
+            </div>
+          )}
+          {!existingFrames.geng && (
+            <div style={{ background: 'rgba(255,255,255,0.1)', padding: '15px', borderRadius: '12px' }}>
+              <h4>⚡ GENG PUBG</h4>
+              <canvas ref={canvasRefs.geng} width="1080" height="2160" style={{ width: '100%', borderRadius: '8px' }} />
+              <p style={{ textAlign: 'center', marginTop: '10px' }}>
+                {getStatusIcon(progress.geng)}
+              </p>
+            </div>
+          )}
         </div>
 
         <div style={{ textAlign: 'center' }}>
