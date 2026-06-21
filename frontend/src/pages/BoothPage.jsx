@@ -449,20 +449,21 @@ function BoothPage() {
           // Get user's zoom/pan transform
           const t = getTransform(i);
 
-          // Apply transform: scale and translate
-          const baseScaleX = sW / photoImg.naturalWidth
-          const baseScaleY = sH / photoImg.naturalHeight
-          // Use Math.max for 'cover' behavior - photo fills entire slot, may crop edges
-          const baseScale = Math.max(baseScaleX, baseScaleY)
+          // Calculate scale to cover the slot (like CSS object-fit: cover)
+          const scaleX = sW / photoImg.naturalWidth
+          const scaleY = sH / photoImg.naturalHeight
+          const coverScale = Math.max(scaleX, scaleY)
           
-          // Apply user's scale on top of base scale
-          const finalScale = baseScale * t.scale
+          // Apply user's scale on top of cover scale
+          const finalScale = coverScale * t.scale
           const drawW = photoImg.naturalWidth * finalScale
           const drawH = photoImg.naturalHeight * finalScale
           
-          // Center the photo and apply user's x,y offset
-          const offsetX = sX + (sW - drawW) / 2 + t.x
-          const offsetY = sY + (sH - drawH) / 2 + t.y
+          // Center the photo in the slot, then apply user's offset
+          const centerX = sX + sW / 2
+          const centerY = sY + sH / 2
+          const offsetX = centerX - drawW / 2 + t.x
+          const offsetY = centerY - drawH / 2 + t.y
 
           ctx.save()
           
