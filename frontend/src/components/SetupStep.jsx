@@ -14,6 +14,8 @@ function SetupStep({
   onSelectFilter,
   onContinue
 }) {
+  // Filter out private frames for normal users
+  const publicFrames = frames.filter(frame => !frame.isPrivate)
   // Generate preview based on selected options
   const renderPreview = () => {
     if (!selectedStripType) {
@@ -105,12 +107,12 @@ function SetupStep({
                 className="custom-select"
                 value={selectedFrame?.id || ''}
                 onChange={(e) => {
-                  const frame = frames.find(f => f.id === e.target.value)
+                  const frame = publicFrames.find(f => f.id === e.target.value)
                   onSelectFrame(frame)
                 }}
               >
                 <option value="">Select frame...</option>
-                {frames.map(frame => (
+                {publicFrames.map(frame => (
                   <option key={frame.id} value={frame.id}>
                     {frame.emoji ? `${frame.emoji} ` : ''}{frame.name}
                   </option>

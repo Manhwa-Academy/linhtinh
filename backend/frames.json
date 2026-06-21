@@ -121,6 +121,7 @@
     "color": "#3B82F6",
     "bgGradient": "linear-gradient(135deg, #1E3A8A 0%, #3B82F6 50%, #1E3A8A 100%)",
     "frameImage": "http://localhost:3001/uploads/frames/dns-pubg-2026.png",
+    "isPrivate": true,
     "photoSlots": [
       {
         "x": 10,
@@ -164,6 +165,7 @@
     "color": "#FFD700",
     "bgGradient": "linear-gradient(135deg, #000000 0%, #FFD700 50%, #000000 100%)",
     "frameImage": "http://localhost:3001/uploads/frames/geng-pubg-2026.png",
+    "isPrivate": true,
     "photoSlots": [
       {
         "x": 10,
@@ -293,6 +295,7 @@
     "color": "#0EA5E9",
     "bgGradient": "linear-gradient(135deg, #0EA5E9 0%, #38BDF8 50%, #7DD3FC 100%)",
     "frameImage": "http://localhost:3001/uploads/frames/dns-pubg-wwcd-2026.png",
+    "isPrivate": true,
     "photoSlots": [
       {
         "x": 10,
