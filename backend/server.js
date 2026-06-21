@@ -408,7 +408,7 @@ app.get('/api/frames/:id', async (req, res) => {
 // Add new frame
 app.post('/api/frames', async (req, res) => {
   try {
-    const { name, description, emoji, color, bgGradient, frameImage, photoSlots } = req.body
+    const { name, description, emoji, color, bgGradient, frameImage, photoSlots, isPrivate } = req.body
     
     if (!name) {
       return res.status(400).json({ error: 'Thiếu tên frame' })
@@ -432,7 +432,8 @@ app.post('/api/frames', async (req, res) => {
       color: color || '#FFE4E9',
       bgGradient: bgGradient || `linear-gradient(135deg, ${color} 0%, ${color} 100%)`,
       frameImage: frameImage || null,
-      photoSlots: photoSlots || []
+      photoSlots: photoSlots || [],
+      isPrivate: isPrivate || false
     }
     
     frames.push(newFrame)
@@ -637,7 +638,7 @@ app.post('/api/upload-frame', async (req, res) => {
 // Update frame
 app.put('/api/frames/:id', async (req, res) => {
   try {
-    const { name, description, emoji, color, bgGradient, frameImage, photoSlots } = req.body
+    const { name, description, emoji, color, bgGradient, frameImage, photoSlots, isPrivate } = req.body
     const frames = await readFrames()
     const frameIndex = frames.findIndex(f => f.id === req.params.id)
     
@@ -660,7 +661,8 @@ app.put('/api/frames/:id', async (req, res) => {
       color: color || frames[frameIndex].color,
       bgGradient: bgGradient || frames[frameIndex].bgGradient,
       frameImage: frameImage !== undefined ? frameImage : frames[frameIndex].frameImage,
-      photoSlots: photoSlots !== undefined ? photoSlots : frames[frameIndex].photoSlots || []
+      photoSlots: photoSlots !== undefined ? photoSlots : frames[frameIndex].photoSlots || [],
+      isPrivate: isPrivate !== undefined ? isPrivate : frames[frameIndex].isPrivate || false
     }
     
     await writeFrames(frames)
