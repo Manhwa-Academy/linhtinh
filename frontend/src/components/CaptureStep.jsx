@@ -26,10 +26,18 @@ function CaptureStep({
     if (webcamRef.current) {
       const video = webcamRef.current.video
       if (video && video.readyState === video.HAVE_ENOUGH_DATA) {
-        // Create canvas with actual video dimensions for maximum quality
+        const videoWidth = video.videoWidth || 1920
+        const videoHeight = video.videoHeight || 1080
+        
+        // Calculate square crop (center crop)
+        const size = Math.min(videoWidth, videoHeight)
+        const offsetX = (videoWidth - size) / 2
+        const offsetY = (videoHeight - size) / 2
+        
+        // Create square canvas
         const canvas = document.createElement('canvas')
-        canvas.width = video.videoWidth || 1920
-        canvas.height = video.videoHeight || 1080
+        canvas.width = size
+        canvas.height = size
         
         const ctx = canvas.getContext('2d', { 
           alpha: false,
@@ -41,8 +49,12 @@ function CaptureStep({
           ctx.imageSmoothingEnabled = true
           ctx.imageSmoothingQuality = 'high'
           
-          // Draw video frame to canvas
-          ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+          // Draw cropped video frame (center square crop)
+          ctx.drawImage(
+            video,
+            offsetX, offsetY, size, size,  // Source: center square from video
+            0, 0, size, size                // Destination: full canvas
+          )
           
           // Get high-quality JPEG
           const imageSrc = canvas.toDataURL('image/jpeg', 0.95)
