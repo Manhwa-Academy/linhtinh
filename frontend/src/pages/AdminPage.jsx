@@ -168,7 +168,8 @@ function AdminPage() {
     bgGradient: '',
     frameImage: null, // File object
     frameImagePreview: null, // URL for preview
-    photoSlots: [] // Array of photo slot positions
+    photoSlots: [], // Array of photo slot positions
+    isPrivate: false // Privacy flag
   })
 
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' })
@@ -260,7 +261,8 @@ function AdminPage() {
         color: newFrame.color,
         bgGradient: newFrame.bgGradient || `linear-gradient(135deg, ${newFrame.color} 0%, ${adjustColor(newFrame.color, 20)} 100%)`,
         frameImage: frameImageUrl,
-        photoSlots: newFrame.photoSlots || []
+        photoSlots: newFrame.photoSlots || [],
+        isPrivate: newFrame.isPrivate || false
       }
 
       if (editMode === 'edit' && editingFrameId) {
@@ -302,7 +304,7 @@ function AdminPage() {
       setEditMode('add')
       setEditingFrameId(null)
       setShowSlotsEditor(false)
-      setNewFrame({ name: '', description: '', emoji: '', color: '#FFE4E9', bgGradient: '', frameImage: null, frameImagePreview: null, photoSlots: [] })
+      setNewFrame({ name: '', description: '', emoji: '', color: '#FFE4E9', bgGradient: '', frameImage: null, frameImagePreview: null, photoSlots: [], isPrivate: false })
       
     } catch (error) {
       console.error('Error saving frame:', error)
@@ -675,7 +677,7 @@ function AdminPage() {
             setEditMode('add')
             setEditingFrameId(null)
             setShowSlotsEditor(false)
-            setNewFrame({ name: '', description: '', emoji: '', color: '#FFE4E9', bgGradient: '', frameImage: null, frameImagePreview: null, photoSlots: [] })
+            setNewFrame({ name: '', description: '', emoji: '', color: '#FFE4E9', bgGradient: '', frameImage: null, frameImagePreview: null, photoSlots: [], isPrivate: false })
             setIsAddingNew(true)
           }} className="add-frame-btn">
             <Plus size={20} /> Thêm Frame Mới
@@ -748,6 +750,22 @@ function AdminPage() {
                   placeholder="Auto-generate nếu để trống"
                 />
               </div>
+            </div>
+
+            {/* Privacy Toggle */}
+            <div className="form-group">
+              <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+                <input
+                  type="checkbox"
+                  checked={newFrame.isPrivate || false}
+                  onChange={(e) => setNewFrame({ ...newFrame, isPrivate: e.target.checked })}
+                  style={{ width: '20px', height: '20px', cursor: 'pointer' }}
+                />
+                <span>🔒 Frame riêng tư (chỉ admin thấy, user không thấy trong danh sách)</span>
+              </label>
+              <small className="form-hint">
+                💡 Bật tùy chọn này nếu bạn muốn frame chỉ dành riêng và không hiển thị công khai
+              </small>
             </div>
             
             <div className="form-group">
@@ -1052,7 +1070,7 @@ function AdminPage() {
                 setEditMode('add')
                 setEditingFrameId(null)
                 setShowSlotsEditor(false)
-                setNewFrame({ name: '', description: '', emoji: '', color: '#FFE4E9', bgGradient: '', frameImage: null, frameImagePreview: null, photoSlots: [] })
+                setNewFrame({ name: '', description: '', emoji: '', color: '#FFE4E9', bgGradient: '', frameImage: null, frameImagePreview: null, photoSlots: [], isPrivate: false })
               }} className="cancel-btn">
                 <X size={18} /> Hủy
               </button>
