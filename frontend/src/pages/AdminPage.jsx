@@ -1327,7 +1327,8 @@ function AdminPage() {
                           bgGradient: frame.bgGradient || '',
                           frameImage: null,
                           frameImagePreview: frame.frameImage ? frameImageUrl(frame.frameImage) : null,
-                          photoSlots: frame.photoSlots || []
+                          photoSlots: frame.photoSlots || [],
+                          isPrivate: frame.isPrivate || false
                         })
                         setEditMode('edit')
                         setEditingFrameId(frame.id)
