@@ -234,6 +234,47 @@ function BoothPage() {
       [index]: { ...getTransform(index), ...patch }
     }))
   }
+  
+  // Auto-fit photos to frame slots when photos change
+  const autoFitPhotosToSlots = useCallback(() => {
+    if (!selectedFrame?.photoSlots || capturedPhotos.length === 0) return;
+    
+    // Calculate ideal scale for each photo to fill its slot
+    const newTransforms = {};
+    capturedPhotos.forEach((photo, index) => {
+      const slot = selectedFrame.photoSlots[index];
+      if (!slot) return;
+      
+      // Slots are defined as percentages, photos are square (1:1)
+      // We need to scale up so photo covers the entire slot
+      const slotAspect = slot.width / slot.height;
+      
+      // For square photos (1:1), if slot is wider (landscape):
+      // - slotAspect > 1 means slot is wider than tall
+      // - We need to scale by height to fill, which means scale > 1
+      // For DNS PUBG slots: width=80%, height=21.3%, aspect ≈ 3.76
+      // So we need to zoom quite a bit to fill width
+      
+      // Base scale to cover slot (use larger dimension)
+      const coverScale = Math.max(slotAspect, 1);
+      
+      // Add a bit more zoom (5-10%) to ensure no gaps
+      const autoScale = coverScale * 1.05;
+      
+      newTransforms[index] = { 
+        scale: autoScale, 
+        x: 0, 
+        y: 0 
+      };
+    });
+    
+    setPhotoTransforms(newTransforms);
+  }, [selectedFrame, capturedPhotos]);
+  
+  // Run auto-fit when photos or frame changes
+  useEffect(() => {
+    autoFitPhotosToSlots();
+  }, [autoFitPhotosToSlots]);
 
   const handleSlotMouseDown = (e, index) => {
     e.preventDefault()
