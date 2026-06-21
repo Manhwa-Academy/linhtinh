@@ -56,8 +56,8 @@ function CaptureStep({
             0, 0, size, size                // Destination: full canvas
           )
           
-          // Apply beauty filter (smooth skin, remove blemishes)
-          applyBeautyFilter(ctx, size, size)
+          // Light beauty filter only (fast and safe)
+          applyLightBeautyFilter(ctx, size, size)
           
           // Get high-quality JPEG
           const imageSrc = canvas.toDataURL('image/jpeg', 0.95)
@@ -79,87 +79,28 @@ function CaptureStep({
     }
   }, [onPhotosChange])
 
-  // Beauty filter: smooth skin, remove blemishes, and enhance photo
-  const applyBeautyFilter = (ctx, width, height) => {
-    const imageData = ctx.getImageData(0, 0, width, height)
-    const data = imageData.data
-    
-    // Step 1: Aggressive skin smoothing
-    const tempData = new Uint8ClampedArray(data)
-    const radius = 5 // Increased blur radius for stronger smoothing
-    
-    for (let y = radius; y < height - radius; y++) {
-      for (let x = radius; x < width - radius; x++) {
-        const idx = (y * width + x) * 4
-        
-        let r = 0, g = 0, b = 0, count = 0
-        
-        // Gaussian-like weighted blur
-        for (let dy = -radius; dy <= radius; dy++) {
-          for (let dx = -radius; dx <= radius; dx++) {
-            const distance = Math.sqrt(dx * dx + dy * dy)
-            if (distance <= radius) {
-              const weight = Math.exp(-(distance * distance) / (2 * radius))
-              const newIdx = ((y + dy) * width + (x + dx)) * 4
-              r += tempData[newIdx] * weight
-              g += tempData[newIdx + 1] * weight
-              b += tempData[newIdx + 2] * weight
-              count += weight
-            }
-          }
-        }
-        
-        // Strong blend (70% smooth, 30% original) for heavy blemish removal
-        const blurR = r / count
-        const blurG = g / count
-        const blurB = b / count
-        
-        data[idx] = Math.floor(tempData[idx] * 0.3 + blurR * 0.7)
-        data[idx + 1] = Math.floor(tempData[idx + 1] * 0.3 + blurG * 0.7)
-        data[idx + 2] = Math.floor(tempData[idx + 2] * 0.3 + blurB * 0.7)
+  // Light beauty filter: fast and mobile-friendly
+  const applyLightBeautyFilter = (ctx, width, height) => {
+    try {
+      const imageData = ctx.getImageData(0, 0, width, height)
+      const data = imageData.data
+      
+      // Simple brightness and contrast enhancement only
+      const contrast = 1.1
+      const brightness = 3
+      
+      for (let i = 0; i < data.length; i += 4) {
+        // Enhance contrast and brightness
+        data[i] = Math.max(0, Math.min(255, (data[i] - 128) * contrast + 128 + brightness))
+        data[i + 1] = Math.max(0, Math.min(255, (data[i + 1] - 128) * contrast + 128 + brightness))
+        data[i + 2] = Math.max(0, Math.min(255, (data[i + 2] - 128) * contrast + 128 + brightness))
       }
+      
+      ctx.putImageData(imageData, 0, 0)
+    } catch (error) {
+      console.error('Beauty filter error:', error)
+      // Fail silently, keep original image
     }
-    
-    // Step 2: Sharpen edges to maintain detail
-    const sharpenData = new Uint8ClampedArray(data)
-    const sharpenKernel = [
-      0, -1, 0,
-      -1, 5, -1,
-      0, -1, 0
-    ]
-    
-    for (let y = 1; y < height - 1; y++) {
-      for (let x = 1; x < width - 1; x++) {
-        const idx = (y * width + x) * 4
-        let r = 0, g = 0, b = 0
-        
-        for (let ky = -1; ky <= 1; ky++) {
-          for (let kx = -1; kx <= 1; kx++) {
-            const kidx = sharpenKernel[(ky + 1) * 3 + (kx + 1)]
-            const pixelIdx = ((y + ky) * width + (x + kx)) * 4
-            r += sharpenData[pixelIdx] * kidx
-            g += sharpenData[pixelIdx + 1] * kidx
-            b += sharpenData[pixelIdx + 2] * kidx
-          }
-        }
-        
-        data[idx] = Math.max(0, Math.min(255, r))
-        data[idx + 1] = Math.max(0, Math.min(255, g))
-        data[idx + 2] = Math.max(0, Math.min(255, b))
-      }
-    }
-    
-    // Step 3: Brightness and contrast enhancement
-    const contrast = 1.15 // Increase contrast
-    const brightness = 5  // Slight brightness boost
-    
-    for (let i = 0; i < data.length; i += 4) {
-      data[i] = Math.max(0, Math.min(255, (data[i] - 128) * contrast + 128 + brightness))
-      data[i + 1] = Math.max(0, Math.min(255, (data[i + 1] - 128) * contrast + 128 + brightness))
-      data[i + 2] = Math.max(0, Math.min(255, (data[i + 2] - 128) * contrast + 128 + brightness))
-    }
-    
-    ctx.putImageData(imageData, 0, 0)
   }
 
   const handleCaptureClick = () => {
