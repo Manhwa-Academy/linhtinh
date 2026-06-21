@@ -307,7 +307,7 @@ function BoothPage() {
   const goToNextStep = () => {
     if (currentStep < 4) {
       if (currentStep === 2 && capturedPhotos.length === 0) {
-        alert('Vui lòng chụp hoặc tải ảnh lên!')
+        alert('Please capture or upload photos!')
         return
       }
       setCurrentStep(currentStep + 1)
