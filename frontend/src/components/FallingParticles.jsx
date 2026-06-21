@@ -73,8 +73,8 @@ function FallingParticles({ count = 20 }) {
           color: icon.color,
           size: icon.size,
           left: Math.random() * 100,
-          animationDuration: 10 + Math.random() * 5,  // 10-15s để chậm hơn, dễ nhìn
-          animationDelay: Math.random() * 15,         // Random delay để liên tục
+          animationDuration: 20 + Math.random() * 10,  // 20-30s để rơi rất chậm, dễ nhìn hơn
+          animationDelay: Math.random() * 20,          // Random delay để liên tục
           rotate: Math.random() * 360                  // Random rotation
         })
       }
@@ -87,7 +87,7 @@ function FallingParticles({ count = 20 }) {
     // Regenerate particles để tạo hiệu ứng liên tục
     const interval = setInterval(() => {
       generateParticles()
-    }, 15000) // Mỗi 15s regenerate để luôn có particles mới
+    }, 20000) // Mỗi 20s regenerate để luôn có particles mới
     
     return () => clearInterval(interval)
   }, [count])

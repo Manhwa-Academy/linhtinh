@@ -41,7 +41,7 @@ function HomePage() {
       </div>
 
       <footer className="home-footer">
-        Made with ♡ — FRAMEVERSE
+        Made with ♡ — FRAMEVERSE <span className="by-yun">by Yun</span>
       </footer>
     </div>
   )
