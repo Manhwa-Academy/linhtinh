@@ -163,13 +163,9 @@ const makeBlackTransparent = (imgSrc) => {
           const g = data[i+1];
           const b = data[i+2];
           
-          // Make WHITE/light pixels transparent (for photo cutout frames)
-          // Using threshold (200) to catch white/light areas where photos should show
-          if (r > 200 && g > 200 && b > 200) {
-            data[i+3] = 0; // Set alpha to 0 (transparent)
-          }
-          // Also make black/dark pixels transparent (for dark borders)
-          else if (r < 80 && g < 80 && b < 80) {
+          // Make BLACK/dark pixels transparent (for photo slot cutouts)
+          // Increase threshold to catch more dark areas in slots
+          if (r < 100 && g < 100 && b < 100) {
             data[i+3] = 0; // Set alpha to 0 (transparent)
           }
         }
@@ -245,21 +241,22 @@ function BoothPage() {
       const slot = selectedFrame.photoSlots[index];
       if (!slot) return;
       
-      // Slots are defined as percentages, photos are square (1:1)
-      // We need to scale up so photo covers the entire slot
+      // Photos are square (1:1 aspect ratio)
+      // Slots are wider rectangles (e.g., 80% wide × 21.3% tall ≈ 3.76:1)
+      // To fill the slot, we need to scale so photo width matches slot width
+      
+      // Calculate scale needed to fill slot width
+      // Since photo is square and displayed with width/height 100% initially,
+      // we need to scale by the slot's aspect ratio to fill it
       const slotAspect = slot.width / slot.height;
       
-      // For square photos (1:1), if slot is wider (landscape):
-      // - slotAspect > 1 means slot is wider than tall
-      // - We need to scale by height to fill, which means scale > 1
-      // For DNS PUBG slots: width=80%, height=21.3%, aspect ≈ 3.76
-      // So we need to zoom quite a bit to fill width
+      // For wide slots (aspect > 1), scale up by that ratio
+      // Example: slot is 3.76 times wider than tall
+      // Photo needs to be scaled 3.76x to fill the width
+      const fillScale = Math.max(slotAspect, 1.0);
       
-      // Base scale to cover slot (use larger dimension)
-      const coverScale = Math.max(slotAspect, 1);
-      
-      // Add a bit more zoom (5-10%) to ensure no gaps
-      const autoScale = coverScale * 1.05;
+      // Add extra 10% to ensure full coverage with no gaps
+      const autoScale = fillScale * 1.1;
       
       newTransforms[index] = { 
         scale: autoScale, 
@@ -808,9 +805,13 @@ function BoothPage() {
                               position: 'absolute',
                               top: '50%',
                               left: '50%',
-                              width: `${100 * t.scale}%`,
-                              height: `${100 * t.scale}%`,
-                              objectFit: 'cover', // Fill entire slot, may crop edges
+                              minWidth: `${100 * t.scale}%`,
+                              minHeight: `${100 * t.scale}%`,
+                              width: 'auto',
+                              height: 'auto',
+                              maxWidth: 'none',
+                              maxHeight: 'none',
+                              objectFit: 'cover',
                               objectPosition: 'center',
                               display: 'block',
                               transform: `translate(calc(-50% + ${t.x}px), calc(-50% + ${t.y}px))`,
