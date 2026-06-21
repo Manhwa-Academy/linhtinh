@@ -8,6 +8,14 @@
     "build": "vite build",
     "preview": "vite preview"
   },
+  "browserslist": [
+    "> 0.5%",
+    "last 2 versions",
+    "Firefox ESR",
+    "not dead",
+    "iOS >= 9",
+    "Android >= 5"
+  ],
   "dependencies": {
     "@uploadthing/react": "^7.3.3",
     "html2canvas": "^1.4.1",
