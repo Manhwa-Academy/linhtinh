@@ -56,6 +56,9 @@ function CaptureStep({
             0, 0, size, size                // Destination: full canvas
           )
           
+          // Apply beauty filter (smooth skin, remove blemishes)
+          applyBeautyFilter(ctx, size, size)
+          
           // Get high-quality JPEG
           const imageSrc = canvas.toDataURL('image/jpeg', 0.95)
           
@@ -76,6 +79,42 @@ function CaptureStep({
     }
   }, [onPhotosChange])
 
+  // Beauty filter: smooth skin and enhance photo
+  const applyBeautyFilter = (ctx, width, height) => {
+    const imageData = ctx.getImageData(0, 0, width, height)
+    const data = imageData.data
+    
+    // Simple bilateral filter approximation for skin smoothing
+    const tempData = new Uint8ClampedArray(data)
+    const radius = 3 // Blur radius for smoothing
+    
+    for (let y = radius; y < height - radius; y++) {
+      for (let x = radius; x < width - radius; x++) {
+        const idx = (y * width + x) * 4
+        
+        let r = 0, g = 0, b = 0, count = 0
+        
+        // Average nearby pixels (simple box blur)
+        for (let dy = -radius; dy <= radius; dy++) {
+          for (let dx = -radius; dx <= radius; dx++) {
+            const newIdx = ((y + dy) * width + (x + dx)) * 4
+            r += tempData[newIdx]
+            g += tempData[newIdx + 1]
+            b += tempData[newIdx + 2]
+            count++
+          }
+        }
+        
+        // Blend original with blurred (50% blend for natural look)
+        data[idx] = Math.floor((tempData[idx] + r / count) / 2)
+        data[idx + 1] = Math.floor((tempData[idx + 1] + g / count) / 2)
+        data[idx + 2] = Math.floor((tempData[idx + 2] + b / count) / 2)
+      }
+    }
+    
+    ctx.putImageData(imageData, 0, 0)
+  }
+
   const handleCaptureClick = () => {
     if (!showCamera) {
       setShowCamera(true)
@@ -94,7 +133,7 @@ function CaptureStep({
     const maxPhotos = totalPhotos - capturedPhotos.length
     
     if (maxPhotos <= 0) {
-      alert(`Bạn đã có đủ ${totalPhotos} ảnh!`)
+      alert(`You already have ${totalPhotos} photos!`)
       return
     }
     
