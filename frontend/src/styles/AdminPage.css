@@ -522,7 +522,9 @@
 
 .edit-btn,
 .delete-btn,
-.fix-slots-btn {
+.fix-slots-btn,
+.private-btn,
+.public-btn {
   flex: 1;
   padding: 10px;
   border: none;
@@ -563,6 +565,36 @@
   cursor: not-allowed;
 }
 
+.private-btn {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+}
+
+.private-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+}
+
+.private-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.public-btn {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.public-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+.public-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .delete-btn {
   background: linear-gradient(135deg, #ff6b9d, #ff8fb3);
   color: white;
@@ -584,6 +616,24 @@
   font-weight: 600;
   color: #856404;
   text-align: center;
+}
+
+/* Privacy Badge */
+.privacy-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+  z-index: 10;
 }
 
 /* Edit Mode */

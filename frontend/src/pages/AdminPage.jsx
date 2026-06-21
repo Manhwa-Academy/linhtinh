@@ -431,6 +431,34 @@ function AdminPage() {
     }
   }
 
+  // Toggle frame privacy
+  const handleTogglePrivacy = async (frameId, currentPrivacy) => {
+    try {
+      setIsProcessing(true)
+      const frame = frames.find(f => f.id === frameId)
+      
+      const response = await fetch(`${API_URL}/api/frames/${frameId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...frame,
+          isPrivate: !currentPrivacy
+        })
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        setFrames(frames.map(f => f.id === frameId ? data.frame : f))
+        showToast(`Frame đã được đặt ${!currentPrivacy ? 'riêng tư' : 'công khai'}!`, 'success')
+      }
+    } catch (error) {
+      console.error('Error toggling privacy:', error)
+      showToast('Lỗi khi thay đổi trạng thái!', 'error')
+    } finally {
+      setIsProcessing(false)
+    }
+  }
+
   // Helper: Adjust color brightness
   const adjustColor = (color, percent) => {
     const num = parseInt(color.replace('#', ''), 16)
@@ -1208,6 +1236,12 @@ function AdminPage() {
           <div className="frames-grid-admin">
             {frames.map((frame) => (
               <div key={frame.id} className="frame-card-admin">
+                {/* Privacy Badge */}
+                {frame.isPrivate && (
+                  <div className="privacy-badge">
+                    🔒 Riêng tư
+                  </div>
+                )}
                 {editingFrame?.id === frame.id ? (
                   // Edit Mode
                   <div className="edit-mode">
@@ -1342,6 +1376,14 @@ function AdminPage() {
                           🔧 Fix Slots
                         </button>
                       )}
+                      <button 
+                        onClick={() => handleTogglePrivacy(frame.id, frame.isPrivate)} 
+                        className={frame.isPrivate ? "public-btn" : "private-btn"}
+                        disabled={isProcessing}
+                        title={frame.isPrivate ? "Đặt công khai" : "Đặt riêng tư"}
+                      >
+                        {frame.isPrivate ? '🌐 Công khai' : '🔒 Riêng tư'}
+                      </button>
                       <button onClick={() => setDeleteConfirmId(frame.id)} className="delete-btn">
                         <Trash2 size={16} /> Xóa
                       </button>
