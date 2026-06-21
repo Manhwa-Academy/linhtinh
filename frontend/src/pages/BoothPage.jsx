@@ -222,7 +222,7 @@ function BoothPage() {
   const [activePhotoEdit, setActivePhotoEdit] = useState(null) // index of photo being edited
   const dragRef = useRef({ dragging: false, startX: 0, startY: 0, origX: 0, origY: 0 })
 
-  const getTransform = (index) => photoTransforms[index] || { scale: 1.0, x: 0, y: 0 }
+  const getTransform = (index) => photoTransforms[index] || { scale: 4.0, x: 0, y: 0 }
 
   const updateTransform = (index, patch) => {
     setPhotoTransforms(prev => ({
@@ -805,12 +805,8 @@ function BoothPage() {
                               position: 'absolute',
                               top: '50%',
                               left: '50%',
-                              minWidth: `${100 * t.scale}%`,
-                              minHeight: `${100 * t.scale}%`,
-                              width: 'auto',
-                              height: 'auto',
-                              maxWidth: 'none',
-                              maxHeight: 'none',
+                              width: `${100 * t.scale}%`,
+                              height: `${100 * t.scale}%`,
                               objectFit: 'cover',
                               objectPosition: 'center',
                               display: 'block',
