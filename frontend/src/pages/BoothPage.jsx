@@ -234,21 +234,28 @@ function BoothPage() {
   }
 
   const handleSlotMouseDown = (e, index) => {
+    e.preventDefault()
     e.stopPropagation()
     setActivePhotoEdit(index)
     const t = getTransform(index)
-    dragRef.current = { dragging: true, startX: e.clientX, startY: e.clientY, origX: t.x, origY: t.y }
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY
+    dragRef.current = { dragging: true, startX: clientX, startY: clientY, origX: t.x, origY: t.y }
   }
 
   const handleSlotMouseMove = (e) => {
     const d = dragRef.current
     if (!d.dragging || activePhotoEdit === null) return
-    const dx = e.clientX - d.startX
-    const dy = e.clientY - d.startY
+    e.preventDefault()
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY
+    const dx = clientX - d.startX
+    const dy = clientY - d.startY
     updateTransform(activePhotoEdit, { x: d.origX + dx, y: d.origY + dy })
   }
 
-  const handleSlotMouseUp = () => {
+  const handleSlotMouseUp = (e) => {
+    if (e) e.preventDefault()
     dragRef.current.dragging = false
   }
   
@@ -718,6 +725,8 @@ function BoothPage() {
                       onMouseMove={handleSlotMouseMove}
                       onMouseUp={handleSlotMouseUp}
                       onMouseLeave={handleSlotMouseUp}
+                      onTouchMove={handleSlotMouseMove}
+                      onTouchEnd={handleSlotMouseUp}
                     >
                       {capturedPhotos.map((photo, index) => {
                         const slot = selectedFrame?.photoSlots?.[index];
@@ -731,6 +740,7 @@ function BoothPage() {
                         <div
                           key={index}
                           onMouseDown={(e) => handleSlotMouseDown(e, index)}
+                          onTouchStart={(e) => handleSlotMouseDown(e, index)}
                           style={{
                             position: 'absolute',
                             top: `${sY}%`,
@@ -741,7 +751,8 @@ function BoothPage() {
                             isolation: 'isolate',
                             cursor: isActive ? 'grabbing' : 'grab',
                             outline: isActive ? '2px solid #FF6B9D' : 'none',
-                            outlineOffset: '2px'
+                            outlineOffset: '2px',
+                            touchAction: 'none'
                           }}
                         >
                           <img

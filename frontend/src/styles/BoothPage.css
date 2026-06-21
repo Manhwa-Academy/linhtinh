@@ -8,6 +8,11 @@
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
+  /* Mobile touch optimizations */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: pan-y;
 }
 
 /* Particles Container for BoothPage */
@@ -1493,4 +1498,37 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   font-weight: 700;
   white-space: nowrap;
+}
+
+
+/* Mobile Touch Optimizations for Photo Dragging */
+@media (hover: none) and (pointer: coarse) {
+  /* This targets touch devices only */
+  .booth-page {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Prevent text selection and zoom while dragging */
+  [style*="cursor: grab"],
+  [style*="cursor: grabbing"] {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: none;
+  }
+  
+  /* Improve touch response */
+  button, 
+  input[type="range"] {
+    -webkit-tap-highlight-color: rgba(255, 107, 157, 0.3);
+    touch-action: manipulation;
+  }
+  
+  /* Prevent double-tap zoom on photo slots */
+  [style*="overflow: hidden"][style*="position: absolute"] {
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
 }
