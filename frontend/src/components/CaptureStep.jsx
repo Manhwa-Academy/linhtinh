@@ -25,43 +25,44 @@ function CaptureStep({
   const capture = useCallback(() => {
     if (webcamRef.current) {
       const video = webcamRef.current.video
-      if (video) {
+      if (video && video.readyState === video.HAVE_ENOUGH_DATA) {
         // Create canvas with actual video dimensions for maximum quality
         const canvas = document.createElement('canvas')
-        canvas.width = video.videoWidth
-        canvas.height = video.videoHeight
+        canvas.width = video.videoWidth || 1920
+        canvas.height = video.videoHeight || 1080
         
         const ctx = canvas.getContext('2d', { 
           alpha: false,
-          desynchronized: true,
           willReadFrequently: false
         })
         
-        // Disable image smoothing for sharper images
-        ctx.imageSmoothingEnabled = false
-        ctx.imageSmoothingQuality = 'high'
-        
-        // Draw video frame to canvas
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
-        
-        // Get high-quality JPEG
-        const imageSrc = canvas.toDataURL('image/jpeg', 1.0)
-        
-        if (imageSrc) {
-          setIsCapturing(true)
-          onPhotosChange(prev => {
-            const newPhotos = [...prev, imageSrc]
-            return newPhotos
-          })
+        if (ctx) {
+          // Enable high quality rendering
+          ctx.imageSmoothingEnabled = true
+          ctx.imageSmoothingQuality = 'high'
           
-          // Brief flash effect then ready for next photo
-          setTimeout(() => {
-            setIsCapturing(false)
-          }, 300)
+          // Draw video frame to canvas
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+          
+          // Get high-quality JPEG
+          const imageSrc = canvas.toDataURL('image/jpeg', 0.95)
+          
+          if (imageSrc && imageSrc.length > 100) {
+            setIsCapturing(true)
+            onPhotosChange(prev => {
+              const newPhotos = [...prev, imageSrc]
+              return newPhotos
+            })
+            
+            // Brief flash effect then ready for next photo
+            setTimeout(() => {
+              setIsCapturing(false)
+            }, 300)
+          }
         }
       }
     }
-  }, [totalPhotos, onPhotosChange])
+  }, [onPhotosChange])
 
   const handleCaptureClick = () => {
     if (!showCamera) {
@@ -153,21 +154,14 @@ function CaptureStep({
                   ref={webcamRef}
                   audio={false}
                   screenshotFormat="image/jpeg"
-                  screenshotQuality={1.0}
+                  screenshotQuality={0.95}
                   videoConstraints={{
-                    width: { min: 1920, ideal: 3840, max: 7680 },
-                    height: { min: 1080, ideal: 2160, max: 4320 },
+                    width: { min: 1280, ideal: 1920, max: 3840 },
+                    height: { min: 720, ideal: 1080, max: 2160 },
                     aspectRatio: { ideal: 16/9 },
                     facingMode: "user",
-                    frameRate: { ideal: 60, max: 120 },
-                    resizeMode: "none",
-                    advanced: [
-                      { width: { min: 3840 } },
-                      { height: { min: 2160 } },
-                      { aspectRatio: { exact: 16/9 } }
-                    ]
+                    frameRate: { ideal: 30 }
                   }}
-                  imageSmoothing={false}
                   className="webcam"
                 />
               </div>
