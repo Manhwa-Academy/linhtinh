@@ -13,7 +13,6 @@ import {
 import { API_URL, frameImageUrl } from '../config/api'
 import SetupStep from '../components/SetupStep'
 import CaptureStep from '../components/CaptureStep'
-import FallingParticles from '../components/FallingParticles'
 import '../styles/BoothPage.css'
 
 const stripTypes = [
@@ -511,8 +510,6 @@ function BoothPage() {
 
   return (
     <div className="booth-page">
-      <FallingParticles count={25} />
-
       <header className="booth-header">
         {currentStep === 1 ? (
           <Link to="/" className="back-button">
