@@ -2,6 +2,7 @@ import { useState, useRef, useCallback } from 'react'
 import Webcam from 'react-webcam'
 import { Camera, Upload, RotateCcw, X } from 'lucide-react'
 import { frameImageUrl } from '../config/api'
+import { useTranslation } from '../i18n/useTranslation'
 import '../styles/CaptureStep.css'
 
 function CaptureStep({
@@ -13,6 +14,7 @@ function CaptureStep({
   onContinue,
   onBack
 }) {
+  const { t } = useTranslation()
   const webcamRef = useRef(null)
   const fileInputRef = useRef(null)
   const [showCamera, setShowCamera] = useState(false)
@@ -121,7 +123,7 @@ function CaptureStep({
     const maxPhotos = totalPhotos - capturedPhotos.length
     
     if (maxPhotos <= 0) {
-      alert(`You already have ${totalPhotos} photos!`)
+      alert(`${t.booth.capture.alertMaxPhotos} ${totalPhotos} ${t.booth.capture.alertMaxPhotosEnd}`)
       return
     }
     
@@ -170,7 +172,7 @@ function CaptureStep({
         {/* Left side - Camera/Preview */}
         <div className="capture-main">
           <h2 className="capture-counter">
-            Photo {Math.min(currentPhotoIndex + 1, totalPhotos)} of {totalPhotos}
+            {t.booth.capture.photoCounter} {Math.min(currentPhotoIndex + 1, totalPhotos)} {t.booth.capture.of} {totalPhotos}
           </h2>
 
           <div className="camera-container">
@@ -183,7 +185,7 @@ function CaptureStep({
             {allCaptured && (
               <div className="all-captured-message">
                 <div className="success-icon">✨</div>
-                <h3>All photos captured!</h3>
+                <h3>{t.booth.capture.allCapturedTitle}</h3>
               </div>
             )}
 
@@ -207,7 +209,7 @@ function CaptureStep({
             ) : !allCaptured ? (
               <div className="camera-placeholder">
                 <Camera size={80} strokeWidth={1.5} />
-                <p>Ready to capture memories?</p>
+                <p>{t.booth.capture.readyMessage}</p>
               </div>
             ) : (
               <div className="preview-last-photo" style={{ filter: filter?.value }}>
@@ -224,7 +226,7 @@ function CaptureStep({
             <button 
               className="control-btn-icon"
               onClick={() => fileInputRef.current?.click()}
-              title="Upload photos"
+              title={t.booth.capture.uploadTooltip}
             >
               <Upload size={24} />
             </button>
@@ -242,7 +244,7 @@ function CaptureStep({
             <button 
               className="control-btn-icon"
               onClick={retakeAll}
-              title="Retake all"
+              title={t.booth.capture.retakeTooltip}
               disabled={capturedPhotos.length === 0}
             >
               <RotateCcw size={24} />
@@ -252,7 +254,7 @@ function CaptureStep({
 
         {/* Right side - Captured photos sidebar */}
         <div className="captured-sidebar">
-          <h3 className="sidebar-title">CAPTURED</h3>
+          <h3 className="sidebar-title">{t.booth.capture.capturedTitle}</h3>
           <div className="captured-grid">
             {capturedPhotos.map((photo, index) => (
               <div key={index} className="captured-thumb">
@@ -284,12 +286,12 @@ function CaptureStep({
       {/* Bottom Actions */}
       <div className="capture-actions">
         <button className="back-btn-capture" onClick={onBack}>
-          ← Back
+          {t.booth.capture.backButton}
         </button>
         
         {allCaptured && (
           <button className="continue-btn-capture" onClick={onContinue}>
-            Edit Photos →
+            {t.booth.capture.continueButton}
           </button>
         )}
       </div>

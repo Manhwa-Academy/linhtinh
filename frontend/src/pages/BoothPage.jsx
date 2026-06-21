@@ -11,6 +11,7 @@ import {
   Umbrella, Trophy, Key, Glasses
 } from 'lucide-react'
 import { API_URL, frameImageUrl } from '../config/api'
+import { useTranslation } from '../i18n/useTranslation'
 import SetupStep from '../components/SetupStep'
 import CaptureStep from '../components/CaptureStep'
 import '../styles/BoothPage.css'
@@ -189,6 +190,7 @@ const makeBlackTransparent = (imgSrc) => {
 };
 
 function BoothPage() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const photoStripRef = useRef(null)
@@ -307,7 +309,7 @@ function BoothPage() {
   const goToNextStep = () => {
     if (currentStep < 4) {
       if (currentStep === 2 && capturedPhotos.length === 0) {
-        alert('Please capture or upload photos!')
+        alert(t.booth.capture.alertNoPhotos)
         return
       }
       setCurrentStep(currentStep + 1)
@@ -361,7 +363,7 @@ function BoothPage() {
 
   const addCustomText = () => {
     if (!customText.trim()) {
-      alert('Please enter text!')
+      alert(t.booth.decorate.alertEnterText)
       return
     }
     
@@ -490,7 +492,7 @@ function BoothPage() {
         link.click()
       } catch (err) {
         console.error('Canvas download error:', err)
-        alert('Error downloading photo!')
+        alert(t.booth.final.alertDownloadError)
       }
       return
     }
@@ -531,7 +533,7 @@ function BoothPage() {
         
         {/* Progress Steps - Updated to 4 steps */}
         <div className="progress-steps">
-          {['Setup', 'Capture', 'Decorate', 'Done!'].map((step, index) => (
+          {[t.booth.steps.setup, t.booth.steps.capture, t.booth.steps.decorate, t.booth.steps.done].map((step, index) => (
             <div 
               key={index} 
               className={`step ${currentStep === index + 1 ? 'active' : ''} ${currentStep > index + 1 ? 'completed' : ''}`}

@@ -1,5 +1,6 @@
 import { Camera, ChevronDown } from 'lucide-react'
 import { frameImageUrl } from '../config/api'
+import { useTranslation } from '../i18n/useTranslation'
 import '../styles/SetupStep.css'
 
 function SetupStep({ 
@@ -14,15 +15,31 @@ function SetupStep({
   onSelectFilter,
   onContinue
 }) {
+  const { t } = useTranslation()
   // Filter out private frames for normal users - safely handle undefined
   const publicFrames = (frames || []).filter(frame => !frame.isPrivate)
+  
+  // Translate strip types
+  const getStripTypeName = (type) => {
+    return t.booth.stripTypes[type.id]?.name || type.name
+  }
+  
+  const getStripTypeDescription = (type) => {
+    return `${type.count} ${t.booth.setup.photos}`
+  }
+  
+  // Translate filters
+  const getFilterName = (filter) => {
+    return t.booth.filters[filter.id]?.name || filter.name
+  }
+  
   // Generate preview based on selected options
   const renderPreview = () => {
     if (!selectedStripType) {
       return (
         <div className="preview-placeholder">
           <Camera size={40} strokeWidth={1} />
-          <p>Select a strip type to see preview</p>
+          <p>{t.booth.setup.selectStripPlaceholder}</p>
         </div>
       )
     }
@@ -57,14 +74,14 @@ function SetupStep({
 
     return (
       <div className="preview-strip" style={frameStyle}>
-        <div className={`preview-slots-container ${isGridLayout ? 'grid-layout' : 'vertical-layout'}`}>
+        <div className="preview-slots-container ${isGridLayout ? 'grid-layout' : 'vertical-layout'}`}>
           {Array.from({ length: slotCount }).map((_, i) => (
             <div key={i} className="preview-slot">
               <Camera size={isGridLayout ? 18 : 20} strokeWidth={1.5} />
             </div>
           ))}
         </div>
-        <div className="preview-label">{selectedStripType.name}</div>
+        <div className="preview-label">{getStripTypeName(selectedStripType)}</div>
       </div>
     )
   }
@@ -77,7 +94,7 @@ function SetupStep({
         {/* Left: Options */}
         <div className="setup-options">
           <div className="option-section">
-            <h3 className="section-title">Photo Strips</h3>
+            <h3 className="section-title">{t.booth.setup.photoStrips}</h3>
             <div className="strips-grid">
               {stripTypes.map(type => (
                 <div
@@ -91,8 +108,8 @@ function SetupStep({
                     ))}
                   </div>
                   <div className="strip-info">
-                    <h4>{type.name}</h4>
-                    <p>{type.count} photos</p>
+                    <h4>{getStripTypeName(type)}</h4>
+                    <p>{getStripTypeDescription(type)}</p>
                   </div>
                 </div>
               ))}
@@ -101,7 +118,7 @@ function SetupStep({
 
           {/* Frame selector with icon */}
           <div className="option-section">
-            <h3 className="section-title">Frame</h3>
+            <h3 className="section-title">{t.booth.setup.frame}</h3>
             <div className="custom-select-wrapper">
               <select 
                 className="custom-select"
@@ -111,7 +128,7 @@ function SetupStep({
                   onSelectFrame(frame)
                 }}
               >
-                <option value="">Select frame...</option>
+                <option value="">{t.booth.setup.selectFrame}</option>
                 {publicFrames.map(frame => (
                   <option key={frame.id} value={frame.id}>
                     {frame.emoji ? `${frame.emoji} ` : ''}{frame.name}
@@ -138,7 +155,7 @@ function SetupStep({
 
           {/* Filter selector with icon */}
           <div className="option-section">
-            <h3 className="section-title">Filter</h3>
+            <h3 className="section-title">{t.booth.setup.filter}</h3>
             <div className="custom-select-wrapper">
               <select 
                 className="custom-select"
@@ -148,10 +165,10 @@ function SetupStep({
                   onSelectFilter(filter)
                 }}
               >
-                <option value="">Select filter...</option>
+                <option value="">{t.booth.setup.selectFilter}</option>
                 {filters.map(filter => (
                   <option key={filter.id} value={filter.id}>
-                    {filter.name}
+                    {getFilterName(filter)}
                   </option>
                 ))}
               </select>
@@ -163,7 +180,7 @@ function SetupStep({
                   className="selected-color-dot" 
                   style={{ backgroundColor: selectedFilter.color }}
                 />
-                <span className="selected-name">{selectedFilter.name}</span>
+                <span className="selected-name">{getFilterName(selectedFilter)}</span>
               </div>
             )}
           </div>
@@ -171,7 +188,7 @@ function SetupStep({
 
         {/* Right: Preview only */}
         <div className="setup-preview">
-          <h3 className="preview-title">Preview</h3>
+          <h3 className="preview-title">{t.booth.setup.preview}</h3>
           {renderPreview()}
         </div>
       </div>
@@ -181,7 +198,7 @@ function SetupStep({
         onClick={onContinue}
         disabled={!canContinue}
       >
-        Continue →
+        {t.booth.setup.continue}
       </button>
     </div>
   )
