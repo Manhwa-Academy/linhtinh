@@ -14,8 +14,8 @@ function SetupStep({
   onSelectFilter,
   onContinue
 }) {
-  // Filter out private frames for normal users
-  const publicFrames = frames.filter(frame => !frame.isPrivate)
+  // Filter out private frames for normal users - safely handle undefined/null
+  const publicFrames = (frames || []).filter(frame => !frame.isPrivate)
   // Generate preview based on selected options
   const renderPreview = () => {
     if (!selectedStripType) {
