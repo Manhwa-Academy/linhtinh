@@ -196,7 +196,8 @@ function AdminPage() {
   // Load frames from backend
   const loadFrames = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/frames`)
+      // Use admin endpoint to get all frames including private ones
+      const response = await fetch(`${API_URL}/api/admin/frames`)
       if (response.ok) {
         const data = await response.json()
         setFrames(data.frames)
@@ -437,6 +438,8 @@ function AdminPage() {
       setIsProcessing(true)
       const frame = frames.find(f => f.id === frameId)
       
+      console.log('Toggle privacy for:', frameId, 'Current:', currentPrivacy, 'New:', !currentPrivacy)
+      
       const response = await fetch(`${API_URL}/api/frames/${frameId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -448,8 +451,16 @@ function AdminPage() {
 
       if (response.ok) {
         const data = await response.json()
-        setFrames(frames.map(f => f.id === frameId ? data.frame : f))
+        console.log('Response data:', data)
+        
+        // Force reload all frames to ensure sync
+        await loadFrames()
+        
         showToast(`Frame đã được đặt ${!currentPrivacy ? 'riêng tư' : 'công khai'}!`, 'success')
+      } else {
+        const error = await response.text()
+        console.error('Server error:', error)
+        showToast('Lỗi từ server!', 'error')
       }
     } catch (error) {
       console.error('Error toggling privacy:', error)
@@ -1371,19 +1382,22 @@ function AdminPage() {
                       }} className="edit-btn">
                         <Edit2 size={16} /> Sửa
                       </button>
+                      
+                      <button 
+                        onClick={() => handleTogglePrivacy(frame.id, frame.isPrivate)} 
+                        className={frame.isPrivate ? "private-btn" : "public-btn"}
+                        disabled={isProcessing}
+                        title={frame.isPrivate ? "Click để công khai (hiện tại: riêng tư)" : "Click để riêng tư (hiện tại: công khai)"}
+                      >
+                        {frame.isPrivate ? '🔒 Riêng tư' : '🌐 Công khai'}
+                      </button>
+                      
                       {frame.frameImage && (!frame.photoSlots || frame.photoSlots.length === 0) && (
                         <button onClick={() => handleFixSlots(frame.id)} className="fix-slots-btn" disabled={isProcessing}>
                           🔧 Fix Slots
                         </button>
                       )}
-                      <button 
-                        onClick={() => handleTogglePrivacy(frame.id, frame.isPrivate)} 
-                        className={frame.isPrivate ? "public-btn" : "private-btn"}
-                        disabled={isProcessing}
-                        title={frame.isPrivate ? "Đặt công khai" : "Đặt riêng tư"}
-                      >
-                        {frame.isPrivate ? '🌐 Công khai' : '🔒 Riêng tư'}
-                      </button>
+                      
                       <button onClick={() => setDeleteConfirmId(frame.id)} className="delete-btn">
                         <Trash2 size={16} /> Xóa
                       </button>

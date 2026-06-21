@@ -377,10 +377,24 @@ app.post('/api/frames/:id/fix-slots', async (req, res) => {
 
 // ============== FRAMES API ==============
 
-// Get all frames
+// Get all frames (public only for users)
 app.get('/api/frames', async (req, res) => {
   try {
     const frames = await readFrames()
+    // Filter out private frames for normal users
+    const publicFrames = frames.filter(frame => !frame.isPrivate)
+    res.json({ success: true, frames: publicFrames })
+  } catch (error) {
+    console.error('Error reading frames:', error)
+    res.status(500).json({ error: 'Lỗi khi đọc frames' })
+  }
+})
+
+// Get all frames including private ones (for admin panel)
+app.get('/api/admin/frames', async (req, res) => {
+  try {
+    const frames = await readFrames()
+    // Return all frames including private ones
     res.json({ success: true, frames })
   } catch (error) {
     console.error('Error reading frames:', error)
