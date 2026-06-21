@@ -452,8 +452,8 @@ function BoothPage() {
           // Apply transform: scale and translate
           const baseScaleX = sW / photoImg.naturalWidth
           const baseScaleY = sH / photoImg.naturalHeight
-          // Use Math.min for 'contain' behavior - photo fits inside slot without cropping
-          const baseScale = Math.min(baseScaleX, baseScaleY)
+          // Use Math.max for 'cover' behavior - photo fills entire slot, may crop edges
+          const baseScale = Math.max(baseScaleX, baseScaleY)
           
           // Apply user's scale on top of base scale
           const finalScale = baseScale * t.scale
@@ -768,7 +768,7 @@ function BoothPage() {
                               left: '50%',
                               width: `${100 * t.scale}%`,
                               height: `${100 * t.scale}%`,
-                              objectFit: 'contain', // Fit inside without cropping
+                              objectFit: 'cover', // Fill entire slot, may crop edges
                               objectPosition: 'center',
                               display: 'block',
                               transform: `translate(calc(-50% + ${t.x}px), calc(-50% + ${t.y}px))`,
