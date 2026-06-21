@@ -24,20 +24,41 @@ function CaptureStep({
 
   const capture = useCallback(() => {
     if (webcamRef.current) {
-      const imageSrc = webcamRef.current.getScreenshot()
-      if (imageSrc) {
-        setIsCapturing(true)
-        onPhotosChange(prev => {
-          const newPhotos = [...prev, imageSrc]
-          // Auto continue to next photo if more photos needed
-          // No countdown - instant capture on next photo
-          return newPhotos
+      const video = webcamRef.current.video
+      if (video) {
+        // Create canvas with actual video dimensions for maximum quality
+        const canvas = document.createElement('canvas')
+        canvas.width = video.videoWidth
+        canvas.height = video.videoHeight
+        
+        const ctx = canvas.getContext('2d', { 
+          alpha: false,
+          desynchronized: true,
+          willReadFrequently: false
         })
         
-        // Brief flash effect then ready for next photo
-        setTimeout(() => {
-          setIsCapturing(false)
-        }, 300)
+        // Disable image smoothing for sharper images
+        ctx.imageSmoothingEnabled = false
+        ctx.imageSmoothingQuality = 'high'
+        
+        // Draw video frame to canvas
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+        
+        // Get high-quality JPEG
+        const imageSrc = canvas.toDataURL('image/jpeg', 1.0)
+        
+        if (imageSrc) {
+          setIsCapturing(true)
+          onPhotosChange(prev => {
+            const newPhotos = [...prev, imageSrc]
+            return newPhotos
+          })
+          
+          // Brief flash effect then ready for next photo
+          setTimeout(() => {
+            setIsCapturing(false)
+          }, 300)
+        }
       }
     }
   }, [totalPhotos, onPhotosChange])
@@ -131,12 +152,22 @@ function CaptureStep({
                 <Webcam
                   ref={webcamRef}
                   audio={false}
-                  screenshotFormat="image/png"
+                  screenshotFormat="image/jpeg"
+                  screenshotQuality={1.0}
                   videoConstraints={{
-                    width: 1280,
-                    height: 720,
-                    facingMode: "user"
+                    width: { min: 1920, ideal: 3840, max: 7680 },
+                    height: { min: 1080, ideal: 2160, max: 4320 },
+                    aspectRatio: { ideal: 16/9 },
+                    facingMode: "user",
+                    frameRate: { ideal: 60, max: 120 },
+                    resizeMode: "none",
+                    advanced: [
+                      { width: { min: 3840 } },
+                      { height: { min: 2160 } },
+                      { aspectRatio: { exact: 16/9 } }
+                    ]
                   }}
+                  imageSmoothing={false}
                   className="webcam"
                 />
               </div>
