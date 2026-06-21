@@ -361,7 +361,7 @@ function BoothPage() {
 
   const addCustomText = () => {
     if (!customText.trim()) {
-      alert('Vui lòng nhập text!')
+      alert('Please enter text!')
       return
     }
     
@@ -490,7 +490,7 @@ function BoothPage() {
         link.click()
       } catch (err) {
         console.error('Canvas download error:', err)
-        alert('Lỗi khi tải xuống ảnh!')
+        alert('Error downloading photo!')
       }
       return
     }
