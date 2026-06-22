@@ -241,14 +241,15 @@ function BoothPage() {
       const slot = selectedFrame.photoSlots[index];
       if (!slot) return;
       
-      // Photos are square (1:1 aspect ratio)
-      // Slots are now more square (40% wide × 21% tall ≈ 1.9:1)
-      // Calculate scale to fill slot completely
+      // Photos are square (1:1 aspect ratio) from camera crop
+      // Slots are wide (80% × 21% ≈ 3.8:1)
+      // Need to scale photo HEIGHT to match slot HEIGHT (since photo is taller)
       
       const slotAspect = slot.width / slot.height;
       
-      // Scale to fill width + small buffer for full coverage
-      const fillScale = slotAspect * 1.05;
+      // Scale aggressively to fill the wide slot
+      // Use slot aspect ratio as base scale
+      const fillScale = slotAspect;
       
       newTransforms[index] = { 
         scale: fillScale, 

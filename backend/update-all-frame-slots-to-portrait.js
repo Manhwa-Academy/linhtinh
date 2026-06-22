@@ -5,36 +5,36 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// New square slot configuration (1:1 ratio for selfie photos)
+// New slot configuration - WIDER to fill frame completely
 const NEW_PORTRAIT_SLOTS = [
   {
-    x: 30,      // Center horizontally (30% from left)
+    x: 10,      // Near left edge
     y: 6.5,     // Top slot
-    width: 40,  // 40% width (square ratio: 40/21 ≈ 1.9:1)
+    width: 80,  // 80% width - WIDE to ensure full coverage
     height: 21, // 21% height
     rotation: 0,
     label: 'Slot 1'
   },
   {
-    x: 30,
+    x: 10,
     y: 28.5,    // Second slot
-    width: 40,
+    width: 80,
     height: 21,
     rotation: 0,
     label: 'Slot 2'
   },
   {
-    x: 30,
+    x: 10,
     y: 51.5,    // Third slot
-    width: 40,
+    width: 80,
     height: 21,
     rotation: 0,
     label: 'Slot 3'
   },
   {
-    x: 30,
+    x: 10,
     y: 74.5,    // Bottom slot
-    width: 40,
+    width: 80,
     height: 21,
     rotation: 0,
     label: 'Slot 4'
@@ -68,7 +68,7 @@ async function updateAllFrameSlots() {
           label: frame.photoSlots[i]?.label || `Slot ${i + 1}`
         }));
         
-        console.log(`   New: ${frame.photoSlots[0].width}% × ${frame.photoSlots[0].height}% (square)`);
+        console.log(`   New: ${frame.photoSlots[0].width}% × ${frame.photoSlots[0].height}% (WIDE)`);
         console.log('');
         updated++;
       } else if (frame.photoSlots) {
@@ -86,11 +86,11 @@ async function updateAllFrameSlots() {
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     console.log('📊 SUMMARY:');
     console.log(`   ✅ Updated: ${updated} frames`);
-    console.log(`   📐 New slot size: 40% × 21% (square)`);
-    console.log(`   📍 Centered horizontally (x=30%)`);
+    console.log(`   📐 New slot size: 80% × 21% (WIDE for full coverage)`);
+    console.log(`   📍 Position: x=10%`);
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     
-    console.log('\n✨ Done! Frames now use square slots for selfie photos.\n');
+    console.log('\n✨ Done! Frames now use WIDE slots to ensure full photo coverage.\n');
     
   } catch (error) {
     console.error('❌ Error:', error);
