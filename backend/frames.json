@@ -49,33 +49,33 @@
     "frameImage": "http://localhost:3001/uploads/frames/frame-1781793537200-641412976.jpg",
     "photoSlots": [
       {
-        "x": 10,
+        "x": 39.5,
         "y": 6.5,
-        "width": 80,
+        "width": 21,
         "height": 21,
         "rotation": 0,
         "label": "Slot 1"
       },
       {
-        "x": 10,
+        "x": 39.5,
         "y": 28.5,
-        "width": 80,
+        "width": 21,
         "height": 21,
         "rotation": 0,
         "label": "Slot 2"
       },
       {
-        "x": 10,
+        "x": 39.5,
         "y": 51.5,
-        "width": 80,
+        "width": 21,
         "height": 21,
         "rotation": 0,
         "label": "Slot 3"
       },
       {
-        "x": 10,
+        "x": 39.5,
         "y": 74.5,
-        "width": 80,
+        "width": 21,
         "height": 21,
         "rotation": 0,
         "label": "Slot 4"
@@ -93,33 +93,33 @@
     "frameImage": "http://localhost:3001/uploads/frames/team-korea-v2.png",
     "photoSlots": [
       {
-        "x": 10,
+        "x": 39.5,
         "y": 6.5,
-        "width": 80,
+        "width": 21,
         "height": 21,
         "rotation": 0,
         "label": "GYUMIN"
       },
       {
-        "x": 10,
+        "x": 39.5,
         "y": 28.5,
-        "width": 80,
+        "width": 21,
         "height": 21,
         "rotation": 0,
         "label": "SEONGJANG"
       },
       {
-        "x": 10,
+        "x": 39.5,
         "y": 51.5,
-        "width": 80,
+        "width": 21,
         "height": 21,
         "rotation": 0,
         "label": "HEAVEN"
       },
       {
-        "x": 10,
+        "x": 39.5,
         "y": 74.5,
-        "width": 80,
+        "width": 21,
         "height": 21,
         "rotation": 0,
         "label": "HEATHER"
@@ -138,33 +138,33 @@
     "isPrivate": true,
     "photoSlots": [
       {
-        "x": 10,
+        "x": 39.5,
         "y": 6.5,
-        "width": 80,
+        "width": 21,
         "height": 21,
         "rotation": 0,
         "label": "GYUMIN 🦝"
       },
       {
-        "x": 10,
+        "x": 39.5,
         "y": 28.5,
-        "width": 80,
+        "width": 21,
         "height": 21,
         "rotation": 0,
         "label": "HEAVEN 😇"
       },
       {
-        "x": 10,
+        "x": 39.5,
         "y": 51.5,
-        "width": 80,
+        "width": 21,
         "height": 21,
         "rotation": 0,
         "label": "DIEL 🐶"
       },
       {
-        "x": 10,
+        "x": 39.5,
         "y": 74.5,
-        "width": 80,
+        "width": 21,
         "height": 21,
         "rotation": 0,
         "label": "REX 🦖"
@@ -182,33 +182,33 @@
     "isPrivate": true,
     "photoSlots": [
       {
-        "x": 10,
+        "x": 39.5,
         "y": 6.5,
-        "width": 80,
+        "width": 21,
         "height": 21,
         "rotation": 0,
         "label": "SEOUL"
       },
       {
-        "x": 10,
+        "x": 39.5,
         "y": 28.5,
-        "width": 80,
+        "width": 21,
         "height": 21,
         "rotation": 0,
         "label": "BEAN"
       },
       {
-        "x": 10,
+        "x": 39.5,
         "y": 51.5,
-        "width": 80,
+        "width": 21,
         "height": 21,
         "rotation": 0,
         "label": "DIYY"
       },
       {
-        "x": 10,
+        "x": 39.5,
         "y": 74.5,
-        "width": 80,
+        "width": 21,
         "height": 21,
         "rotation": 0,
         "label": "SALUTE"
@@ -225,33 +225,33 @@
     "frameImage": "http://localhost:3001/uploads/frames/team-vietnam-2026.png",
     "photoSlots": [
       {
-        "x": 10,
+        "x": 39.5,
         "y": 6.5,
-        "width": 80,
+        "width": 21,
         "height": 21,
         "rotation": 0,
         "label": "TANVUU"
       },
       {
-        "x": 10,
+        "x": 39.5,
         "y": 28.5,
-        "width": 80,
+        "width": 21,
         "height": 21,
         "rotation": 0,
         "label": "HIMASS"
       },
       {
-        "x": 10,
+        "x": 39.5,
         "y": 51.5,
-        "width": 80,
+        "width": 21,
         "height": 21,
         "rotation": 0,
         "label": "DELWYN"
       },
       {
-        "x": 10,
+        "x": 39.5,
         "y": 74.5,
-        "width": 80,
+        "width": 21,
         "height": 21,
         "rotation": 0,
         "label": "SOLOLZY"
@@ -269,33 +269,33 @@
     "frameImage": "http://localhost:3001/uploads/frames/team-korea-pnc-2026.png",
     "photoSlots": [
       {
-        "x": 10,
+        "x": 39.5,
         "y": 6.5,
-        "width": 80,
+        "width": 21,
         "height": 21,
         "rotation": 0,
         "label": "GYUMIN"
       },
       {
-        "x": 10,
+        "x": 39.5,
         "y": 28.5,
-        "width": 80,
+        "width": 21,
         "height": 21,
         "rotation": 0,
         "label": "SEONGJANG"
       },
       {
-        "x": 10,
+        "x": 39.5,
         "y": 51.5,
-        "width": 80,
+        "width": 21,
         "height": 21,
         "rotation": 0,
         "label": "HEAVEN"
       },
       {
-        "x": 10,
+        "x": 39.5,
         "y": 74.5,
-        "width": 80,
+        "width": 21,
         "height": 21,
         "rotation": 0,
         "label": "HEATHER"
@@ -314,33 +314,33 @@
     "isPrivate": true,
     "photoSlots": [
       {
-        "x": 10,
+        "x": 39.5,
         "y": 6.5,
-        "width": 80,
+        "width": 21,
         "height": 21,
         "rotation": 0,
         "label": "GYUMIN"
       },
       {
-        "x": 10,
+        "x": 39.5,
         "y": 28.5,
-        "width": 80,
+        "width": 21,
         "height": 21,
         "rotation": 0,
         "label": "HEAVEN"
       },
       {
-        "x": 10,
+        "x": 39.5,
         "y": 51.5,
-        "width": 80,
+        "width": 21,
         "height": 21,
         "rotation": 0,
         "label": "DIEL"
       },
       {
-        "x": 10,
+        "x": 39.5,
         "y": 74.5,
-        "width": 80,
+        "width": 21,
         "height": 21,
         "rotation": 0,
         "label": "REX"
