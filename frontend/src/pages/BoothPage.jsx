@@ -241,9 +241,8 @@ function BoothPage() {
       const slot = selectedFrame.photoSlots[index];
       if (!slot) return;
       
-      // Use aggressive scale to ensure photo fills entire slot with objectFit: cover
-      // Default scale of 1.5x to ensure full coverage
-      const fillScale = 1.5;
+      // Aggressive scale to ensure full coverage - 4x for 80% wide slots
+      const fillScale = 4.0;
       
       newTransforms[index] = { 
         scale: fillScale, 
