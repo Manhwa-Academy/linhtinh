@@ -222,7 +222,7 @@ function BoothPage() {
   const [activePhotoEdit, setActivePhotoEdit] = useState(null) // index of photo being edited
   const dragRef = useRef({ dragging: false, startX: 0, startY: 0, origX: 0, origY: 0 })
 
-  const getTransform = (index) => photoTransforms[index] || { scale: 4.0, x: 0, y: 0 }
+  const getTransform = (index) => photoTransforms[index] || { scale: 4.5, x: 0, y: 0 }
 
   const updateTransform = (index, patch) => {
     setPhotoTransforms(prev => ({
@@ -246,20 +246,14 @@ function BoothPage() {
       // To fill the slot, we need to scale so photo width matches slot width
       
       // Calculate scale needed to fill slot width
-      // Since photo is square and displayed with width/height 100% initially,
-      // we need to scale by the slot's aspect ratio to fill it
       const slotAspect = slot.width / slot.height;
       
       // For wide slots (aspect > 1), scale up by that ratio
-      // Example: slot is 3.76 times wider than tall
-      // Photo needs to be scaled 3.76x to fill the width
-      const fillScale = Math.max(slotAspect, 1.0);
-      
-      // Add extra 10% to ensure full coverage with no gaps
-      const autoScale = fillScale * 1.1;
+      // Add extra 15% to ensure full coverage with no gaps
+      const fillScale = Math.max(slotAspect * 1.15, 4.5);
       
       newTransforms[index] = { 
-        scale: autoScale, 
+        scale: fillScale, 
         x: 0, 
         y: 0 
       };
