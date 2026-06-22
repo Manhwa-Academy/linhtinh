@@ -5,36 +5,36 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// SQUARE slot configuration (width = height for square photos)
+// LANDSCAPE slot configuration matching photo aspect ratio
 const NEW_PORTRAIT_SLOTS = [
   {
-    x: 39.5,    // Center horizontally: (100 - 21) / 2 = 39.5
+    x: 10,      // Left edge
     y: 6.5,     // Top slot
-    width: 21,  // SQUARE: 21% width = 21% height
-    height: 21,
+    width: 80,  // 80% width (landscape to match photo)
+    height: 21, // 21% height
     rotation: 0,
     label: 'Slot 1'
   },
   {
-    x: 39.5,
+    x: 10,
     y: 28.5,    // Second slot
-    width: 21,
+    width: 80,
     height: 21,
     rotation: 0,
     label: 'Slot 2'
   },
   {
-    x: 39.5,
+    x: 10,
     y: 51.5,    // Third slot
-    width: 21,
+    width: 80,
     height: 21,
     rotation: 0,
     label: 'Slot 3'
   },
   {
-    x: 39.5,
+    x: 10,
     y: 74.5,    // Bottom slot
-    width: 21,
+    width: 80,
     height: 21,
     rotation: 0,
     label: 'Slot 4'
@@ -68,7 +68,7 @@ async function updateAllFrameSlots() {
           label: frame.photoSlots[i]?.label || `Slot ${i + 1}`
         }));
         
-        console.log(`   New: ${frame.photoSlots[0].width}% × ${frame.photoSlots[0].height}% (SQUARE)`);
+        console.log(`   New: ${frame.photoSlots[0].width}% × ${frame.photoSlots[0].height}% (LANDSCAPE)`);
         console.log('');
         updated++;
       } else if (frame.photoSlots) {
@@ -86,11 +86,11 @@ async function updateAllFrameSlots() {
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     console.log('📊 SUMMARY:');
     console.log(`   ✅ Updated: ${updated} frames`);
-    console.log(`   📐 New slot size: 21% × 21% (SQUARE 1:1)`);
-    console.log(`   📍 Centered: x=39.5%`);
+    console.log(`   📐 New slot size: 80% × 21% (LANDSCAPE matching photos)`);
+    console.log(`   📍 Position: x=10%`);
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     
-    console.log('\n✨ Done! Frames now use SQUARE slots matching square photos.\n');
+    console.log('\n✨ Done! Frames now use LANDSCAPE slots matching photo aspect ratio.\n');
     
   } catch (error) {
     console.error('❌ Error:', error);

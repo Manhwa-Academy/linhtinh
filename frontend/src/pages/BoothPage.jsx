@@ -241,9 +241,9 @@ function BoothPage() {
       const slot = selectedFrame.photoSlots[index];
       if (!slot) return;
       
-      // Use 1.0 scale with objectFit: contain
-      // This shows full photo without cropping (like Winter frame)
-      const fillScale = 1.0;
+      // Use aggressive scale to ensure photo fills entire slot with objectFit: cover
+      // Default scale of 1.5x to ensure full coverage
+      const fillScale = 1.5;
       
       newTransforms[index] = { 
         scale: fillScale, 
@@ -474,13 +474,13 @@ function BoothPage() {
           // Get user's zoom/pan transform
           const t = getTransform(i);
 
-          // Calculate scale to contain the photo (like CSS object-fit: contain)
+          // Calculate scale to cover the slot (like CSS object-fit: cover)
           const scaleX = sW / photoImg.naturalWidth
           const scaleY = sH / photoImg.naturalHeight
-          const containScale = Math.min(scaleX, scaleY)
+          const coverScale = Math.max(scaleX, scaleY)
           
-          // Apply user's scale on top of contain scale
-          const finalScale = containScale * t.scale
+          // Apply user's scale on top of cover scale
+          const finalScale = coverScale * t.scale
           const drawW = photoImg.naturalWidth * finalScale
           const drawH = photoImg.naturalHeight * finalScale
           
@@ -794,7 +794,7 @@ function BoothPage() {
                               left: '50%',
                               width: `${100 * t.scale}%`,
                               height: `${100 * t.scale}%`,
-                              objectFit: 'contain',
+                              objectFit: 'cover',
                               objectPosition: 'center',
                               display: 'block',
                               transform: `translate(calc(-50% + ${t.x}px), calc(-50% + ${t.y}px))`,
