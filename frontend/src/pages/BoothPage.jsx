@@ -222,7 +222,7 @@ function BoothPage() {
   const [activePhotoEdit, setActivePhotoEdit] = useState(null) // index of photo being edited
   const dragRef = useRef({ dragging: false, startX: 0, startY: 0, origX: 0, origY: 0 })
 
-  const getTransform = (index) => photoTransforms[index] || { scale: 4.5, x: 0, y: 0 }
+  const getTransform = (index) => photoTransforms[index] || { scale: 5.5, x: 0, y: 0 }
 
   const updateTransform = (index, patch) => {
     setPhotoTransforms(prev => ({
@@ -249,8 +249,8 @@ function BoothPage() {
       const slotAspect = slot.width / slot.height;
       
       // For wide slots (aspect > 1), scale up by that ratio
-      // Add extra 15% to ensure full coverage with no gaps
-      const fillScale = Math.max(slotAspect * 1.15, 4.5);
+      // Add extra 25% to ensure full coverage with no gaps
+      const fillScale = Math.max(slotAspect * 1.25, 5.5);
       
       newTransforms[index] = { 
         scale: fillScale, 
