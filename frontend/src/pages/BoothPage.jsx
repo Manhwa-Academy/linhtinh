@@ -241,15 +241,9 @@ function BoothPage() {
       const slot = selectedFrame.photoSlots[index];
       if (!slot) return;
       
-      // Photos are square (1:1 aspect ratio) from camera crop
-      // Slots are wide (80% × 21% ≈ 3.8:1)
-      // Need to scale photo HEIGHT to match slot HEIGHT (since photo is taller)
-      
-      const slotAspect = slot.width / slot.height;
-      
-      // Scale aggressively to fill the wide slot
-      // Use slot aspect ratio as base scale
-      const fillScale = slotAspect;
+      // Use 1.0 scale with objectFit: contain
+      // This shows full photo without cropping (like Winter frame)
+      const fillScale = 1.0;
       
       newTransforms[index] = { 
         scale: fillScale, 
@@ -480,13 +474,13 @@ function BoothPage() {
           // Get user's zoom/pan transform
           const t = getTransform(i);
 
-          // Calculate scale to cover the slot (like CSS object-fit: cover)
+          // Calculate scale to contain the photo (like CSS object-fit: contain)
           const scaleX = sW / photoImg.naturalWidth
           const scaleY = sH / photoImg.naturalHeight
-          const coverScale = Math.max(scaleX, scaleY)
+          const containScale = Math.min(scaleX, scaleY)
           
-          // Apply user's scale on top of cover scale
-          const finalScale = coverScale * t.scale
+          // Apply user's scale on top of contain scale
+          const finalScale = containScale * t.scale
           const drawW = photoImg.naturalWidth * finalScale
           const drawH = photoImg.naturalHeight * finalScale
           
@@ -800,7 +794,7 @@ function BoothPage() {
                               left: '50%',
                               width: `${100 * t.scale}%`,
                               height: `${100 * t.scale}%`,
-                              objectFit: 'cover',
+                              objectFit: 'contain',
                               objectPosition: 'center',
                               display: 'block',
                               transform: `translate(calc(-50% + ${t.x}px), calc(-50% + ${t.y}px))`,
